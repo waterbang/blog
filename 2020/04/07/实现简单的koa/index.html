@@ -1,0 +1,630 @@
+
+
+<!DOCTYPE html>
+<html lang="ch_CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/apple-touch-icon.png">
+  <link rel="icon" href="/img/favicon.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="waterbang">
+  <meta name="keywords" content="waterbang">
+  
+    <meta name="description" content="前言贴一波官网koa 简介koa 通过async函数帮助我们避免了回调函数。他的源码都是用类写的，基于http模块，它的源码只有4个文件，分别是：application.js : 应用入口，核心文件 context.js ： 上下文，主要为辅助方法request.js ： 专门对应于请求 response.js ： 专门对应响应 如何用需要先引入koa,它会返回一个类,koa基于原生的node方法">
+<meta property="og:type" content="article">
+<meta property="og:title" content="实现简单的koa">
+<meta property="og:url" content="https://www.waterbang.top/2020/04/07/%E5%AE%9E%E7%8E%B0%E7%AE%80%E5%8D%95%E7%9A%84koa/index.html">
+<meta property="og:site_name" content="waterbang">
+<meta property="og:description" content="前言贴一波官网koa 简介koa 通过async函数帮助我们避免了回调函数。他的源码都是用类写的，基于http模块，它的源码只有4个文件，分别是：application.js : 应用入口，核心文件 context.js ： 上下文，主要为辅助方法request.js ： 专门对应于请求 response.js ： 专门对应响应 如何用需要先引入koa,它会返回一个类,koa基于原生的node方法">
+<meta property="og:locale" content="ch_CN">
+<meta property="og:image" content="https://www.waterbang.top/2020/04/07/%E5%AE%9E%E7%8E%B0%E7%AE%80%E5%8D%95%E7%9A%84koa/index.png">
+<meta property="article:published_time" content="2020-04-07T06:58:20.000Z">
+<meta property="article:modified_time" content="2022-04-26T13:58:15.508Z">
+<meta property="article:author" content="waterbang">
+<meta property="article:tag" content="node.js">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://www.waterbang.top/2020/04/07/%E5%AE%9E%E7%8E%B0%E7%AE%80%E5%8D%95%E7%9A%84koa/index.png">
+  
+  
+  <title>实现简单的koa 🏮 waterbang</title>
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4/dist/css/bootstrap.min.css" />
+
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/github-markdown-css@4/github-markdown.min.css" />
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hint.css@2/hint.min.css" />
+
+  
+    
+    
+      
+      <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@10/styles/tomorrow-night-eighties.min.css" />
+    
+  
+
+  
+    <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3/dist/jquery.fancybox.min.css" />
+  
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_ba1fz6golrf.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+<!-- 自定义样式保持在最底部 -->
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    var CONFIG = {"hostname":"www.waterbang.top","root":"/","version":"1.8.14","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"right","visible":"hover","icon":"🍦"},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"copy_btn":true,"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"baidu":"58e161bf4b884b2aa577f323f137ac0f","google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+<meta name="generator" content="Hexo 6.1.0"></head>
+
+
+<body>
+  <header style="height: 70vh;">
+    <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>waterbang</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                Startseite
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                Archiv
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                Etiketten
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                Über mich
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/links/">
+                <i class="iconfont icon-link-fill"></i>
+                Weblinks
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              &nbsp;<i class="iconfont icon-search"></i>&nbsp;
+            </a>
+          </li>
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">&nbsp;<i
+                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+    <div class="banner" id="banner" parallax=true
+         style="background: url('/img/post-banner.jpg') no-repeat center center;
+           background-size: cover;">
+      <div class="full-bg-img">
+        <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+          <div class="page-header text-center fade-in-up">
+            <span class="h2" id="subtitle" title="实现简单的koa">
+              
+            </span>
+
+            
+              <div class="mt-3">
+  
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-author" aria-hidden="true"></i>
+      waterbang
+    </span>
+  
+  
+    <span class="post-meta">
+      <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+      <time datetime="2020-04-07 14:58" pubdate>
+        April 7, 2020 pm
+      </time>
+    </span>
+  
+</div>
+
+<div class="mt-1">
+  
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-chart"></i>
+      14k 字
+    </span>
+  
+
+  
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-clock-fill"></i>
+      
+      
+      115 分钟
+    </span>
+  
+
+  
+  
+    
+      <!-- 不蒜子统计文章PV -->
+      <span id="busuanzi_container_page_pv" style="display: none">
+        <i class="iconfont icon-eye" aria-hidden="true"></i>
+        <span id="busuanzi_value_page_pv"></span> 次
+      </span>
+    
+  
+</div>
+
+            
+          </div>
+
+          
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="d-none d-lg-block col-lg-2"></div>
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div class="py-5" id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">实现简单的koa</h1>
+            
+              <p class="note note-info">
+                
+                  本文最后更新于：3 hours ago
+                
+              </p>
+            
+            <div class="markdown-body">
+              <h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>贴一波官网<a target="_blank" rel="noopener" href="https://koa.bootcss.com/">koa</a></p>
+<h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><p>koa 通过async函数帮助我们避免了回调函数。他的源码都是用类写的，基于http模块，<br>它的源码只有4个文件，分别是：<br><code>application.js</code> : 应用入口，核心文件<br><code> context.js</code> ： 上下文，主要为辅助方法<br><code>request.js</code> ： 专门对应于请求<br><code> response.js</code> ： 专门对应响应</p>
+<h3 id="如何用"><a href="#如何用" class="headerlink" title="如何用"></a>如何用</h3><p>需要先引入koa,它会返回一个类,koa基于原生的node方法封装了request,和response。<br>koa 怕用户还要区分原生的req和res，与koa自己封装的封装了request,和response。<br>用 ctx代理了原生和koa封装的方法。这样就非常方便了。如我们要取路径：</p>
+<div class="code-wrapper"><pre><code class="hljs">ctx.request.path
+</code></pre></div>
+<p> 这样子不太方便，直接下面这样就行了</p>
+<div class="code-wrapper"><pre><code class="hljs">   ctx.path
+</code></pre></div>
+<p> koa核心用法</p>
+<figure class="highlight html"><table><tr><td class="gutter"><div class="code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></div></td><td class="code"><pre><code class="hljs html">const Koa = require(&#x27;koa&#x27;);<br><br>const app =  new Koa();<br><br>app.use((ctx,next) =&gt; &#123;<br>  ctx.body = &quot;hello!&quot;;<br>&#125;)<br><br>app.listen(3000);<br></code></pre></td></tr></table></figure>
+<p>koa帮我们解决了很多恶心的事，比如：<br>之前不能直接返回对象，现在只要：</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs html">ctx.body = &#123;obj:&quot;water&quot;&#125;<br></code></pre></td></tr></table></figure>
+
+<blockquote>
+<p><strong>注意：koa不建议绕过response，应该避免使用以下node属性：<br>res.statusCode res.writeHead() res.write() res.end()</strong></p>
+</blockquote>
+<h2 id="构建自己的koa"><a href="#构建自己的koa" class="headerlink" title="构建自己的koa"></a>构建自己的koa</h2><p>在你的工作目录下创建，如下结构：</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs html">|-koa<br>|-server.js<br>|-koa<br>    |-application.js<br>    |-context.js<br>    |-request.js<br>    |-response.js<br></code></pre></td></tr></table></figure>
+
+<p>为了先实现简单点,我们先用点原生的方法作为过渡，在server.js里写入以下代码：</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs html">const Koa = require(&#x27;./koa/application&#x27;);<br><br>let app = new Koa();<br><br>app.use((req, res) =&gt; &#123;<br>  res.end(&#x27;hello&#x27;);<br>&#125;)<br><br>app.listen(2000);<br></code></pre></td></tr></table></figure>
+
+<h3 id="Application"><a href="#Application" class="headerlink" title="Application"></a>Application</h3><p>接着我们需要导出一个Koa类，源码里面默认叫<code>Application</code>。<br>然后添加两个方法，listen是监听一个端口号，use是存了一个函数，当请求到来的时候执行，代码如下：</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs html">class Application&#123;<br>  use()&#123; // 用来注册方法<br><br>  &#125;<br>  listen(..args) &#123; // 用来监听端口<br><br>  &#125;<br>&#125;<br><br>module.exports = Application;<br></code></pre></td></tr></table></figure>
+
+<h4 id="listen-amp-amp-use"><a href="#listen-amp-amp-use" class="headerlink" title="listen &amp;&amp; use"></a>listen &amp;&amp; use</h4><p>用http模块创建监听方法：</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><code class="hljs html">const http = require(&#x27;http&#x27;);<br><br>class Application&#123;<br>  use(fn)&#123;<br><br>  &#125;<br>  handleRequest(req, res) &#123;<br><br>  &#125;<br>  listen(...args) &#123;<br>    let server = http.createServer(this.handleRequest.bind(this));<br>    server.listen(...args);<br>  &#125;<br>&#125;<br><br>module.exports = Application;<br></code></pre></td></tr></table></figure>
+<p>把handleRequest拿出去用来接收use的方法，接着将fn放到handleRequest里面执行：</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><code class="hljs html">const http = require(&#x27;http&#x27;);<br><br>class Application&#123;<br>  use(fn)&#123;<br>    this.fn = fn;<br>  &#125; <br>  handleRequest(req, res) &#123;<br>    this.fn(req, res);<br>  &#125;<br>  listen(...args) &#123;<br>    let server = http.createServer(this.handleRequest.bind(this));<br>    server.listen(...args);<br>  &#125;<br>&#125;<br><br>module.exports = Application;<br></code></pre></td></tr></table></figure>
+<p>这样就实现了一个简单的功能。我们用<a target="_blank" rel="noopener" href="https://www.npmjs.com/package/nodemon">nodemon</a>跑一下，在浏览器就能看到结果。</p>
+<blockquote>
+<p>全局安装nodemon:<br>npm install -g nodemon<br>或者安装为开发依赖<br>npm install –save-dev nodemon</p>
+</blockquote>
+<h3 id="向Koa靠拢"><a href="#向Koa靠拢" class="headerlink" title="向Koa靠拢"></a>向Koa靠拢</h3><p>koa没有实现res和req，只有一个ctx,我们需要封装request和response对象到ctx上，先修改一下server.js：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs javascript"><span class="hljs-keyword">const</span> <span class="hljs-title class_">Koa</span> = <span class="hljs-built_in">require</span>(<span class="hljs-string">&#x27;./koa/application&#x27;</span>);<br><br><span class="hljs-keyword">let</span> app = <span class="hljs-keyword">new</span> <span class="hljs-title class_">Koa</span>();<br><br>app.<span class="hljs-title function_">use</span>(<span class="hljs-function">(<span class="hljs-params">ctx</span>) =&gt;</span> &#123;<br>&#125;)<br><br>app.<span class="hljs-title function_">listen</span>(<span class="hljs-number">2000</span>);<br></code></pre></td></tr></table></figure>
+<p>接下来我们先来用上其他的文件，把对应的功能放到对应的文件，然后引入到application.js,<br>并且将引入的对象放到this上，为了不破坏原有的方法，并且方便扩展，使用<code>Object.create()</code>创建对象：</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs html">// context.js<br>const context = &#123;<br>&#125;<br>module.exports = context;<br></code></pre></td></tr></table></figure>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs html">// response.js<br>const response = &#123;<br>&#125;<br>module.exports = response;<br></code></pre></td></tr></table></figure>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs html">// request.js<br>const request = &#123;<br><br>&#125;<br>module.exports = request;<br></code></pre></td></tr></table></figure>
+<p>在构造方法上赋值：</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><code class="hljs html">const http = require(&#x27;http&#x27;);<br><br>const context = require(&#x27;./context&#x27;);<br>const response = require(&#x27;./response&#x27;);<br>const request = require(&#x27;./request&#x27;);<br><br>class Application&#123;<br>  constructor() &#123;<br>    this.context = context;<br>    this.response = response;<br>    this.request = request;<br>  &#125;<br>  use(fn)&#123;<br>    this.fn = fn;<br>  &#125; <br>  handleRequest(req, res) &#123;<br>    this.fn(req, res);<br>  &#125;<br>  listen(...args) &#123;<br>    let server = http.createServer(this.handleRequest.bind(this));<br>    server.listen(...args);<br>  &#125;<br>&#125;<br>module.exports = Application;<br></code></pre></td></tr></table></figure>
+
+<p>现在就需要变化fn()那边的req和res,将其变为ctx,ctx整合了req(原生),res(原生),request(自己的),response(自己的)。<br>我们先创建一个函数，来整合四个属性。：</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><code class="hljs html">const http = require(&#x27;http&#x27;);<br><br>const context = require(&#x27;./context&#x27;);<br>const response = require(&#x27;./response&#x27;);<br>const request = require(&#x27;./request&#x27;);<br><br>class Application&#123;<br>  constructor() &#123;<br>    this.context = context;<br>    this.response = response;<br>    this.request = request;<br>  &#125;<br>  use(fn)&#123;<br>    this.fn = fn;<br>  &#125;<br>  createContext(req, res) &#123;<br>    let context = Object.create(this.context);<br>    context.req = req;<br>    context.res = res;<br>    context.request = Object.create(this.request);<br>    context.response = Object.create(this.response);<br>    return context;<br>  &#125;<br>  handleRequest(req, res) &#123;<br>    let ctx = this.createContext(req, res);<br>    this.fn(ctx);<br>  &#125;<br>  listen(...args) &#123;<br>    let server = http.createServer(this.handleRequest.bind(this));<br>    server.listen(...args);<br>  &#125;<br>&#125;<br><br>module.exports = Application;<br></code></pre></td></tr></table></figure>
+
+<h4 id="增加url"><a href="#增加url" class="headerlink" title="增加url"></a>增加url</h4><p>现在来修改一下server.js文件，来尝试获取一下url:</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs html">const Koa = require(&#x27;./koa/application&#x27;);<br><br>let app = new Koa();<br>app.use((ctx) =&gt; &#123;<br>  console.log(ctx.req.url); // 原生<br>  console.log(ctx.request.req.url); // 原生<br>  console.log(ctx.request.url); // 自己的<br>  console.log(ctx.url); // 自己的<br>&#125;)<br><br>app.listen(2000);<br></code></pre></td></tr></table></figure>
+<p>上面四个在原生的Koa是全部能打印出来的, 而我们的只能获取到第一个，接着我们在创建上下文的时候，<br>将原生的方法，赋值给我们自己的方法，来支持第二个打印：</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs html">createContext(req, res) &#123;<br>  let context = Object.create(this.context);<br>  context.request = Object.create(this.request);<br>  context.response = Object.create(this.response);<br>  context.req = context.request.req =  req;<br>  context.res = context.response.res =  res;<br>  return context;<br>&#125;<br></code></pre></td></tr></table></figure>
+<p>这样子第二个也能打印出来了。接下来我们来解决ctx.request.url，我们先回到request.js文件，<br>里面的url需要动态获取，我们使用属性访问器的方式，来帮助我们处理复杂逻辑。代码如下：</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs html">// request.js<br>const request = &#123;<br>  get url() &#123; <br>    return this.req.url; // this === ctx.request<br>  &#125;<br>&#125;<br><br>module.exports = request;<br></code></pre></td></tr></table></figure>
+<p>这样子取this.req.url时，取的就是ctx.request上的url,所以第三个也就可以了。<br><img src="/./console1.png" srcset="/img/loading.gif" lazyload alt="/"></p>
+<p>最后一个是最难的，我们取ctx.url,真正取的是ctx.request.url。这时候就可以做一个代理模式。<br>正好我们的context.js只做一件事：实现代理功能，代码如下：</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs html">const context = &#123;&#125;<br><br>Object.defineProperty(context,&#x27;url&#x27; ,&#123;<br>  get() &#123;<br>    return this.request.url; // 这里的this指代的是自己创建的context<br>  &#125;<br>&#125;)<br><br>module.exports = context;<br></code></pre></td></tr></table></figure>
+<h4 id="增加method"><a href="#增加method" class="headerlink" title="增加method"></a>增加method</h4><p>Koa源码是使用一个非标准且快废弃的属性<a target="_blank" rel="noopener" href="https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Object/__defineGetter__"><code>__defineGetter__</code></a>，所以我改用了<code>Object.defineProperty</code>。<br>如果我们现在把server.js 里面的url换成method呢？是不是还得写一个defineProperty，<br>所以我们要把defineProperty封装一下：</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><code class="hljs html">const context = &#123;&#125;<br>function defineGetter(property, key) &#123;<br>  Object.defineProperty(context,key ,&#123;<br>    get() &#123;<br>      return this[property][key];<br>    &#125;<br>  &#125;)<br>&#125;<br><br>defineGetter(&#x27;request&#x27;, &#x27;url&#x27;);<br>defineGetter(&#x27;request&#x27;, &#x27;method&#x27;);<br><br>module.exports = context;<br></code></pre></td></tr></table></figure>
+<p>我们还得在自己的request.js上添加一个获取method的方法：</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs html">const request = &#123;<br>  get url() &#123; <br>    return this.req.url; // this === ctx.request<br>  &#125;,<br>  get method() &#123;<br>    return this.req.method;<br>  &#125;<br>&#125;<br><br>module.exports = request;<br></code></pre></td></tr></table></figure>
+<p>这样就能打印出method。<br><img src="/./console2.png" srcset="/img/loading.gif" lazyload alt="console2"></p>
+<p>为什么不在request.js上也封装方法呢？ 因为它是拿来扩展的，比如我们要增加一个path：</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><code class="hljs html">const url = require(&#x27;url&#x27;);<br>const request = &#123;<br>  get url() &#123; <br>    return this.req.url; // this === ctx.request<br>  &#125;,<br>  get method() &#123;<br>    return this.req.method;<br>  &#125;,<br>  get path()&#123;<br>    return url.parse(this.req.url).pathname;<br>  &#125;<br><br>&#125;<br><br>module.exports = request;<br></code></pre></td></tr></table></figure>
+<p>然后在context.js里新增代码：</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs html">defineGetter(&#x27;request&#x27;, &#x27;path&#x27;);<br></code></pre></td></tr></table></figure>
+<p>这样就给自己的request扩展了个方法。</p>
+<h3 id="ctx-body"><a href="#ctx-body" class="headerlink" title="ctx.body"></a>ctx.body</h3><p>接下来设置一下body属性，先修改一下server.js代码：</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs html">const Koa = require(&#x27;./koa/application&#x27;);<br><br>let app = new Koa();<br>app.use((ctx) =&gt; &#123;<br>  ctx.response.body = &#x27;hello&#x27;;<br>  console.log(ctx.body); <br>&#125;)<br><br>app.listen(2000);<br></code></pre></td></tr></table></figure>
+<p>ctx代理了response方法，所以ctx.body就是ctx.response.body。<br>接下来需要在response.js里给body设置get和set方法：</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs html">const response = &#123;<br>  _body:&#x27;&#x27;,<br>  get body() &#123;<br>    return this._body;<br>  &#125;,<br>  set body(newValue) &#123;<br>    this._body = newValue;<br>  &#125;<br>&#125;<br><br>module.exports = response;<br></code></pre></td></tr></table></figure>
+<p>然后在context.js里，再增加一行代码：</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs html">defineGetter(&#x27;response&#x27;, &#x27;body&#x27;);<br></code></pre></td></tr></table></figure>
+<p>这样就能打印出hello。</p>
+<p>但是如果我们是赋值给ctx.body呢：</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs html">app.use((ctx) =&gt; &#123;<br>  ctx.body = &#x27;hello&#x27;;<br>  console.log(ctx.response.body); <br>&#125;)<br></code></pre></td></tr></table></figure>
+<p>要实现这样的效果，我们要给ctx.body设置的时候，也得走到response里去，<br>编辑context.js，新增加个set,随便修改个方法名：</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><code class="hljs html">const context = &#123;&#125;<br>function defineAgency(property, key) &#123;<br>  Object.defineProperty(context, key, &#123;<br>    get() &#123;<br>      return this[property][key];<br>    &#125;,<br>    set(newValue) &#123;<br>      this[property][key] = newValue;<br>    &#125;<br>  &#125;)<br>&#125;<br><br>defineAgency(&#x27;request&#x27;, &#x27;url&#x27;);<br>defineAgency(&#x27;request&#x27;, &#x27;method&#x27;);<br>defineAgency(&#x27;request&#x27;, &#x27;path&#x27;);<br>defineAgency(&#x27;response&#x27;, &#x27;body&#x27;);<br><br>module.exports = context;<br></code></pre></td></tr></table></figure>
+<p>这样就能在ctx.body上赋值了。</p>
+<h3 id="组合"><a href="#组合" class="headerlink" title="组合"></a>组合</h3><p>app.use里，不仅有ctx,而且还有next，如果我们写了多个use,需要调一下next(),来执行下一个方法。<br>这里就是洋葱模型。在koa里有个compose方法，会将所有的方法组合成一个大的promise。</p>
+<h4 id="洋葱模型"><a href="#洋葱模型" class="headerlink" title="洋葱模型"></a>洋葱模型</h4><figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><code class="hljs html">const Koa = require(&#x27;koa&#x27;);<br><br>const app =  new Koa();<br><br>app.use((ctx,next) =&gt; &#123;<br>  console.log(1);<br>  next();<br>  console.log(4);<br>&#125;);<br><br>app.use((ctx,next) =&gt; &#123;<br>  console.log(2);<br>  next();<br>  console.log(5);<br>&#125;);<br><br>app.use((ctx,next) =&gt; &#123;<br>  console.log(3);<br>  next();<br>  console.log(6);<br>&#125;);<br><br>app.listen(3000);<br></code></pre></td></tr></table></figure>
+<p>执行顺序就是<br><img src="/./ycmx.png" srcset="/img/loading.gif" lazyload alt="洋葱模型"></p>
+<h4 id="中间件"><a href="#中间件" class="headerlink" title="中间件"></a>中间件</h4><p>中间件可以理解为use方法，它可以决定是否向下执行。在执行异步的时候，可以使用async + await语法。</p>
+<blockquote>
+<p>写koa一定得在next前面加await要不就加return,不然它不会等待里面的函数执行完。</p>
+</blockquote>
+<p>接下来我们的use就需要将方法存起来了，方便后期执行。然后在handleRequest方法，等所有promise执行完，<br>将结果返回去。代码如下：</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><code class="hljs html">// application.js<br>const http = require(&#x27;http&#x27;);<br><br>const context = require(&#x27;./context&#x27;);<br>const response = require(&#x27;./response&#x27;);<br>const request = require(&#x27;./request&#x27;);<br><br>class Application&#123;<br>  constructor() &#123;<br>    this.context = context;<br>    this.response = response;<br>    this.request = request;<br>    this.middlewares = []; // +++++<br>  &#125;<br>  use(fn)&#123;<br>    this.middlewares.push(fn);  // +++++<br>  &#125;<br>  createContext(req, res) &#123;<br>    let context = Object.create(this.context);<br>    context.request = Object.create(this.request);<br>    context.response = Object.create(this.response);<br>    context.req = context.request.req =  req;<br>    context.res = context.response.res =  res;<br>    return context;<br>  &#125;<br>  handleRequest(req, res) &#123;<br>    let ctx = this.createContext(req, res);<br>    this.compose(ctx).then(() =&gt; &#123;      // +++++<br>      let _body = ctx.body;             // +++++<br>      res.end(_body);                   // +++++<br>    &#125;);                                 // +++++<br>  &#125;<br>  listen(...args) &#123;<br>    let server = http.createServer(this.handleRequest.bind(this));<br>    server.listen(...args);<br>  &#125;<br>&#125;<br><br>module.exports = Application;<br></code></pre></td></tr></table></figure>
+
+<h3 id="compose"><a href="#compose" class="headerlink" title="compose"></a>compose</h3><p>这里面最主要的就是this.compose方法。它返回的就是一个promise。<br>我们先来修改一下server.js，让它来检测我们的compose:</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><code class="hljs html">const Koa = require(&#x27;./koa/application&#x27;);<br><br>const app =  new Koa();<br><br>const my = () =&gt; &#123;<br>  return new Promise((resolve, reject) =&gt; &#123;<br>    setTimeout(() =&gt; &#123;<br>      console.log(&quot;my&quot;);<br>      resolve();<br>    &#125;, 1000);<br>  &#125;);<br>&#125;;<br><br>app.use(async(ctx,next) =&gt; &#123;<br>  console.log(1);<br>  await next();<br>  console.log(4);<br>&#125;);<br><br>app.use(async(ctx,next) =&gt; &#123;<br>  console.log(2);<br>  await my();<br>  next();<br>  console.log(5);<br>&#125;);<br><br>app.use((ctx,next) =&gt; &#123;<br>  console.log(3);<br>  next();<br>  console.log(6);<br>&#125;);<br><br>app.listen(3000);<br></code></pre></td></tr></table></figure>
+<p>先取出第一个函数，执行，然后派发给下一个函数，我们先直接写,不考虑promise。</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs html">compose(ctx) &#123;<br>  function dispatch(index) &#123;<br>   let middle =  this.middlewares[index];<br>   middle(ctx,()=&gt; dispatch(index+1)); // 这个箭头函数指的就是下一个函数<br>  &#125;<br>  return dispatch(0)<br>&#125;<br></code></pre></td></tr></table></figure>
+<p>现在有可能这个方法是一个普通函数。如果它不是个promise，我们也把他变成promise。<br>这样保证方法执行完，返回一个promise.并且我们再加上终止条件。如果终止了直接返回一个成功的promise。</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs html">compose(ctx) &#123;<br>  let dispatch = (index) =&gt; &#123;<br>    if (index == this.middlewares.length) return Promise.resolve();// 返回一个成功的Promise<br>    let middle = this.middlewares[index]; // 拿出第一个use 让其执行<br>    return Promise.resolve(middle(ctx, () =&gt; dispatch(index + 1))); //  执行的时候传递ctx,next方法<br>  &#125;<br>  return dispatch(0);<br>&#125;<br></code></pre></td></tr></table></figure>
+<p>这样我们在server.js运行，就能看到跟源码一样的结果。核心逻辑只有3行。<br>但是我们的代码还不够健壮，我们接下来要防止next调用多次，造成代码顺序混乱。<br>然后再加上错误处理，并且将错误用事件抛出，代码如下：</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br></pre></td><td class="code"><pre><code class="hljs html">const http = require(&#x27;http&#x27;);<br>const EventEmitter = require(&#x27;events&#x27;);<br><br>const context = require(&#x27;./context&#x27;);<br>const response = require(&#x27;./response&#x27;);<br>const request = require(&#x27;./request&#x27;);<br><br>class Application extends EventEmitter &#123;<br>  constructor() &#123;<br>    super();<br>    this.context = context;<br>    this.response = response;<br>    this.request = request;<br>    this.middlewares = [];<br>  &#125;<br>  use(fn) &#123;<br>    this.middlewares.push(fn);<br>  &#125;<br>  createContext(req, res) &#123;<br>    let context = Object.create(this.context);<br>    context.request = Object.create(this.request);<br>    context.response = Object.create(this.response);<br>    context.req = context.request.req = req;<br>    context.res = context.response.res = res;<br>    return context;<br>  &#125;<br>  compose(ctx) &#123;<br>    let i = -1<br>    let dispatch = (index) =&gt; &#123;<br>      if (index &lt;= i) return Promise.reject(new Error(&#x27;next() called multiple times&#x27;))<br>      i = index<br>      if (index == this.middlewares.length) return Promise.resolve();// 返回一个成功的Promise<br>      let middle = this.middlewares[index]; // 拿出第一个use 让其执行<br>     try &#123;<br>      return Promise.resolve(middle(ctx, () =&gt; dispatch(index + 1))); //  执行的时候传递ctx,next方法<br>     &#125; catch (err)&#123;<br>      return Promise.reject(err)<br>     &#125;<br>    &#125;<br>    return dispatch(0);<br>  &#125;<br>  handleRequest(req, res) &#123;<br>    let ctx = this.createContext(req, res);<br>    this.compose(ctx).then(() =&gt; &#123;<br>      let _body = ctx.body;<br>      res.end(_body);<br>    &#125;).catch(err =&gt; &#123;<br>      this.emit(&#x27;error&#x27;, err);<br>    &#125;);<br>  &#125;<br>  listen(...args) &#123;<br>    let server = http.createServer(this.handleRequest.bind(this));<br>    server.listen(...args);<br>  &#125;<br>&#125;<br><br>module.exports = Application;<br></code></pre></td></tr></table></figure>
+<p>最后我们来让body支持一下对象,并且可以返回文件，它需要引入Stream模块。</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br></pre></td><td class="code"><pre><code class="hljs html">const http = require(&#x27;http&#x27;);<br>const EventEmitter = require(&#x27;events&#x27;);<br>let Stream = require(&#x27;stream&#x27;);<br><br>const context = require(&#x27;./context&#x27;);<br>const response = require(&#x27;./response&#x27;);<br>const request = require(&#x27;./request&#x27;);<br><br>class Application extends EventEmitter &#123;<br>  constructor() &#123;<br>    super();<br>    this.context = context;<br>    this.response = response;<br>    this.request = request;<br>    this.middlewares = [];<br>  &#125;<br>  use(fn) &#123;<br>    this.middlewares.push(fn);<br>  &#125;<br>  createContext(req, res) &#123;<br>    let context = Object.create(this.context);<br>    context.request = Object.create(this.request);<br>    context.response = Object.create(this.response);<br>    context.req = context.request.req = req;<br>    context.res = context.response.res = res;<br>    return context;<br>  &#125;<br>  compose(ctx) &#123;<br>    let i = -1<br>    let dispatch = (index) =&gt; &#123;<br>      if (index &lt;= i) return Promise.reject(new Error(&#x27;next() called multiple times&#x27;))<br>      i = index<br>      if (index == this.middlewares.length) return Promise.resolve();// 返回一个成功的Promise<br>      let middle = this.middlewares[index]; // 拿出第一个use 让其执行<br>     try &#123;<br>      return Promise.resolve(middle(ctx, () =&gt; dispatch(index + 1))); //  执行的时候传递ctx,next方法<br>     &#125; catch (err)&#123;<br>      return Promise.reject(err)<br>     &#125;<br>    &#125;<br>    return dispatch(0);<br>  &#125;<br>  handleRequest(req, res) &#123;<br>    let ctx = this.createContext(req, res);<br>    this.compose(ctx).then(() =&gt; &#123;<br>      let _body = ctx.body;<br>      if(_body instanceof Stream)&#123;<br>          return _body.pipe(res);<br>      &#125;else if(typeof _body === &#x27;object&#x27;)&#123;<br>          return res.end(JSON.stringify(_body));<br>      &#125;else&#123;<br>          return res.end(_body);<br>      &#125;<br>    &#125;).catch(err =&gt; &#123;<br>      this.emit(&#x27;error&#x27;, err);<br>    &#125;);<br>  &#125;<br>  listen(...args) &#123;<br>    let server = http.createServer(this.handleRequest.bind(this));<br>    server.listen(...args);<br>  &#125;<br>&#125;<br><br>module.exports = Application;<br></code></pre></td></tr></table></figure>
+<p>这样我们就实现了koa 90%的方法了。</p>
+<h3 id="结束语"><a href="#结束语" class="headerlink" title="结束语"></a>结束语</h3><p>怪来一夜蛙声歇，又作东风十日寒。<br>「绝句」<br>吴涛</p>
+
+            </div>
+            <hr>
+            <div>
+              <div class="post-metas mb-3">
+                
+                
+                  <div class="post-meta">
+                    <i class="iconfont icon-tags"></i>
+                    
+                      <a class="hover-with-bg" href="/tags/node-js/">node.js</a>
+                    
+                  </div>
+                
+              </div>
+              
+                <p class="note note-warning">
+                  
+                    本博客所有文章除特别声明外，均采用 <a target="_blank" href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh" rel="nofollow noopener noopener">CC BY-SA 4.0 协议</a> ，转载请注明出处！
+                  
+                </p>
+              
+              
+                <div class="post-prevnext">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2020/04/21/%E5%B0%A4%E9%9B%A8%E6%BA%AA%E8%B0%88vue3-0beta%E6%80%BB%E7%BB%93/">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">尤雨溪谈vue3.0beta总结</span>
+                        <span class="visible-mobile">Vorheriger</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2020/03/29/%E5%9F%BA%E4%BA%8Enode%E7%9A%84fs%E5%AE%9E%E7%8E%B0%E5%8F%AF%E8%AF%BB%E6%B5%81%E5%92%8C%E5%8F%AF%E5%86%99%E6%B5%81/">
+                        <span class="hidden-mobile">基于node的fs实现可读流和可写流</span>
+                        <span class="visible-mobile">Nächster</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+              <!-- Comments -->
+              <article class="comments" id="comments" lazyload>
+                
+                  
+                
+                
+  <script type="text/javascript">
+    Fluid.utils.loadComments('#comments', function() {
+      var light = 'github-light';
+      var dark = 'github-dark';
+      var schema = document.documentElement.getAttribute('data-user-color-scheme');
+      if (schema === 'dark') {
+        schema = dark;
+      } else {
+        schema = light;
+      }
+      window.UtterancesThemeLight = light;
+      window.UtterancesThemeDark = dark;
+      var s = document.createElement('script');
+      s.setAttribute('src', 'https://utteranc.es/client.js');
+      s.setAttribute('repo', 'waterbang/Comment');
+      s.setAttribute('issue-term', 'pathname');
+      
+      s.setAttribute('label', 'utterances');
+      
+      s.setAttribute('theme', schema);
+      s.setAttribute('crossorigin', 'anonymous');
+      document.getElementById('comments').appendChild(s);
+    })
+  </script>
+  <noscript>Please enable JavaScript to view the comments</noscript>
+
+
+              </article>
+            
+          </article>
+        </div>
+      </div>
+    </div>
+    
+      <div class="d-none d-lg-block col-lg-2 toc-container" id="toc-ctn">
+        <div id="toc">
+  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;TOC</p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+      </div>
+    
+  </div>
+</div>
+
+<!-- Custom -->
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">Suchen</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v"
+                 for="local-search-input">Stichwort</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+
+    
+  </main>
+
+  <footer class="text-center mt-5 py-3">
+  <div class="footer-content">
+     <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a>
+  </div>
+  
+
+  
+  <!-- 备案信息 -->
+  <div class="beian">
+    <span>
+      <a href="http://beian.miit.gov.cn/" target="_blank" rel="nofollow noopener">
+        闽ICP备18009949号-2
+      </a>
+    </span>
+    
+  </div>
+
+
+  
+</footer>
+
+
+  <!-- SCRIPTS -->
+  
+  <script  src="https://cdn.jsdelivr.net/npm/nprogress@0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/nprogress@0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js" ></script>
+<script  src="https://cdn.jsdelivr.net/npm/bootstrap@4/dist/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+<!-- Plugins -->
+
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+  
+
+
+
+  
+    <script  src="https://cdn.jsdelivr.net/npm/tocbot@4/dist/tocbot.min.js" ></script>
+  
+  
+    <script  src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3/dist/jquery.fancybox.min.js" ></script>
+  
+  
+    <script  src="https://cdn.jsdelivr.net/npm/anchor-js@4/anchor.min.js" ></script>
+  
+  
+    <script defer src="https://cdn.jsdelivr.net/npm/clipboard@2/dist/clipboard.min.js" ></script>
+  
+
+
+
+  <script defer src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" ></script>
+
+
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/typed.js@2/lib/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var title = document.getElementById('subtitle').title;
+      
+        typing(title);
+      
+    })(window, document);
+  </script>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+    <!-- Baidu Analytics -->
+    <script defer>
+      var _hmt = _hmt || [];
+      (function () {
+        var hm = document.createElement("script");
+        hm.src = "https://hm.baidu.com/hm.js?58e161bf4b884b2aa577f323f137ac0f";
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(hm, s);
+      })();
+    </script>
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+
+
+
+
+<!-- 主题的启动项 保持在最底部 -->
+<script  src="/js/boot.js" ></script>
+
+
+</body>
+</html>

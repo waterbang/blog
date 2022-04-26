@@ -1,0 +1,964 @@
+
+
+<!DOCTYPE html>
+<html lang="ch_CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/apple-touch-icon.png">
+  <link rel="icon" href="/img/favicon.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="waterbang">
+  <meta name="keywords" content="waterbang">
+  
+    <meta name="description" content="webpack各种优化珠峰架构课webpack课程。 这是珠峰架构课课件，不是本人编写。 上一章节我们已经掌握了webpack常见的所有配置 这一节我们来看看如何实现webpack中的优化，我们先来编写最基本的webpack配置，然后依次实现各种优化！ &#x2F;&#x2F;javascript const MiniCssExtractPlugin &#x3D; require(&quot;mini-css-extract-">
+<meta property="og:type" content="article">
+<meta property="og:title" content="webpack各种优化">
+<meta property="og:url" content="https://www.waterbang.top/2019/11/24/2019-11-24-webpack-webpack%E5%90%84%E7%A7%8D%E4%BC%98%E5%8C%96/index.html">
+<meta property="og:site_name" content="waterbang">
+<meta property="og:description" content="webpack各种优化珠峰架构课webpack课程。 这是珠峰架构课课件，不是本人编写。 上一章节我们已经掌握了webpack常见的所有配置 这一节我们来看看如何实现webpack中的优化，我们先来编写最基本的webpack配置，然后依次实现各种优化！ &#x2F;&#x2F;javascript const MiniCssExtractPlugin &#x3D; require(&quot;mini-css-extract-">
+<meta property="og:locale" content="ch_CN">
+<meta property="og:image" content="https://www.waterbang.top/2019/11/17/2019-11-17-%E5%B0%8F%E7%A8%8B%E5%BA%8F-5%E6%AF%9B%E9%92%B1%E5%B0%8F%E7%A8%8B%E5%BA%8F/webpack1.png">
+<meta property="article:published_time" content="2019-11-24T06:46:38.000Z">
+<meta property="article:modified_time" content="2022-04-26T13:58:15.433Z">
+<meta property="article:author" content="waterbang">
+<meta property="article:tag" content="webpack">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://www.waterbang.top/2019/11/17/2019-11-17-%E5%B0%8F%E7%A8%8B%E5%BA%8F-5%E6%AF%9B%E9%92%B1%E5%B0%8F%E7%A8%8B%E5%BA%8F/webpack1.png">
+  
+  
+  <title>webpack各种优化 🏮 waterbang</title>
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4/dist/css/bootstrap.min.css" />
+
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/github-markdown-css@4/github-markdown.min.css" />
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hint.css@2/hint.min.css" />
+
+  
+    
+    
+      
+      <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@10/styles/tomorrow-night-eighties.min.css" />
+    
+  
+
+  
+    <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3/dist/jquery.fancybox.min.css" />
+  
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_ba1fz6golrf.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+<!-- 自定义样式保持在最底部 -->
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    var CONFIG = {"hostname":"www.waterbang.top","root":"/","version":"1.8.14","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"right","visible":"hover","icon":"🍦"},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"copy_btn":true,"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"baidu":"58e161bf4b884b2aa577f323f137ac0f","google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+<meta name="generator" content="Hexo 6.1.0"></head>
+
+
+<body>
+  <header style="height: 70vh;">
+    <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>waterbang</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                Startseite
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                Archiv
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                Etiketten
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                Über mich
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/links/">
+                <i class="iconfont icon-link-fill"></i>
+                Weblinks
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              &nbsp;<i class="iconfont icon-search"></i>&nbsp;
+            </a>
+          </li>
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">&nbsp;<i
+                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+    <div class="banner" id="banner" parallax=true
+         style="background: url('/img/post-banner.jpg') no-repeat center center;
+           background-size: cover;">
+      <div class="full-bg-img">
+        <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+          <div class="page-header text-center fade-in-up">
+            <span class="h2" id="subtitle" title="webpack各种优化">
+              
+            </span>
+
+            
+              <div class="mt-3">
+  
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-author" aria-hidden="true"></i>
+      waterbang
+    </span>
+  
+  
+    <span class="post-meta">
+      <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+      <time datetime="2019-11-24 14:46" pubdate>
+        November 24, 2019 pm
+      </time>
+    </span>
+  
+</div>
+
+<div class="mt-1">
+  
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-chart"></i>
+      8.7k 字
+    </span>
+  
+
+  
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-clock-fill"></i>
+      
+      
+      73 分钟
+    </span>
+  
+
+  
+  
+    
+      <!-- 不蒜子统计文章PV -->
+      <span id="busuanzi_container_page_pv" style="display: none">
+        <i class="iconfont icon-eye" aria-hidden="true"></i>
+        <span id="busuanzi_value_page_pv"></span> 次
+      </span>
+    
+  
+</div>
+
+            
+          </div>
+
+          
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="d-none d-lg-block col-lg-2"></div>
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div class="py-5" id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">webpack各种优化</h1>
+            
+              <p class="note note-info">
+                
+                  本文最后更新于：3 hours ago
+                
+              </p>
+            
+            <div class="markdown-body">
+              <h1 id="webpack各种优化"><a href="#webpack各种优化" class="headerlink" title="webpack各种优化"></a>webpack各种优化</h1><p><a target="_blank" rel="noopener" href="http://www.zhufengpeixun.cn/">珠峰架构课</a>webpack课程。</p>
+<p>这是<a target="_blank" rel="noopener" href="http://www.zhufengpeixun.cn/">珠峰架构课</a>课件，不是本人编写。</p>
+<p>上一章节我们已经掌握了webpack常见的所有配置</p>
+<p>这一节我们来看看如何实现webpack中的优化，我们先来编写最基本的webpack配置，然后依次实现各种优化！</p>
+<div class="code-wrapper"><pre><code class="hljs">//javascript
+const MiniCssExtractPlugin = require(&quot;mini-css-extract-plugin&quot;);
+const HtmlWebpackPlugin = require(&quot;html-webpack-plugin&quot;);
+const path = require(&quot;path&quot;);
+module.exports = mode =&gt; &#123;
+  return &#123;
+    mode: mode,
+    entry: &quot;./src/main.js&quot;,
+    output: &#123;
+      filename: &quot;bundle.js&quot;,
+      path: path.resolve(__dirname, &quot;dist&quot;)
+    &#125;,
+    module: &#123;
+      rules: [
+        &#123;
+          test: /\.(png|jpg|gif)$/,
+          use: &quot;file-loader&quot;
+        &#125;,
+        &#123;
+          test: /\.js$/,
+          use: &quot;babel-loader&quot; // .babelrc已经配置支持react
+        &#125;,
+        &#123;
+          test: /\.css$/,
+          use: [
+            mode !== &quot;development&quot;
+              ? MiniCssExtractPlugin.loader
+              : &quot;style-loader&quot;,
+            &quot;css-loader&quot;
+          ]
+        &#125;
+      ]
+    &#125;,
+    plugins: [
+      new PurgecssPlugin(&#123;
+        paths: glob.sync(`$&#123;path.join(__dirname, &quot;src&quot;)&#125;/**/*`, &#123; nodir: true &#125;) // 不匹配目录，只匹配文件
+      &#125;),
+      mode !== &quot;development&quot; &amp;&amp;
+        new MiniCssExtractPlugin(&#123;
+          filename: &quot;css/[name].css&quot;
+        &#125;),
+      new HtmlWebpackPlugin(&#123;
+        template: &quot;./src/template.html&quot;,
+        filename: &quot;index.html&quot;
+      &#125;)
+    ].filter(Boolean)
+  &#125;;
+&#125;;
+</code></pre></div>
+<p><code>.babelrc</code>配置文件</p>
+<div class="code-wrapper"><pre><code class="hljs">//json
+&#123;
+    &quot;presets&quot;: [
+        &quot;@babel/preset-env&quot;,
+        &quot;@babel/preset-react&quot;
+    ]
+&#125;
+</code></pre></div>
+<h2 id="1-删除无用的Css样式"><a href="#1-删除无用的Css样式" class="headerlink" title="1.删除无用的Css样式"></a>1.删除无用的Css样式</h2><p>先来看编写的代码</p>
+<div class="code-wrapper"><pre><code class="hljs">//javascript
+import &#39;./style.css&#39;
+import React from &#39;react&#39;;
+import ReactDOM from &#39;react-dom&#39;;
+ReactDOM.render(&lt;div&gt;hello&lt;/div&gt;,document.getElementById(&#39;root&#39;));
+
+
+//css
+body&#123;
+    background: red
+&#125;
+.class1&#123;
+    background: red
+&#125;
+</code></pre></div>
+<blockquote>
+<p>这里的<code>.class1</code>显然是无用的，我们可以搜索<code>src</code>目录下的文件，删除无用的样式</p>
+</blockquote>
+<div class="code-wrapper"><pre><code class="hljs">//javascript
+const glob = require(&#39;glob&#39;);
+const PurgecssPlugin = require(&#39;purgecss-webpack-plugin&#39;);
+
+// 需要配合mini-css-extract-plugin插件
+mode !== &quot;development&quot; &amp;&amp; new PurgecssPlugin(&#123;
+    paths: glob.sync(`$&#123;path.join(__dirname, &quot;src&quot;)&#125;/**/*`, &#123; nodir: true &#125;) // 不匹配目录，只匹配文件
+&#125;),
+</code></pre></div>
+<h2 id="2-图片压缩插件"><a href="#2-图片压缩插件" class="headerlink" title="2.图片压缩插件"></a>2.图片压缩插件</h2><p>将打包后的图片进行优化</p>
+<div class="code-wrapper"><pre><code class="hljs">npm install image-webpack-loader --save-dev
+</code></pre></div>
+<p>在file-loader之前使用压缩图片插件</p>
+<div class="code-wrapper"><pre><code class="hljs">//javascript
+loader: &quot;image-webpack-loader&quot;,
+options: &#123;
+  mozjpeg: &#123;
+    progressive: true,
+    quality: 65
+  &#125;,
+  // optipng.enabled: false will disable optipng
+  optipng: &#123;
+    enabled: false,
+  &#125;,
+  pngquant: &#123;
+    quality: [0.90, 0.95],
+    speed: 4
+  &#125;,
+  gifsicle: &#123;
+    interlaced: false,
+  &#125;,
+  // the webp option will enable WEBP
+  webp: &#123;
+    quality: 75
+  &#125;
+&#125;
+</code></pre></div>
+<blockquote>
+<p>可以发现图片大小是有了明显的变化</p>
+</blockquote>
+<h2 id="3-CDN加载文件"><a href="#3-CDN加载文件" class="headerlink" title="3.CDN加载文件"></a>3.CDN加载文件</h2><p>我们希望通过cdn的方式引入资源</p>
+<div class="code-wrapper"><pre><code class="hljs">    //javascript
+   const AddAssetHtmlCdnPlugin = require(&#39;add-asset-html-cdn-webpack-plugin&#39;)
+   new AddAssetHtmlCdnPlugin(true,&#123;
+       &#39;jquery&#39;:&#39;https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js&#39;
+   &#125;)
+   
+</code></pre></div>
+<p>但是在代码中还希望引入<code>jquery</code>来获得提示</p>
+<div class="code-wrapper"><pre><code class="hljs">//javascript
+import $ from &#39;jquery&#39;
+console.log(&#39;$&#39;,$)
+</code></pre></div>
+<p>但是打包时依然会将<code>jquery</code>进行打包</p>
+<div class="code-wrapper"><pre><code class="hljs">//javascript
+externals:&#123;
+  &#39;jquery&#39;:&#39;$&#39;
+&#125;
+</code></pre></div>
+<p>在配置文件中标注<code>jquery</code>是外部的，这样打包时就不会将jquery进行打包了</p>
+<h2 id="4-Tree-shaking-amp-amp-Scope-Hoisting"><a href="#4-Tree-shaking-amp-amp-Scope-Hoisting" class="headerlink" title="4.Tree-shaking &amp;&amp; Scope-Hoisting"></a>4.Tree-shaking &amp;&amp; Scope-Hoisting</h2><h3 id="4-1-Tree-shaking"><a href="#4-1-Tree-shaking" class="headerlink" title="4.1 Tree-shaking"></a>4.1 Tree-shaking</h3><p>顾名思义就是将没用的内容摇晃掉,来看下面代码</p>
+<p><code>main.js</code></p>
+<div class="code-wrapper"><pre><code class="hljs">//javascript
+import &#123; minus &#125; from &quot;./calc&quot;;
+console.log(minus(1,1));
+</code></pre></div>
+<p><code>calc.js</code></p>
+<div class="code-wrapper"><pre><code class="hljs">//javascript
+import &#123;test&#125; from &#39;./test&#39;;
+export const sum = (a, b) =&gt; &#123;
+  return a + b + &#39;sum&#39;;
+&#125;;
+export const minus = (a, b) =&gt; &#123;
+  return a - b + &#39;minus&#39;;
+&#125;;
+</code></pre></div>
+<p><code>test.js</code></p>
+<div class="code-wrapper"><pre><code class="hljs">//javascript
+export const test = ()=&gt;&#123;
+    console.log(&#39;hello&#39;)
+&#125;
+console.log(test());
+</code></pre></div>
+<blockquote>
+<p>观察上述代码其实我们主要使用<code>minus</code>方法,<code>test.js</code>代码是有副作用的! </p>
+</blockquote>
+<p>默认<code>mode:production</code>时，会自动<code>tree-shaking</code>,但是打包后<code>&#39;hello&#39;</code>依然会被打印出来,这时候我们需要配置不使用副作用</p>
+<p>在<code>package.json</code>中配置</p>
+<div class="code-wrapper"><pre><code class="hljs">//javascript
+&quot;sideEffects&quot;:false,
+</code></pre></div>
+<p>如果这样设置，默认就不会导入<code>css</code>文件啦，因为我们引入css也是通过<code>import &#39;./style.css&#39;</code></p>
+<p>这里重点就来了,<code>tree-shaking</code>主要针对<strong>es6模块</strong>,我们可以使用<code>require</code>语法导入css,但是这样用起来有点格格不入,所以我们可以配置<code>css</code>文件不是副作用</p>
+<div class="code-wrapper"><pre><code class="hljs">//javascript
+&quot;sideEffects&quot;:[
+    &quot;**/*.css&quot;
+]
+</code></pre></div>
+<p>在开发环境下默认<code>tree-shaking</code>不会生效,可以配置标识提示</p>
+<div class="code-wrapper"><pre><code class="hljs">//javascript
+optimization:&#123;
+  usedExports:true 
+&#125;
+</code></pre></div>
+<h3 id="4-2-Scope-Hoisting"><a href="#4-2-Scope-Hoisting" class="headerlink" title="4.2 Scope Hoisting"></a>4.2 Scope Hoisting</h3><p>作用域提升,可以减少代码体积，节约内存</p>
+<div class="code-wrapper"><pre><code class="hljs">//javascript
+let a = 1;
+let b = 2;
+let c = 3;
+let d = a+b+c
+export default d;
+// 引入d
+import d from &#39;./d&#39;;
+console.log(d)
+</code></pre></div>
+<blockquote>
+<p>最终打包后的结果会变成 <code>console.log(6)</code></p>
+</blockquote>
+<ul>
+<li>代码量明显减少</li>
+<li>减少多个函数后内存占用也将减少</li>
+</ul>
+<h2 id="5-DllPlugin-amp-amp-DllReferencePlugin"><a href="#5-DllPlugin-amp-amp-DllReferencePlugin" class="headerlink" title="5.DllPlugin &amp;&amp; DllReferencePlugin"></a>5.DllPlugin &amp;&amp; DllReferencePlugin</h2><p>每次构建时第三方模块都需要重新构建，这个性能消耗比较大，我们可以先把第三方库打包成动态链接库，以后构建时只需要查找构建好的库就好了，这样可以大大节约构建时间</p>
+<div class="code-wrapper"><pre><code class="hljs">//javascript
+import React from &#39;react&#39;;
+import ReactDOM from &#39;react-dom&#39;;
+
+ReactDOM.render(&lt;h1&gt;hello&lt;/h1&gt;,document.getElementById(&#39;root&#39;))
+</code></pre></div>
+<h3 id="5-1-DllPlugin"><a href="#5-1-DllPlugin" class="headerlink" title="5.1 DllPlugin"></a>5.1 DllPlugin</h3><blockquote>
+<p>这里我们可以先将<code>react</code>、<code>react-dom</code>单独进行打包</p>
+</blockquote>
+<p>单独打包创建<code>webpack.dll.js</code></p>
+<div class="code-wrapper"><pre><code class="hljs">//javascript
+const path = require(&#39;path&#39;);
+const DllPlugin = require(&#39;webpack/lib/DllPlugin&#39;);
+module.exports = &#123;
+    entry:[&#39;react&#39;,&#39;react-dom&#39;],
+    mode:&#39;production&#39;,
+    output:&#123;
+        filename:&#39;react.dll.js&#39;,
+        path:path.resolve(__dirname,&#39;dll&#39;),
+        library:&#39;react&#39;
+    &#125;,
+    plugins:[
+        new DllPlugin(&#123;
+            name:&#39;react&#39;,
+            path:path.resolve(__dirname,&#39;dll/manifest.json&#39;)
+        &#125;)
+    ]
+&#125;
+</code></pre></div>
+<p>执行<code>&quot;webpack --config webpack.dll.js</code>命令，可以看到dll目录下创建了两个文件分别是<code>manifest.json</code>,<code>react.dll.js</code></p>
+<p>关系是这个酱紫的，到时候我们会通过<code>manifest.json</code>找到<code>react.dll.js</code>文件中的模块进行加载</p>
+<h3 id="5-2-DllReferencePlugin"><a href="#5-2-DllReferencePlugin" class="headerlink" title="5.2 DllReferencePlugin"></a>5.2 DllReferencePlugin</h3><p>在我们的项目中可以引用刚才打包好的动态链接库</p>
+<div class="code-wrapper"><pre><code class="hljs">//javascript
+const DllReferencePlugin = require(&#39;webpack/lib/DllReferencePlugin&#39;);
+const AddAssetHtmlWebpackPlugin = require(&#39;add-asset-html-webpack-plugin&#39;);
+// 构建时会引用动态链接库的内容
+new DllReferencePlugin(&#123;
+  manifest:path.resolve(__dirname,&#39;dll/manifest.json&#39;)
+&#125;),
+// 需要手动引入react.dll.js
+new AddAssetHtmlWebpackPlugin(
+  &#123; filepath: path.resolve(__dirname,&#39;dll/react.dll.js&#39;) &#125;
+)
+</code></pre></div>
+<p>使用DllPlugin可以大幅度提高构建速度</p>
+<h2 id="6-动态加载"><a href="#6-动态加载" class="headerlink" title="6.动态加载"></a>6.动态加载</h2><p>实现点击后动态加载文件</p>
+<div class="code-wrapper"><pre><code class="hljs">//javascript
+let btn = document.createElement(&#39;button&#39;);
+btn.innerHTML = &#39;点击加载视频&#39;;
+btn.addEventListener(&#39;click&#39;,()=&gt;&#123;
+    import(&#39;./video&#39;).then(res=&gt;&#123;
+        console.log(res.default);
+    &#125;);
+&#125;);
+document.body.appendChild(btn);
+</code></pre></div>
+<p>给动态引入的文件增加名字</p>
+<div class="code-wrapper"><pre><code class="hljs">//javascript
+output:&#123;
+  chunkFilename:&#39;[name].min.js&#39;
+&#125;
+import(/* webpackChunkName: &quot;video&quot; */ &#39;./video&#39;).then(res=&gt;&#123;
+    console.log(res.default);
+&#125;)
+</code></pre></div>
+<blockquote>
+<p>这样打包后的结果最终的文件就是 <code>video.min.js</code></p>
+</blockquote>
+<h2 id="7-打包文件分析工具"><a href="#7-打包文件分析工具" class="headerlink" title="7.打包文件分析工具"></a>7.打包文件分析工具</h2><p>安装<code>webpack-bundle-analyzer</code>插件</p>
+<div class="code-wrapper"><pre><code class="hljs">npm install --save-dev webpack-bundle-analyzer
+</code></pre></div>
+<p>使用插件</p>
+<div class="code-wrapper"><pre><code class="hljs">//javascript
+const &#123;BundleAnalyzerPlugin&#125; = require(&#39;webpack-bundle-analyzer&#39;);
+mode !== &quot;development&quot; &amp;&amp; new BundleAnalyzerPlugin()
+</code></pre></div>
+<p>默认就会展现当前应用的分析图表</p>
+<h2 id="8-SplitChunks"><a href="#8-SplitChunks" class="headerlink" title="8.SplitChunks"></a>8.SplitChunks</h2><p>我们在来看下SplitChunks这个配置，他可以在编译时抽离第三方模块、公共模块</p>
+<p>将项目配置成多入口文件</p>
+<div class="code-wrapper"><pre><code class="hljs">//javascript
+entry:&#123;
+  a:&#39;./src/a.js&#39;,
+  b:&#39;./src/b.js&#39;
+&#125;
+</code></pre></div>
+<p>我们让a,b两个模块同时引用<code>jquery</code>,别忘了去掉之前的<code>externals</code>配置</p>
+<p><img src="http://img.fullstackjavascript.cn/analyze-1.png" srcset="/img/loading.gif" lazyload></p>
+<p>配置<code>SplitChunks</code>插件</p>
+<p>默认配置在此，我一个个描述下含义</p>
+<div class="code-wrapper"><pre><code class="hljs">//javascript
+splitChunks: &#123;
+  chunks: &#39;async&#39;, // 分割异步模块
+  minSize: 30000, // 分割的文件最小大小
+  maxSize: 0, 
+  minChunks: 1, // 引用次数
+  maxAsyncRequests: 5, // 最大异步请求数
+  maxInitialRequests: 3, // 最大初始化请求数
+  automaticNameDelimiter: &#39;~&#39;, // 抽离的命名分隔符
+  automaticNameMaxLength: 30, // 名字最大长度
+  name: true,
+  cacheGroups: &#123; // 缓存组
+    vendors: &#123; // 先抽离第三方
+      test: /[\\/]node_modules[\\/]/,
+      priority: -10
+    &#125;,
+    default: &#123; 
+      minChunks: 2,
+      priority: -20, // 优先级
+      reuseExistingChunk: true
+    &#125;
+  &#125;
+&#125;
+</code></pre></div>
+<blockquote>
+<p>我们将<code>async</code>改为<code>initial</code></p>
+</blockquote>
+<p><img src="http://img.fullstackjavascript.cn/analyze-2.png" srcset="/img/loading.gif" lazyload></p>
+<p>我们在为每个文件动态导入<code>lodash</code>库,并且改成<code>async</code></p>
+<div class="code-wrapper"><pre><code class="hljs">//javascript
+import(&#39;lodash&#39;)
+</code></pre></div>
+<p><img src="http://img.fullstackjavascript.cn/analyze-3.png" srcset="/img/loading.gif" lazyload></p>
+<blockquote>
+<p>为每个入口引入<code>c.js</code>,并且改造配置文件</p>
+</blockquote>
+<div class="code-wrapper"><pre><code class="hljs">//javascript
+splitChunks: &#123;
+  chunks: &#39;all&#39;,
+  name: true,
+  cacheGroups: &#123;
+    vendors: &#123;
+      test: /[\\/]node_modules[\\/]/,
+      priority: -10
+    &#125;,
+    default: &#123;
+      minSize:1, // 不是第三方模块，被引入两次也会被抽离
+      minChunks: 2,
+      priority: -20,
+    &#125;
+  &#125;
+&#125;
+</code></pre></div>
+<p><img src="http://img.fullstackjavascript.cn/analyze-4.png" srcset="/img/loading.gif" lazyload></p>
+<blockquote>
+<p>这样再反过来看<code>chunks</code>的参数是不是就了然于胸啦！</p>
+</blockquote>
+<h2 id="9-热更新"><a href="#9-热更新" class="headerlink" title="9.热更新"></a>9.热更新</h2><p>模块热替换（HMR - Hot Module Replacement）是 webpack 提供的最有用的功能之一。它允许在运行时替换，添加，删除各种模块，而无需进行完全刷新重新加载整个页面</p>
+<ul>
+<li>保留在完全重新加载页面时丢失的应用程序的状态</li>
+<li>只更新改变的内容，以节省开发时间</li>
+<li>调整样式更加快速，几乎等同于就在浏览器调试器中更改样式</li>
+</ul>
+<p>启用热更新，默认样式可以支持热更新，如果不支持热更新则采用强制刷新</p>
+<div class="code-wrapper"><pre><code class="hljs">//javascript
+devServer:&#123;
+  hot:true
+&#125;
+new webpack.NamedModulesPlugin(),
+</code></pre></div>
+<p>让<code>js</code>支持热更新</p>
+<div class="code-wrapper"><pre><code class="hljs">//javascript
+import sum from &#39;./sum&#39;;
+console.log(sum(1,2));
+if(module.hot)&#123; // 如果支持热更新
+    module.hot.accept(); // 当入口文件变化后重新执行当前入口文件
+&#125;
+</code></pre></div>
+<h2 id="10-IgnorePlugin"><a href="#10-IgnorePlugin" class="headerlink" title="10.IgnorePlugin"></a>10.IgnorePlugin</h2><p>忽略 <code>import</code>和<code>require</code>语法</p>
+<div class="code-wrapper"><pre><code class="hljs">//javascript
+new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/)
+</code></pre></div>
+<h2 id="11-费时分析"><a href="#11-费时分析" class="headerlink" title="11.费时分析"></a>11.费时分析</h2><p>可以计算每一步执行的运行速度</p>
+<div class="code-wrapper"><pre><code class="hljs">//javascript
+const SpeedMeasureWebpackPlugin = require(&#39;speed-measure-webpack-plugin&#39;);
+const smw = new SpeedMeasureWebpackPlugin();
+  module.exports =smw.wrap(&#123;
+&#125;);
+</code></pre></div>
+<h2 id="12-noParse"><a href="#12-noParse" class="headerlink" title="12.noParse"></a>12.noParse</h2><p><code>module.noParse</code>，对类似jq这类依赖库，内部不会引用其他库，我们在打包的时候就没有必要去解析，这样能够增加打包速率</p>
+<div class="code-wrapper"><pre><code class="hljs">//javascript
+noParse:/jquery/
+</code></pre></div>
+<h2 id="13-resolve"><a href="#13-resolve" class="headerlink" title="13.resolve"></a>13.resolve</h2><div class="code-wrapper"><pre><code class="hljs">//javascript
+resolve: &#123;
+  extensions: [&quot;.js&quot;,&quot;.jsx&quot;,&quot;.json&quot;,&quot;.css&quot;],
+  alias:&#123;&#125;,
+  modules:[&#39;node_modules&#39;]
+&#125;,
+</code></pre></div>
+<h2 id="14-include-x2F-exclude"><a href="#14-include-x2F-exclude" class="headerlink" title="14.include&#x2F;exclude"></a>14.include&#x2F;exclude</h2><p>在使用<code>loader</code>时,可以指定哪些文件不通过<code>loader</code>,或者指定哪些文件通过<code>loader</code></p>
+<div class="code-wrapper"><pre><code class="hljs">//javascript
+&#123;
+  test: /\.js$/,
+  use: &quot;babel-loader&quot;,
+  // include:path.resolve(__dirname,&#39;src&#39;),
+  exclude:/node_modules/
+&#125;,
+</code></pre></div>
+<h2 id="15-happypack"><a href="#15-happypack" class="headerlink" title="15.happypack"></a>15.happypack</h2><p>多线程打包，我们可以将不同的逻辑交给不同的线程来处理</p>
+<div class="code-wrapper"><pre><code class="hljs">//bash
+npm install --save-dev happypack
+</code></pre></div>
+<p>使用插件</p>
+<div class="code-wrapper"><pre><code class="hljs">//javascript
+const HappyPack = require(&#39;happypack&#39;);
+rules:[
+  &#123;
+    test: /\.js$/,
+    use: &#39;happypack/loader?id=jsx&#39;
+  &#125;,
+
+  &#123;
+    test: /\.less$/,
+    use: &#39;happypack/loader?id=styles&#39;
+  &#125;,
+]
+new HappyPack(&#123;
+  id: &#39;jsx&#39;,
+  threads: 4,
+  loaders: [ &#39;babel-loader&#39; ]
+&#125;),
+
+new HappyPack(&#123;
+  id: &#39;styles&#39;,
+  threads: 2,
+  loaders: [ &#39;style-loader&#39;, &#39;css-loader&#39;, &#39;less-loader&#39; ]
+&#125;)
+</code></pre></div>
+
+            </div>
+            <hr>
+            <div>
+              <div class="post-metas mb-3">
+                
+                
+                  <div class="post-meta">
+                    <i class="iconfont icon-tags"></i>
+                    
+                      <a class="hover-with-bg" href="/tags/webpack/">webpack</a>
+                    
+                  </div>
+                
+              </div>
+              
+                <p class="note note-warning">
+                  
+                    本博客所有文章除特别声明外，均采用 <a target="_blank" href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh" rel="nofollow noopener noopener">CC BY-SA 4.0 协议</a> ，转载请注明出处！
+                  
+                </p>
+              
+              
+                <div class="post-prevnext">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2019/11/25/2019-11-25-TypeScript-%E4%BD%BF%E7%94%A8typescript%E6%9E%84%E5%BB%BAvue%E5%BA%94%E7%94%A8/">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">TypeScript-使用typescript构建vue应用</span>
+                        <span class="visible-mobile">Vorheriger</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2019/11/22/2019-11-22-PWA-CacheStorageAPI/">
+                        <span class="hidden-mobile">PWA-CacheStorageAPI</span>
+                        <span class="visible-mobile">Nächster</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+              <!-- Comments -->
+              <article class="comments" id="comments" lazyload>
+                
+                  
+                
+                
+  <script type="text/javascript">
+    Fluid.utils.loadComments('#comments', function() {
+      var light = 'github-light';
+      var dark = 'github-dark';
+      var schema = document.documentElement.getAttribute('data-user-color-scheme');
+      if (schema === 'dark') {
+        schema = dark;
+      } else {
+        schema = light;
+      }
+      window.UtterancesThemeLight = light;
+      window.UtterancesThemeDark = dark;
+      var s = document.createElement('script');
+      s.setAttribute('src', 'https://utteranc.es/client.js');
+      s.setAttribute('repo', 'waterbang/Comment');
+      s.setAttribute('issue-term', 'pathname');
+      
+      s.setAttribute('label', 'utterances');
+      
+      s.setAttribute('theme', schema);
+      s.setAttribute('crossorigin', 'anonymous');
+      document.getElementById('comments').appendChild(s);
+    })
+  </script>
+  <noscript>Please enable JavaScript to view the comments</noscript>
+
+
+              </article>
+            
+          </article>
+        </div>
+      </div>
+    </div>
+    
+      <div class="d-none d-lg-block col-lg-2 toc-container" id="toc-ctn">
+        <div id="toc">
+  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;TOC</p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+      </div>
+    
+  </div>
+</div>
+
+<!-- Custom -->
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">Suchen</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v"
+                 for="local-search-input">Stichwort</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+
+    
+  </main>
+
+  <footer class="text-center mt-5 py-3">
+  <div class="footer-content">
+     <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a>
+  </div>
+  
+
+  
+  <!-- 备案信息 -->
+  <div class="beian">
+    <span>
+      <a href="http://beian.miit.gov.cn/" target="_blank" rel="nofollow noopener">
+        闽ICP备18009949号-2
+      </a>
+    </span>
+    
+  </div>
+
+
+  
+</footer>
+
+
+  <!-- SCRIPTS -->
+  
+  <script  src="https://cdn.jsdelivr.net/npm/nprogress@0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/nprogress@0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js" ></script>
+<script  src="https://cdn.jsdelivr.net/npm/bootstrap@4/dist/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+<!-- Plugins -->
+
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+  
+
+
+
+  
+    <script  src="https://cdn.jsdelivr.net/npm/tocbot@4/dist/tocbot.min.js" ></script>
+  
+  
+    <script  src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3/dist/jquery.fancybox.min.js" ></script>
+  
+  
+    <script  src="https://cdn.jsdelivr.net/npm/anchor-js@4/anchor.min.js" ></script>
+  
+  
+    <script defer src="https://cdn.jsdelivr.net/npm/clipboard@2/dist/clipboard.min.js" ></script>
+  
+
+
+
+  <script defer src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" ></script>
+
+
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/typed.js@2/lib/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var title = document.getElementById('subtitle').title;
+      
+        typing(title);
+      
+    })(window, document);
+  </script>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+    <!-- Baidu Analytics -->
+    <script defer>
+      var _hmt = _hmt || [];
+      (function () {
+        var hm = document.createElement("script");
+        hm.src = "https://hm.baidu.com/hm.js?58e161bf4b884b2aa577f323f137ac0f";
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(hm, s);
+      })();
+    </script>
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+
+
+
+
+<!-- 主题的启动项 保持在最底部 -->
+<script  src="/js/boot.js" ></script>
+
+
+</body>
+</html>
