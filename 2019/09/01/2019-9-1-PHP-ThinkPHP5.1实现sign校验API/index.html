@@ -44,7 +44,7 @@
     
     
       
-      <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@10/styles/tomorrow-night-eighties.min.css" />
+      <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@10/styles/atom-one-dark.min.css" />
     
   
 
@@ -254,7 +254,7 @@
             
               <p class="note note-info">
                 
-                  本文最后更新于：a day ago
+                  本文最后更新于：a month ago
                 
               </p>
             
@@ -267,14 +267,14 @@
 <br>
 
 <h3 id="1-建立sign的配置文件"><a href="#1-建立sign的配置文件" class="headerlink" title="1.建立sign的配置文件"></a>1.建立sign的配置文件</h3><p>进入config目录，创建aes.php,如下。(ps：在5.1版本需要在config目录配置)</p>
-<div class="code-wrapper"><pre><code class="hljs">    return [
+<div class="hljs code-wrapper"><pre><code class="hljs">    return [
     &#39;aeskey&#39;=&gt;&#39;这是你的key&#39;,//aes加密的密钥  客户端和服务端一致
     &#39;app_sign_time&#39;=&gt;7200,//sign失效时间，微信也是这时间
     &#39;app_sign_cache_time&#39;=&gt;20,//sign缓存的有效时间
     ];  
 </code></pre></div>
 <p>当你需要使用的时候这样用</p>
-<div class="code-wrapper"><pre><code class="hljs">    config(&#39;aes.app_sign_cache_time&#39;);
+<div class="hljs code-wrapper"><pre><code class="hljs">    config(&#39;aes.app_sign_cache_time&#39;);
     
 </code></pre></div>
 <br>
@@ -282,7 +282,7 @@
 <h3 id="2-建立BaseController-php，这个是所有控制器的父类，继承Controller类"><a href="#2-建立BaseController-php，这个是所有控制器的父类，继承Controller类" class="headerlink" title="2.建立BaseController.php，这个是所有控制器的父类，继承Controller类"></a>2.建立BaseController.php，这个是所有控制器的父类，继承Controller类</h3><br>
 
 <p>BaseController代码如下</p>
-<div class="code-wrapper"><pre><code class="hljs">      /**
+<div class="hljs code-wrapper"><pre><code class="hljs">      /**
          * @var string
          */
         private $headers = &#39;&#39;;
@@ -329,7 +329,7 @@
 
 <h3 id="3-创建Aes-php"><a href="#3-创建Aes-php" class="headerlink" title="3.创建Aes.php"></a>3.创建Aes.php</h3><p>在application&#x2F;api&#x2F;common&#x2F;lib&#x2F;Aes.php 创建文件，实际位置看您的情况。</p>
 <p>代码如下</p>
-<div class="code-wrapper"><pre><code class="hljs">    class Aes
+<div class="hljs code-wrapper"><pre><code class="hljs">    class Aes
     &#123;
     
         private $key = null;
@@ -371,7 +371,7 @@
 
 <h3 id="4-创建验证授权验证规则方法"><a href="#4-创建验证授权验证规则方法" class="headerlink" title="4.创建验证授权验证规则方法"></a>4.创建验证授权验证规则方法</h3><p>我是创建在application&#x2F;api&#x2F;common&#x2F;lib&#x2F;IAuth.php。<br>您可以创建在应用公共文件common下比较方便。</p>
 <p>代码如下</p>
-<div class="code-wrapper"><pre><code class="hljs">    /**
+<div class="hljs code-wrapper"><pre><code class="hljs">    /**
          * @param array --检验sign是否能通过，具体规则可以自己与前端商量
          * @return boolean
          */
@@ -403,7 +403,7 @@
 
 <h3 id="自我测试"><a href="#自我测试" class="headerlink" title="自我测试"></a>自我测试</h3><br>
 
-<h4 id="1-BaseController的以下代码注释掉，因为我们要自我加密"><a href="#1-BaseController的以下代码注释掉，因为我们要自我加密" class="headerlink" title="1. BaseController的以下代码注释掉，因为我们要自我加密"></a>1. BaseController的以下代码注释掉，因为我们要自我加密</h4><div class="code-wrapper"><pre><code class="hljs">     $this-&gt;checkRequest();
+<h4 id="1-BaseController的以下代码注释掉，因为我们要自我加密"><a href="#1-BaseController的以下代码注释掉，因为我们要自我加密" class="headerlink" title="1. BaseController的以下代码注释掉，因为我们要自我加密"></a>1. BaseController的以下代码注释掉，因为我们要自我加密</h4><div class="hljs code-wrapper"><pre><code class="hljs">     $this-&gt;checkRequest();
 </code></pre></div>
 <br>
 
@@ -412,7 +412,7 @@
 <br>
 
 
-<h4 id="3-这是测试控制器里的方法，模拟前端加密"><a href="#3-这是测试控制器里的方法，模拟前端加密" class="headerlink" title="3. 这是测试控制器里的方法，模拟前端加密"></a>3. 这是测试控制器里的方法，模拟前端加密</h4><div class="code-wrapper"><pre><code class="hljs">    public function test($data,$time)&#123;
+<h4 id="3-这是测试控制器里的方法，模拟前端加密"><a href="#3-这是测试控制器里的方法，模拟前端加密" class="headerlink" title="3. 这是测试控制器里的方法，模拟前端加密"></a>3. 这是测试控制器里的方法，模拟前端加密</h4><div class="hljs code-wrapper"><pre><code class="hljs">    public function test($data,$time)&#123;
             return (new Aes())-&gt;encrypt(&#39;data=&#39;.$data.&#39;&amp;time=&#39;.$time);
         &#125;
 </code></pre></div>

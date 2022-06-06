@@ -44,7 +44,7 @@
     
     
       
-      <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@10/styles/tomorrow-night-eighties.min.css" />
+      <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@10/styles/atom-one-dark.min.css" />
     
   
 
@@ -254,7 +254,7 @@
             
               <p class="note note-info">
                 
-                  本文最后更新于：a day ago
+                  本文最后更新于：a month ago
                 
               </p>
             
@@ -264,7 +264,7 @@
 </blockquote>
 <h3 id="理解service-worker作用域"><a href="#理解service-worker作用域" class="headerlink" title="理解service worker作用域"></a>理解service worker作用域</h3><p>我们如果把serviceworker.js文件放置到根目录中，那么其就可以控制来自站点中任何地方的所有请求。<br>如果我们把它放置到js目录中，只有源于该<code>子目录</code>的请求才会通过它。</p>
 <p>你可以在注册的时候传一个service worker的时候传入一个scope选项，用来覆盖service worker默认的作用域。<br>这样可以将它的作用域限制在目录较小的子集。（但是不能扩大作用域）</p>
-<div class="code-wrapper"><pre><code class="hljs">//这两个具有相同的作用域
+<div class="hljs code-wrapper"><pre><code class="hljs">//这两个具有相同的作用域
 navigator.serviceWorker.register(&quot;/sw.js&quot;);
 navigator.serviceWorker.register(&quot;/sw.js&quot;,&#123;scope:&quot;/&quot;&#125;);
 

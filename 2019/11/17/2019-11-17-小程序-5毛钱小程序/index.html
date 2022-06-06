@@ -44,7 +44,7 @@
     
     
       
-      <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@10/styles/tomorrow-night-eighties.min.css" />
+      <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@10/styles/atom-one-dark.min.css" />
     
   
 
@@ -254,7 +254,7 @@
             
               <p class="note note-info">
                 
-                  本文最后更新于：a day ago
+                  本文最后更新于：a month ago
                 
               </p>
             
@@ -281,7 +281,7 @@
 
 <h4 id="遇到的问题🈶"><a href="#遇到的问题🈶" class="headerlink" title="遇到的问题🈶"></a>遇到的问题🈶</h4><ol>
 <li><p>在云开发中<strong>所有</strong>更改别人数据的操作需要通过云函数来完成。（直接贴个码)</p>
-<div class="code-wrapper"><pre><code class="hljs">  // 云函数入口文件
+<div class="hljs code-wrapper"><pre><code class="hljs">  // 云函数入口文件
     const cloud = require(&#39;wx-server-sdk&#39;)
     cloud.init()
     const db = cloud.database();
@@ -311,7 +311,7 @@
 <br>      
 
 <p>记得每次写完云函数<strong>记得上传</strong>，然后这样使用✅。</p>
-<div class="code-wrapper"><pre><code class="hljs">    /**
+<div class="hljs code-wrapper"><pre><code class="hljs">    /**
      * 更改状态
      */
     upItemState(_id,lock)&#123;
@@ -332,7 +332,7 @@
 
 
 <h4 id="分享两个使用函数-📊"><a href="#分享两个使用函数-📊" class="headerlink" title="分享两个使用函数 📊"></a>分享两个使用函数 📊</h4><p>我在做home页面的动画时候，如果点击得很快，文字和头像就会跳来跳去，就加了个防抖。<br>但是我偷懒防抖做得很简单，下面的是正规军。（不知道哪里复制粘贴的）<br><br>  </p>
-<div class="code-wrapper"><pre><code class="hljs">/**
+<div class="hljs code-wrapper"><pre><code class="hljs">/**
    * @desc 函数防抖
    * @param func 函数
    * @param wait 延迟执行毫秒数

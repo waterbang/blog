@@ -44,7 +44,7 @@
     
     
       
-      <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@10/styles/tomorrow-night-eighties.min.css" />
+      <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@10/styles/atom-one-dark.min.css" />
     
   
 
@@ -254,7 +254,7 @@
             
               <p class="note note-info">
                 
-                  本文最后更新于：a day ago
+                  本文最后更新于：a month ago
                 
               </p>
             
@@ -266,25 +266,25 @@
 <h3 id="确保有安装环境"><a href="#确保有安装环境" class="headerlink" title="确保有安装环境"></a>确保有安装环境</h3><p>你需要有<code>docker</code>，<code>kubectl</code>，<code>minikube</code>环境。<br>具体推荐阿里云的这篇文章<a target="_blank" rel="noopener" href="https://yq.aliyun.com/articles/221687">Minikube - Kubernetes 本地实验环境</a>。<br>或者直接进入<a target="_blank" rel="noopener" href="https://kubernetes.io/zh/docs/tasks/tools/">官方文档</a>。</p>
 <p>这一定难不倒你。</p>
 <h3 id="入坑"><a href="#入坑" class="headerlink" title="入坑"></a>入坑</h3><p>我一开始看<a target="_blank" rel="noopener" href="https://minikube.sigs.k8s.io/docs/start/linux/">官方文档</a>，里的安装教程，由于我是在 VM 虚拟机中运行的<br>所以就要使用 sudo minikube start –vm-driver&#x3D;none<br>于是开始报错：无法拉取镜像，开启 cluster 时出错。<br>记得每一次构建失败都要执行<code>minikube delete</code></p>
-<h4 id="拉取镜像应该采用镜像储存库"><a href="#拉取镜像应该采用镜像储存库" class="headerlink" title="拉取镜像应该采用镜像储存库"></a>拉取镜像应该采用镜像储存库</h4><div class="code-wrapper"><pre><code class="hljs">minikube start --image-repository=registry.cn-hangzhou.aliyuncs.com/google_containers
+<h4 id="拉取镜像应该采用镜像储存库"><a href="#拉取镜像应该采用镜像储存库" class="headerlink" title="拉取镜像应该采用镜像储存库"></a>拉取镜像应该采用镜像储存库</h4><div class="hljs code-wrapper"><pre><code class="hljs">minikube start --image-repository=registry.cn-hangzhou.aliyuncs.com/google_containers
 </code></pre></div>
 <p>如果这样可以那么恭喜你，可以关闭本文章继续学习了。<br>如果执行失败可以换成阿里云给出的解决方案。<br>下面代码中的<code>https://xxxxxx.mirror.aliyuncs.com</code>，你需要去阿里云<a target="_blank" rel="noopener" href="https://cr.console.aliyun.com/cn-beijing/instances/mirrors">容器镜像服务&gt;镜像加速地址</a>,来获取您的加速器。<br>你还可以顺便给 docker 配置个镜像加速器</p>
 <p><img src="/./aliyun.png" srcset="/img/loading.gif" lazyload alt="阿里云图片"></p>
-<figure class="highlight shell"><table><tr><td class="gutter"><div class="code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></div></td><td class="code"><pre><code class="hljs shell">minikube start --image-mirror-country cn \<br>--iso-url=https://kubernetes.oss-cn-hangzhou.aliyuncs.com/minikube/iso/minikube-v1.6.0.iso \<br>--registry-mirror=https://xxxxxx.mirror.aliyuncs.com<br></code></pre></td></tr></table></figure>
+<figure class="highlight shell"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs shell">minikube start --image-mirror-country cn \<br>--iso-url=https://kubernetes.oss-cn-hangzhou.aliyuncs.com/minikube/iso/minikube-v1.6.0.iso \<br>--registry-mirror=https://xxxxxx.mirror.aliyuncs.com<br></code></pre></div></td></tr></table></figure>
 
 <blockquote>
 <p>我到这一步还是不行</p>
 </blockquote>
-<h3 id="如果出现无法拉取镜像"><a href="#如果出现无法拉取镜像" class="headerlink" title="如果出现无法拉取镜像"></a>如果出现无法拉取镜像</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs shell">🚜  拉取镜像 ...<br>❌  无法拉取映像，有可能是正常状况：running cmd: &quot;/bin/bash -c \&quot;<br>sudo env PATH=/var/lib/minikube/binaries/v1.17.0:$PATH<br>kubeadm config images pull --config /var/tmp/minikube/kubeadm.yaml\&quot;&quot;: /bin/bash -c &quot;<br>sudo env PATH=/var/lib/minikube/binaries/v1.17.0:$PATH<br>kubeadm config images pull --config /var/tmp/minikube/kubeadm.yaml&quot;: exit status 1<br></code></pre></td></tr></table></figure>
+<h3 id="如果出现无法拉取镜像"><a href="#如果出现无法拉取镜像" class="headerlink" title="如果出现无法拉取镜像"></a>如果出现无法拉取镜像</h3><figure class="highlight shell"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs shell">🚜  拉取镜像 ...<br>❌  无法拉取映像，有可能是正常状况：running cmd: &quot;/bin/bash -c \&quot;<br>sudo env PATH=/var/lib/minikube/binaries/v1.17.0:$PATH<br>kubeadm config images pull --config /var/tmp/minikube/kubeadm.yaml\&quot;&quot;: /bin/bash -c &quot;<br>sudo env PATH=/var/lib/minikube/binaries/v1.17.0:$PATH<br>kubeadm config images pull --config /var/tmp/minikube/kubeadm.yaml&quot;: exit status 1<br></code></pre></div></td></tr></table></figure>
 
 <h4 id="可以选择翻墙"><a href="#可以选择翻墙" class="headerlink" title="可以选择翻墙"></a>可以选择翻墙</h4><p>可以把物理机的翻墙工具设置成全局，相信对你来说不是难事。</p>
 <h5 id="如果您在-CentOS-虚拟机上安装了-shadowsocks"><a href="#如果您在-CentOS-虚拟机上安装了-shadowsocks" class="headerlink" title="如果您在 CentOS 虚拟机上安装了 shadowsocks"></a>如果您在 CentOS 虚拟机上安装了 shadowsocks</h5><p>关闭代理，用您的物理机来代理</p>
-<div class="code-wrapper"><pre><code class="hljs">while read var; do unset $var; done &lt; &lt;(env | grep -i proxy | awk -F= &#39;&#123;print $1&#125;&#39;)
+<div class="hljs code-wrapper"><pre><code class="hljs">while read var; do unset $var; done &lt; &lt;(env | grep -i proxy | awk -F= &#39;&#123;print $1&#125;&#39;)
 </code></pre></div>
 <blockquote>
 <p>到此我解决了无法拉取镜像问题</p>
 </blockquote>
-<h3 id="遇到了开启-cluster-时出错"><a href="#遇到了开启-cluster-时出错" class="headerlink" title="遇到了开启 cluster 时出错"></a>遇到了开启 cluster 时出错</h3><div class="code-wrapper"><pre><code class="hljs">💣  开启 cluster 时出错: init failed. cmd: &quot;/bin/bash -c \&quot;sudo env PATH=/var/lib/minikube/binaries/v1.17.0:$PATH kubeadm init --config /var/tmp/minikube/kubeadm.yaml  --ignore-preflight-errors=DirAvailable--etc-kubernetes-manifests,DirAvailable--var-lib-minikube,DirAvailable--var-lib-minikube-etcd,FileAvailable--etc-kubernetes-manifests-kube-scheduler.yaml,FileAvailable--etc-kubernetes-manifests-kube-apiserver.yaml,FileAvailable--etc-kubernetes-manifests-kube-controller-manager.yaml,FileAvailable--etc-kubernetes-manifests-etcd.yaml,Port-10250,Swap\&quot;&quot;: /bin/bash -c &quot;sudo env PATH=/var/lib/minikube/binaries/v1.17.0:$PATH kubeadm init --config /var/tmp/minikube/kubeadm.yaml  --ignore-preflight-errors=DirAvailable--etc-kubernetes-manifests,DirAvailable--var-lib-minikube,DirAvailable--var-lib-minikube-etcd,FileAvailable--etc-kubernetes-manifests-kube-scheduler.yaml,FileAvailable--etc-kubernetes-manifests-kube-apiserver.yaml,FileAvailable--etc-kubernetes-manifests-kube-controller-manager.yaml,FileAvailable--etc-kubernetes-manifests-etcd.yaml,Port-10250,Swap&quot;: exit status 1
+<h3 id="遇到了开启-cluster-时出错"><a href="#遇到了开启-cluster-时出错" class="headerlink" title="遇到了开启 cluster 时出错"></a>遇到了开启 cluster 时出错</h3><div class="hljs code-wrapper"><pre><code class="hljs">💣  开启 cluster 时出错: init failed. cmd: &quot;/bin/bash -c \&quot;sudo env PATH=/var/lib/minikube/binaries/v1.17.0:$PATH kubeadm init --config /var/tmp/minikube/kubeadm.yaml  --ignore-preflight-errors=DirAvailable--etc-kubernetes-manifests,DirAvailable--var-lib-minikube,DirAvailable--var-lib-minikube-etcd,FileAvailable--etc-kubernetes-manifests-kube-scheduler.yaml,FileAvailable--etc-kubernetes-manifests-kube-apiserver.yaml,FileAvailable--etc-kubernetes-manifests-kube-controller-manager.yaml,FileAvailable--etc-kubernetes-manifests-etcd.yaml,Port-10250,Swap\&quot;&quot;: /bin/bash -c &quot;sudo env PATH=/var/lib/minikube/binaries/v1.17.0:$PATH kubeadm init --config /var/tmp/minikube/kubeadm.yaml  --ignore-preflight-errors=DirAvailable--etc-kubernetes-manifests,DirAvailable--var-lib-minikube,DirAvailable--var-lib-minikube-etcd,FileAvailable--etc-kubernetes-manifests-kube-scheduler.yaml,FileAvailable--etc-kubernetes-manifests-kube-apiserver.yaml,FileAvailable--etc-kubernetes-manifests-kube-controller-manager.yaml,FileAvailable--etc-kubernetes-manifests-etcd.yaml,Port-10250,Swap&quot;: exit status 1
 stdout:
 [init] Using Kubernetes version: v1.17.0
 [preflight] Running pre-flight checks
@@ -303,17 +303,17 @@ error execution phase preflight: [preflight] Some fatal errors occurred:
 To see the stack trace of this error execute with --v=5 or higher
 </code></pre></div>
 <h4 id="解决问题"><a href="#解决问题" class="headerlink" title="解决问题"></a>解决问题</h4><p>它提示我们</p>
-<div class="code-wrapper"><pre><code class="hljs">[ERROR FileContent--proc-sys-net-bridge-bridge-nf-call-iptables]:
+<div class="hljs code-wrapper"><pre><code class="hljs">[ERROR FileContent--proc-sys-net-bridge-bridge-nf-call-iptables]:
 /proc/sys/net/bridge/bridge-nf-call-iptables contents are not set to 1
 </code></pre></div>
-<h5 id="输入命令"><a href="#输入命令" class="headerlink" title="输入命令"></a>输入命令</h5><div class="code-wrapper"><pre><code class="hljs">echo &quot;1&quot; &gt;/proc/sys/net/bridge/bridge-nf-call-iptables
+<h5 id="输入命令"><a href="#输入命令" class="headerlink" title="输入命令"></a>输入命令</h5><div class="hljs code-wrapper"><pre><code class="hljs">echo &quot;1&quot; &gt;/proc/sys/net/bridge/bridge-nf-call-iptables
 swaoiff-a
 </code></pre></div>
 <p>然后 vim &#x2F;etc&#x2F;fstab，注释掉下面这一行：</p>
-<figure class="highlight shell"><figcaption><span>script</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_">#</span><span class="language-bash">/dev/mapper/rhel-swap   swap                    swap    defaults        0 0</span><br><br></code></pre></td></tr></table></figure>
+<figure class="highlight shell"><figcaption><span>script</span></figcaption><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs shell"><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_">#</span><span class="language-bash">/dev/mapper/rhel-swap   swap                    swap    defaults        0 0</span><br><br></code></pre></div></td></tr></table></figure>
 
 <p>查看是否成功<br>free -m<br>free 那边是 0 就是成功。</p>
-<h5 id="重新构建"><a href="#重新构建" class="headerlink" title="重新构建"></a>重新构建</h5><div class="code-wrapper"><pre><code class="hljs">minikube delete
+<h5 id="重新构建"><a href="#重新构建" class="headerlink" title="重新构建"></a>重新构建</h5><div class="hljs code-wrapper"><pre><code class="hljs">minikube delete
 minikube start --image-repository=registry.cn-hangzhou.aliyuncs.com/google_containers
 </code></pre></div>
 <blockquote>
@@ -322,10 +322,10 @@ minikube start --image-repository=registry.cn-hangzhou.aliyuncs.com/google_conta
 <h3 id="成功图"><a href="#成功图" class="headerlink" title="成功图"></a>成功图</h3><p><img src="/./success.png" srcset="/img/loading.gif" lazyload></p>
 <h4 id="如果执行-minikube-dashboard-出现-503"><a href="#如果执行-minikube-dashboard-出现-503" class="headerlink" title="如果执行 minikube dashboard 出现 503"></a>如果执行 minikube dashboard 出现 503</h4><p>请将您的虚拟机升到 8G 的运行内存</p>
 <h3 id="如果-kubectl-出现连接超时或不可达"><a href="#如果-kubectl-出现连接超时或不可达" class="headerlink" title="如果 kubectl 出现连接超时或不可达"></a>如果 kubectl 出现连接超时或不可达</h3><p>像这样</p>
-<div class="code-wrapper"><pre><code class="hljs">The connection to the server &lt;server-name:port&gt; was refused - did you specify the right host or port?
+<div class="hljs code-wrapper"><pre><code class="hljs">The connection to the server &lt;server-name:port&gt; was refused - did you specify the right host or port?
 </code></pre></div>
 <p>而且使用 curl 的时候像这样</p>
-<div class="code-wrapper"><pre><code class="hljs">Could not resolve proxy: http//127.0.0.1; 未知的错误
+<div class="hljs code-wrapper"><pre><code class="hljs">Could not resolve proxy: http//127.0.0.1; 未知的错误
 </code></pre></div>
 <p>请检查您的代理，可以注释掉，运行 vi &#x2F;etc&#x2F;profile</p>
 <blockquote>

@@ -44,7 +44,7 @@
     
     
       
-      <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@10/styles/tomorrow-night-eighties.min.css" />
+      <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@10/styles/atom-one-dark.min.css" />
     
   
 
@@ -254,7 +254,7 @@
             
               <p class="note note-info">
                 
-                  本文最后更新于：a day ago
+                  本文最后更新于：a month ago
                 
               </p>
             
@@ -264,7 +264,7 @@
 
 <h3 id="常用的缓存模式-🍭"><a href="#常用的缓存模式-🍭" class="headerlink" title="常用的缓存模式 🍭"></a>常用的缓存模式 🍭</h3><p>下面来看几种常见的缓存模式。</p>
 <h4 id="仅缓存"><a href="#仅缓存" class="headerlink" title="仅缓存"></a>仅缓存</h4><p>这种模式对静态资源非常实用，代码如下：</p>
-<div class="code-wrapper"><pre><code class="hljs">self.addEventLister(&quot;fetch&quot;,function(event)&#123;
+<div class="hljs code-wrapper"><pre><code class="hljs">self.addEventLister(&quot;fetch&quot;,function(event)&#123;
     event.respondWith(
     caches.match(event.request);
     );
@@ -273,7 +273,7 @@
 <br>
 
 <h4 id="缓存优先，网络作为回退方案"><a href="#缓存优先，网络作为回退方案" class="headerlink" title="缓存优先，网络作为回退方案"></a>缓存优先，网络作为回退方案</h4><p>这个模式也会从缓存中相应请求。然而，如果在缓存中找不到内容，service worker 会从网络中请求并返回：</p>
-<div class="code-wrapper"><pre><code class="hljs">self.addEventListener(&quot;fetch&quot;,function(event)&#123;
+<div class="hljs code-wrapper"><pre><code class="hljs">self.addEventListener(&quot;fetch&quot;,function(event)&#123;
     event.respondWith(
         caches.match(event.resquest).then((response)=&gt;&#123;
             return response|| fetch(event.request);
@@ -284,7 +284,7 @@
 <br>
 
 <h4 id="仅网络"><a href="#仅网络" class="headerlink" title="仅网络"></a>仅网络</h4><p>经典的web模型，尝试从网络中请求，网络不通，则请求失败。</p>
-<div class="code-wrapper"><pre><code class="hljs">self.addEventListener(&quot;fetch&quot;,function(event)&#123;
+<div class="hljs code-wrapper"><pre><code class="hljs">self.addEventListener(&quot;fetch&quot;,function(event)&#123;
     event.respondWith(
     fetch(event.request)
    );
@@ -293,7 +293,7 @@
 <br>
     
 <h4 id="网络优先，缓存做为回退方案。"><a href="#网络优先，缓存做为回退方案。" class="headerlink" title="网络优先，缓存做为回退方案。"></a>网络优先，缓存做为回退方案。</h4><p>总是向网络发起请求，请求失败则返回缓存中的版本。</p>
-<div class="code-wrapper"><pre><code class="hljs">self.addEventListener(&quot;fetch&quot;,function(event)&#123;
+<div class="hljs code-wrapper"><pre><code class="hljs">self.addEventListener(&quot;fetch&quot;,function(event)&#123;
     event.respondWith(
         caches.match(event.resquest).catch(()=&gt;&#123;
            return caches.match(event.request);
@@ -303,7 +303,7 @@
 </code></pre></div>
 <br>
 
-<h4 id="网络优先，缓存作为回退方案，通用回退作为兜底方案"><a href="#网络优先，缓存作为回退方案，通用回退作为兜底方案" class="headerlink" title="网络优先，缓存作为回退方案，通用回退作为兜底方案"></a>网络优先，缓存作为回退方案，通用回退作为兜底方案</h4><div class="code-wrapper"><pre><code class="hljs">self.addEventListener(&quot;fetch&quot;,function(event)&#123;
+<h4 id="网络优先，缓存作为回退方案，通用回退作为兜底方案"><a href="#网络优先，缓存作为回退方案，通用回退作为兜底方案" class="headerlink" title="网络优先，缓存作为回退方案，通用回退作为兜底方案"></a>网络优先，缓存作为回退方案，通用回退作为兜底方案</h4><div class="hljs code-wrapper"><pre><code class="hljs">self.addEventListener(&quot;fetch&quot;,function(event)&#123;
     event.respondWith(
         caches.match(event.resquest).catch(()=&gt;&#123;
            return caches.match(event.request).then((response)=&gt;&#123;
@@ -316,7 +316,7 @@
 <br>
     
 <h4 id="按需缓存"><a href="#按需缓存" class="headerlink" title="按需缓存"></a>按需缓存</h4><p>对于不经常改变的资源以及service worker install 事件期间不想缓存的资源，我们可以扩展<code>缓存优先，网络作为回退方案</code>的模式。将网络返回的请求保存到缓存中。</p>
-<div class="code-wrapper"><pre><code class="hljs">self.addEventListener(&quot;fetch&quot;, function (event) &#123;
+<div class="hljs code-wrapper"><pre><code class="hljs">self.addEventListener(&quot;fetch&quot;, function (event) &#123;
     event.respondWith(
         caches.open(&#39;cache-name&#39;).then((cache) =&gt; &#123;
                 return caches.match(event.request).then((cachedResponse) =&gt; &#123;
@@ -330,7 +330,7 @@
 &#125;);
 </code></pre></div>
 <p>在响应保存到缓存中时，我们对其使用了一个clone方法。</p>
-<div class="code-wrapper"><pre><code class="hljs">    fetch(event.request).then((networkResponse)&#123;
+<div class="hljs code-wrapper"><pre><code class="hljs">    fetch(event.request).then((networkResponse)&#123;
         cache.put(event.request, networkResponse.clone());
         return networkResponse;
     &#125;)；
@@ -339,7 +339,7 @@
 <br>
 
 <h4 id="缓存优先，网络作为回退方案，并频繁更新缓存"><a href="#缓存优先，网络作为回退方案，并频繁更新缓存" class="headerlink" title="缓存优先，网络作为回退方案，并频繁更新缓存"></a>缓存优先，网络作为回退方案，并频繁更新缓存</h4><p>对于经常修改的资源（如用户头像），我们可以修改<code>缓存优先，网络作为回退方案</code>的模式。即使在缓存中找到，也总会从缓存中请求资源。</p>
-<div class="code-wrapper"><pre><code class="hljs">self.addEventListener(&quot;fetch&quot;, function (event) &#123;
+<div class="hljs code-wrapper"><pre><code class="hljs">self.addEventListener(&quot;fetch&quot;, function (event) &#123;
     event.respondWith(
         caches.open(&#39;cache-name&#39;).then((cache) =&gt; &#123;
             return caches.match(event.resquest).then((cachedResponse) =&gt; &#123;
@@ -356,7 +356,7 @@
 <br>
 
 <h4 id="网络优先，缓存作为回退方案，并频繁更新缓存。"><a href="#网络优先，缓存作为回退方案，并频繁更新缓存。" class="headerlink" title="网络优先，缓存作为回退方案，并频繁更新缓存。"></a>网络优先，缓存作为回退方案，并频繁更新缓存。</h4><p>该模式总会试图从网络中获取最新版本，仅在网络请求失败的时候才回退到缓存版本。<br>每当网络访问成功时，会将当前缓存更新为视为网络响应的内容。</p>
-<div class="code-wrapper"><pre><code class="hljs">self.addEventListener(&quot;fetch&quot;, function (event) &#123;
+<div class="hljs code-wrapper"><pre><code class="hljs">self.addEventListener(&quot;fetch&quot;, function (event) &#123;
     event.respondWith(
         caches.open(&#39;cache-name&#39;).then((cache) =&gt; &#123;
             return caches.match(event.resquest).then((cachedResponse) =&gt; &#123;

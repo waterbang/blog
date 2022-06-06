@@ -44,7 +44,7 @@
     
     
       
-      <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@10/styles/tomorrow-night-eighties.min.css" />
+      <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@10/styles/atom-one-dark.min.css" />
     
   
 
@@ -254,13 +254,13 @@
             
               <p class="note note-info">
                 
-                  本文最后更新于：a day ago
+                  本文最后更新于：a month ago
                 
               </p>
             
             <div class="markdown-body">
               <h4 id="初始化项目-🏃"><a href="#初始化项目-🏃" class="headerlink" title="初始化项目 🏃"></a>初始化项目 🏃</h4><p>首先用vue-cli初始化我们的项目，分别选择</p>
-<div class="code-wrapper"><pre><code class="hljs">? Please pick a preset: Manually select features
+<div class="hljs code-wrapper"><pre><code class="hljs">? Please pick a preset: Manually select features
 ? Check the features needed for your project: Babel, Router, Vuex, Linter
 ? Use history mode for router? (Requires proper server setup for index fallback in production) No
 ? Pick a linter / formatter config: Airbnb
@@ -271,7 +271,7 @@
 <br>
 
 <p>在<code>.eslintrc.js</code>里添加规则，</p>
-<div class="code-wrapper"><pre><code class="hljs">  rules: &#123;
+<div class="hljs code-wrapper"><pre><code class="hljs">  rules: &#123;
     &#39;no-console&#39;: process.env.NODE_ENV === &#39;production&#39; ? &#39;error&#39; : &#39;off&#39;,
     &#39;no-debugger&#39;: process.env.NODE_ENV === &#39;production&#39; ? &#39;error&#39; : &#39;off&#39;,
     &#39;no-sequences&#39;: 0,
@@ -285,7 +285,7 @@
   &#125;,
 </code></pre></div>
 <h2 id="Vue-router-🍭"><a href="#Vue-router-🍭" class="headerlink" title="Vue-router 🍭"></a>Vue-router 🍭</h2><p>首先我们将 <code>/router/index.js</code> 文件里的vue-router 改写成我们的,&#x2F;vue-router</p>
-<div class="code-wrapper"><pre><code class="hljs">//   /src/router/index.js
+<div class="hljs code-wrapper"><pre><code class="hljs">//   /src/router/index.js
 import Vue from &#39;vue&#39;;
 import VueRouter from &#39;./vue-router&#39;;//改成自己的
 import Home from &#39;../views/Home.vue&#39;;
@@ -296,7 +296,7 @@ Vue.use(VueRouter);
 <br>
 
 <h3 id="初始化自己的vue-router-🎨"><a href="#初始化自己的vue-router-🎨" class="headerlink" title="初始化自己的vue-router 🎨"></a>初始化自己的vue-router 🎨</h3><p>第一步<code>Vue.use(VueRouter)</code>,默认调用了install方法，并传入了一个vue的构造函数。<br> 可以用来扩展属性或者组件或者指令。   </p>
-<div class="code-wrapper"><pre><code class="hljs">//   /src/router/vue-router.js
+<div class="hljs code-wrapper"><pre><code class="hljs">//   /src/router/vue-router.js
 let Vue;// 存起来
 class Router &#123;
 &#125;;
@@ -306,7 +306,7 @@ Router.install = (_Vue) =&gt; &#123;
 export default Router;
 </code></pre></div>
 <p>第二步，我们的根组件里面会传一个<code>router</code>,让子组件都可以拿到这个<code>router</code>。</p>
-<div class="code-wrapper"><pre><code class="hljs">//  /main.js
+<div class="hljs code-wrapper"><pre><code class="hljs">//  /main.js
 new Vue(&#123;
   router,
   store,
@@ -314,10 +314,10 @@ new Vue(&#123;
 &#125;).$mount(&#39;#app&#39;);
 </code></pre></div>
 <p>我们可以直接这样写</p>
-<div class="code-wrapper"><pre><code class="hljs">Vue.prototype.router = xxxx;
+<div class="hljs code-wrapper"><pre><code class="hljs">Vue.prototype.router = xxxx;
 </code></pre></div>
 <p>但是这样在每次<code>new Vue</code> 的时候都会带上router，我们希望在根组件以下才有。所以我们使用<code>Vue.mixin</code>,<br>它内部会把这个对象给每个属性，混合在一起。它内部就是将组件的生命周期做个数组，它会把mixin的方法放在前面，<br>组件的方法放在后面，像这样 <code>[beforeCreate,befoureCrate]</code>,执行的时候，循环。</p>
-<div class="code-wrapper"><pre><code class="hljs"> //   /src/router/vue-router.js
+<div class="hljs code-wrapper"><pre><code class="hljs"> //   /src/router/vue-router.js
 Router.install = (_Vue) =&gt; &#123;
   Vue = _Vue;
   Vue.mixin(&#123;
@@ -329,7 +329,7 @@ Router.install = (_Vue) =&gt; &#123;
 &#125;;
 </code></pre></div>
 <p>这个<code>$options</code>,指的是<code>new Vue</code>传的内容，也就是下面代码的3，4，5行。</p>
-<div class="code-wrapper"><pre><code class="hljs">//  /main.js
+<div class="hljs code-wrapper"><pre><code class="hljs">//  /main.js
 new Vue(&#123;
   router,
   store,
@@ -339,15 +339,15 @@ new Vue(&#123;
 <br>
 
 <h4 id="完善mixin-🏋️‍♂️"><a href="#完善mixin-🏋️‍♂️" class="headerlink" title="完善mixin 🏋️‍♂️"></a>完善mixin 🏋️‍♂️</h4><p>让根组件下都有这个<code>router</code>。</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><div class="code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br></pre></div></td><td class="code"><pre><code class="hljs javascript"><span class="hljs-comment">//  /src/router/vue-router.js</span><br><span class="hljs-title class_">Router</span>.<span class="hljs-property">install</span> = <span class="hljs-function">(<span class="hljs-params">_Vue</span>) =&gt;</span> &#123;<br>  <span class="hljs-title class_">Vue</span> = _Vue;<br>  <span class="hljs-title class_">Vue</span>.<span class="hljs-title function_">mixin</span>(&#123;<br>    <span class="hljs-title function_">beforeCreate</span>(<span class="hljs-params"></span>) &#123; <span class="hljs-comment">// 组件创建之前，走这方法</span><br>      <span class="hljs-keyword">if</span> (<span class="hljs-variable language_">this</span>.<span class="hljs-property">$options</span> &amp;&amp; <span class="hljs-variable language_">this</span>.<span class="hljs-property">$options</span>.<span class="hljs-property">router</span>) &#123; <span class="hljs-comment">//看看是不是根组件</span><br>        <span class="hljs-variable language_">this</span>.<span class="hljs-property">router</span> = <span class="hljs-variable language_">this</span>.<span class="hljs-property">$options</span>.<span class="hljs-property">router</span>;<br>      &#125; <span class="hljs-keyword">else</span> &#123; <span class="hljs-comment">//  如果不是父亲就是儿子</span><br>        <span class="hljs-comment">//  让所有的子组件都有router属性，指向当前 router</span><br>        <span class="hljs-variable language_">this</span>.<span class="hljs-property">router</span> = <span class="hljs-variable language_">this</span>.<span class="hljs-property">$parent</span> &amp;&amp; <span class="hljs-variable language_">this</span>.<span class="hljs-property">$parent</span>.<span class="hljs-property">router</span>;<br>      &#125;<br>    &#125;,<br>  &#125;);<br>&#125;;<span class="hljs-string">``</span><span class="hljs-string">`</span><br><span class="hljs-string"></span><br><span class="hljs-string">&lt;br&gt;</span><br><span class="hljs-string"></span><br><span class="hljs-string"></span><br><span class="hljs-string">### 添加$route $router router-link router-view 🍕</span><br><span class="hljs-string">每个组件都有 `</span>$route<span class="hljs-string">` `</span>$router<span class="hljs-string">` 我们接下来来添加它们，并注册一下两个组件</span><br><span class="hljs-string"></span><br><span class="hljs-string">`</span><span class="hljs-string">``</span>javascript<br><span class="hljs-comment">//  /src/router/vue-router.js</span><br><span class="hljs-keyword">let</span> <span class="hljs-title class_">Vue</span>;<span class="hljs-comment">// 存起来</span><br><span class="hljs-keyword">class</span> <span class="hljs-title class_">Router</span> &#123;<br>&#125;<br><br><span class="hljs-title class_">Router</span>.<span class="hljs-property">install</span> = <span class="hljs-function">(<span class="hljs-params">_Vue</span>) =&gt;</span> &#123;<br>  <span class="hljs-title class_">Vue</span> = _Vue;<br>  <span class="hljs-title class_">Vue</span>.<span class="hljs-title function_">mixin</span>(&#123;<br>    <span class="hljs-title function_">beforeCreate</span>(<span class="hljs-params"></span>) &#123; <span class="hljs-comment">// 组件创建之前，走这方法</span><br>      <span class="hljs-comment">//  判断根组件是谁</span><br>      <span class="hljs-keyword">if</span> (<span class="hljs-variable language_">this</span>.<span class="hljs-property">$options</span> &amp;&amp; <span class="hljs-variable language_">this</span>.<span class="hljs-property">$options</span>.<span class="hljs-property">router</span>) &#123;<br>        <span class="hljs-variable language_">this</span>.<span class="hljs-property">router</span> = <span class="hljs-variable language_">this</span>.<span class="hljs-property">$options</span>.<span class="hljs-property">router</span>;<br>      &#125; <span class="hljs-keyword">else</span> &#123; <span class="hljs-comment">//  如果不是父亲就是儿子</span><br>        <span class="hljs-comment">//  让所有的子组件都有router属性，指向当前 router</span><br>        <span class="hljs-variable language_">this</span>.<span class="hljs-property">router</span> = <span class="hljs-variable language_">this</span>.<span class="hljs-property">$parent</span> &amp;&amp; <span class="hljs-variable language_">this</span>.<span class="hljs-property">$parent</span>.<span class="hljs-property">router</span>;<br>      &#125;<br>        <span class="hljs-comment">//  $route $router</span><br>      <span class="hljs-title class_">Object</span>.<span class="hljs-title function_">defineProperty</span>(<span class="hljs-variable language_">this</span>, <span class="hljs-string">&#x27;$route&#x27;</span>, &#123;<br>        <span class="hljs-attr">value</span>: &#123;&#125;,<br>      &#125;);<br>      <span class="hljs-title class_">Object</span>.<span class="hljs-title function_">defineProperty</span>(<span class="hljs-variable language_">this</span>, <span class="hljs-string">&#x27;$router&#x27;</span>, &#123;<br>        <span class="hljs-attr">value</span>: &#123;&#125;,<br>      &#125;);<br>    &#125;,<br>  &#125;);<br> <span class="hljs-comment">// router-link router-view</span><br>      <span class="hljs-title class_">Vue</span>.<span class="hljs-title function_">component</span>(<span class="hljs-string">&#x27;router-link&#x27;</span>, &#123;<br>        <span class="hljs-title function_">render</span>(<span class="hljs-params"></span>) &#123;<br>          <span class="hljs-keyword">return</span> <span class="hljs-literal">null</span>;<br>        &#125;,<br>      &#125;);<br>      <span class="hljs-title class_">Vue</span>.<span class="hljs-title function_">component</span>(<span class="hljs-string">&#x27;router-view&#x27;</span>, &#123;<br>        <span class="hljs-title function_">render</span>(<span class="hljs-params"></span>) &#123;<br>          <span class="hljs-keyword">return</span> <span class="hljs-literal">null</span>;<br>        &#125;,<br>      &#125;);<br>&#125;;<br><span class="hljs-keyword">export</span> <span class="hljs-keyword">default</span> <span class="hljs-title class_">Router</span>;<br></code></pre></td></tr></table></figure>
+<figure class="highlight javascript"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs javascript"><span class="hljs-comment">//  /src/router/vue-router.js</span><br><span class="hljs-title class_">Router</span>.<span class="hljs-property">install</span> = <span class="hljs-function">(<span class="hljs-params">_Vue</span>) =&gt;</span> &#123;<br>  <span class="hljs-title class_">Vue</span> = _Vue;<br>  <span class="hljs-title class_">Vue</span>.<span class="hljs-title function_">mixin</span>(&#123;<br>    <span class="hljs-title function_">beforeCreate</span>(<span class="hljs-params"></span>) &#123; <span class="hljs-comment">// 组件创建之前，走这方法</span><br>      <span class="hljs-keyword">if</span> (<span class="hljs-variable language_">this</span>.<span class="hljs-property">$options</span> &amp;&amp; <span class="hljs-variable language_">this</span>.<span class="hljs-property">$options</span>.<span class="hljs-property">router</span>) &#123; <span class="hljs-comment">//看看是不是根组件</span><br>        <span class="hljs-variable language_">this</span>.<span class="hljs-property">router</span> = <span class="hljs-variable language_">this</span>.<span class="hljs-property">$options</span>.<span class="hljs-property">router</span>;<br>      &#125; <span class="hljs-keyword">else</span> &#123; <span class="hljs-comment">//  如果不是父亲就是儿子</span><br>        <span class="hljs-comment">//  让所有的子组件都有router属性，指向当前 router</span><br>        <span class="hljs-variable language_">this</span>.<span class="hljs-property">router</span> = <span class="hljs-variable language_">this</span>.<span class="hljs-property">$parent</span> &amp;&amp; <span class="hljs-variable language_">this</span>.<span class="hljs-property">$parent</span>.<span class="hljs-property">router</span>;<br>      &#125;<br>    &#125;,<br>  &#125;);<br>&#125;;<span class="hljs-string">``</span><span class="hljs-string">`</span><br><span class="hljs-string"></span><br><span class="hljs-string">&lt;br&gt;</span><br><span class="hljs-string"></span><br><span class="hljs-string"></span><br><span class="hljs-string">### 添加$route $router router-link router-view 🍕</span><br><span class="hljs-string">每个组件都有 `</span>$route<span class="hljs-string">` `</span>$router<span class="hljs-string">` 我们接下来来添加它们，并注册一下两个组件</span><br><span class="hljs-string"></span><br><span class="hljs-string">`</span><span class="hljs-string">``</span>javascript<br><span class="hljs-comment">//  /src/router/vue-router.js</span><br><span class="hljs-keyword">let</span> <span class="hljs-title class_">Vue</span>;<span class="hljs-comment">// 存起来</span><br><span class="hljs-keyword">class</span> <span class="hljs-title class_">Router</span> &#123;<br>&#125;<br><br><span class="hljs-title class_">Router</span>.<span class="hljs-property">install</span> = <span class="hljs-function">(<span class="hljs-params">_Vue</span>) =&gt;</span> &#123;<br>  <span class="hljs-title class_">Vue</span> = _Vue;<br>  <span class="hljs-title class_">Vue</span>.<span class="hljs-title function_">mixin</span>(&#123;<br>    <span class="hljs-title function_">beforeCreate</span>(<span class="hljs-params"></span>) &#123; <span class="hljs-comment">// 组件创建之前，走这方法</span><br>      <span class="hljs-comment">//  判断根组件是谁</span><br>      <span class="hljs-keyword">if</span> (<span class="hljs-variable language_">this</span>.<span class="hljs-property">$options</span> &amp;&amp; <span class="hljs-variable language_">this</span>.<span class="hljs-property">$options</span>.<span class="hljs-property">router</span>) &#123;<br>        <span class="hljs-variable language_">this</span>.<span class="hljs-property">router</span> = <span class="hljs-variable language_">this</span>.<span class="hljs-property">$options</span>.<span class="hljs-property">router</span>;<br>      &#125; <span class="hljs-keyword">else</span> &#123; <span class="hljs-comment">//  如果不是父亲就是儿子</span><br>        <span class="hljs-comment">//  让所有的子组件都有router属性，指向当前 router</span><br>        <span class="hljs-variable language_">this</span>.<span class="hljs-property">router</span> = <span class="hljs-variable language_">this</span>.<span class="hljs-property">$parent</span> &amp;&amp; <span class="hljs-variable language_">this</span>.<span class="hljs-property">$parent</span>.<span class="hljs-property">router</span>;<br>      &#125;<br>        <span class="hljs-comment">//  $route $router</span><br>      <span class="hljs-title class_">Object</span>.<span class="hljs-title function_">defineProperty</span>(<span class="hljs-variable language_">this</span>, <span class="hljs-string">&#x27;$route&#x27;</span>, &#123;<br>        <span class="hljs-attr">value</span>: &#123;&#125;,<br>      &#125;);<br>      <span class="hljs-title class_">Object</span>.<span class="hljs-title function_">defineProperty</span>(<span class="hljs-variable language_">this</span>, <span class="hljs-string">&#x27;$router&#x27;</span>, &#123;<br>        <span class="hljs-attr">value</span>: &#123;&#125;,<br>      &#125;);<br>    &#125;,<br>  &#125;);<br> <span class="hljs-comment">// router-link router-view</span><br>      <span class="hljs-title class_">Vue</span>.<span class="hljs-title function_">component</span>(<span class="hljs-string">&#x27;router-link&#x27;</span>, &#123;<br>        <span class="hljs-title function_">render</span>(<span class="hljs-params"></span>) &#123;<br>          <span class="hljs-keyword">return</span> <span class="hljs-literal">null</span>;<br>        &#125;,<br>      &#125;);<br>      <span class="hljs-title class_">Vue</span>.<span class="hljs-title function_">component</span>(<span class="hljs-string">&#x27;router-view&#x27;</span>, &#123;<br>        <span class="hljs-title function_">render</span>(<span class="hljs-params"></span>) &#123;<br>          <span class="hljs-keyword">return</span> <span class="hljs-literal">null</span>;<br>        &#125;,<br>      &#125;);<br>&#125;;<br><span class="hljs-keyword">export</span> <span class="hljs-keyword">default</span> <span class="hljs-title class_">Router</span>;<br></code></pre></div></td></tr></table></figure>
 
 
 <h4 id="完善-router-link-🍔"><a href="#完善-router-link-🍔" class="headerlink" title="完善 router-link 🍔"></a>完善 router-link 🍔</h4><p>第一步，我们完善<code>to</code>。（<del>我们也就一步</del>）</p>
-<div class="code-wrapper"><pre><code class="hljs">&lt;!-- 字符串 --&gt;
+<div class="hljs code-wrapper"><pre><code class="hljs">&lt;!-- 字符串 --&gt;
 &lt;router-link to=&quot;home&quot;&gt;Home&lt;/router-link&gt;
 </code></pre></div>
 <p>像这样</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs javascript"><span class="hljs-comment">//  /src/router/vue-router.js</span><br><span class="hljs-title class_">Vue</span>.<span class="hljs-title function_">component</span>(<span class="hljs-string">&#x27;router-link&#x27;</span>, &#123;<br><span class="hljs-attr">props</span>: &#123;<br>  <span class="hljs-attr">to</span>: <span class="hljs-title class_">String</span>,<br>&#125;,<br><span class="hljs-title function_">render</span>(<span class="hljs-params"></span>) &#123;<br>  <span class="hljs-keyword">return</span> <span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">a</span> <span class="hljs-attr">href</span>=<span class="hljs-string">&#123;</span>`#$&#123;<span class="hljs-attr">this.to</span>&#125;`&#125;&gt;</span>&#123;this.$slots.default&#125;<span class="hljs-tag">&lt;/<span class="hljs-name">a</span>&gt;</span></span>;<br>&#125;,<br>&#125;);<br></code></pre></td></tr></table></figure>
+<figure class="highlight javascript"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs javascript"><span class="hljs-comment">//  /src/router/vue-router.js</span><br><span class="hljs-title class_">Vue</span>.<span class="hljs-title function_">component</span>(<span class="hljs-string">&#x27;router-link&#x27;</span>, &#123;<br><span class="hljs-attr">props</span>: &#123;<br>  <span class="hljs-attr">to</span>: <span class="hljs-title class_">String</span>,<br>&#125;,<br><span class="hljs-title function_">render</span>(<span class="hljs-params"></span>) &#123;<br>  <span class="hljs-keyword">return</span> <span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">a</span> <span class="hljs-attr">href</span>=<span class="hljs-string">&#123;</span>`#$&#123;<span class="hljs-attr">this.to</span>&#125;`&#125;&gt;</span>&#123;this.$slots.default&#125;<span class="hljs-tag">&lt;/<span class="hljs-name">a</span>&gt;</span></span>;<br>&#125;,<br>&#125;);<br></code></pre></div></td></tr></table></figure>
 
 <h3 id="接收路由，渲染组件-🚄"><a href="#接收路由，渲染组件-🚄" class="headerlink" title="接收路由，渲染组件 🚄"></a>接收路由，渲染组件 🚄</h3><p>我们在<code>/src/router/index.js</code>里，有个路由表，并在<code>new VueRouter</code>的时候传了进去，<br>接下来我们在VueRouter的构造函数里接收一下，并将它格式化为这样的格式：</p>
 <div align=center>
@@ -357,11 +357,11 @@ new Vue(&#123;
 
 
 <p>我们的routes长这样。</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><code class="hljs javascript"><span class="hljs-comment">//  /src/router/index.js</span><br><span class="hljs-keyword">const</span> routes = [ <span class="hljs-comment">// &#123;&#x27;/&#x27;: Home, &#x27;/about&#x27;:&#x27;xxx&#x27;&#125;</span><br>  &#123;<br>    <span class="hljs-attr">path</span>: <span class="hljs-string">&#x27;/&#x27;</span>,<br>    <span class="hljs-attr">name</span>: <span class="hljs-string">&#x27;home&#x27;</span>,<br>    <span class="hljs-attr">component</span>: <span class="hljs-title class_">Home</span>,<br>  &#125;,<br>  &#123;<br>    <span class="hljs-attr">path</span>: <span class="hljs-string">&#x27;/about&#x27;</span>,<br>    <span class="hljs-attr">name</span>: <span class="hljs-string">&#x27;about&#x27;</span>,<br>    <span class="hljs-attr">component</span>: <span class="hljs-title class_">About</span>,<br>  &#125;,<br>];<br></code></pre></td></tr></table></figure>
+<figure class="highlight javascript"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs javascript"><span class="hljs-comment">//  /src/router/index.js</span><br><span class="hljs-keyword">const</span> routes = [ <span class="hljs-comment">// &#123;&#x27;/&#x27;: Home, &#x27;/about&#x27;:&#x27;xxx&#x27;&#125;</span><br>  &#123;<br>    <span class="hljs-attr">path</span>: <span class="hljs-string">&#x27;/&#x27;</span>,<br>    <span class="hljs-attr">name</span>: <span class="hljs-string">&#x27;home&#x27;</span>,<br>    <span class="hljs-attr">component</span>: <span class="hljs-title class_">Home</span>,<br>  &#125;,<br>  &#123;<br>    <span class="hljs-attr">path</span>: <span class="hljs-string">&#x27;/about&#x27;</span>,<br>    <span class="hljs-attr">name</span>: <span class="hljs-string">&#x27;about&#x27;</span>,<br>    <span class="hljs-attr">component</span>: <span class="hljs-title class_">About</span>,<br>  &#125;,<br>];<br></code></pre></div></td></tr></table></figure>
 
 
 <p>我们在构造函数里接收，并格式化<code>routes</code>。</p>
-<div class="code-wrapper"><pre><code class="hljs">//  /src/router/vue-router.js
+<div class="hljs code-wrapper"><pre><code class="hljs">//  /src/router/vue-router.js
 class Router &#123;
   constructor(&#123; routes &#125;) &#123;
     this.routeMap = routes.reduce((memo, current) =&gt;
@@ -372,7 +372,7 @@ class Router &#123;
 </code></pre></div>
 <p>上面的意思是：将值取出来（current）,将path赋给当前的memo，值为current.component。<br>打印后长这样<br><img src="/./routes1.png" srcset="/img/loading.gif" lazyload alt="router1"></p>
 <h4 id="渲染组件到-router-view-🚅"><a href="#渲染组件到-router-view-🚅" class="headerlink" title="渲染组件到 router-view 🚅"></a>渲染组件到 router-view 🚅</h4><p>我们先将路由固定为<code>home</code>页面</p>
-<div class="code-wrapper"><pre><code class="hljs"> //  /src/router/vue-router.js
+<div class="hljs code-wrapper"><pre><code class="hljs"> //  /src/router/vue-router.js
     class Router &#123;
       constructor(&#123; routes &#125;) &#123;
         this.routeMap = routes.reduce((memo, current) =&gt;
@@ -382,7 +382,7 @@ class Router &#123;
     &#125;
 </code></pre></div>
 <p>然后修改<code>router-view</code>来渲染。</p>
-<div class="code-wrapper"><pre><code class="hljs">  Vue.component(&#39;router-view&#39;, &#123;
+<div class="hljs code-wrapper"><pre><code class="hljs">  Vue.component(&#39;router-view&#39;, &#123;
     render(h) &#123; //  这个this是个代理对象
       return h(this.router.routeMap[this.router.route.current]);
     &#125;,
@@ -393,7 +393,7 @@ class Router &#123;
 <p>路由分为两种：一种是hash的<code>#</code> ，另一种是h5的API <code>/</code> .<br>hash不利已SEO优化，但是比较容易。</p>
 </blockquote>
 <p>监听<code>hashchange</code>事件，在改变的时候将路由改掉。</p>
-<div class="code-wrapper"><pre><code class="hljs">//  /src/router/vue-router.js
+<div class="hljs code-wrapper"><pre><code class="hljs">//  /src/router/vue-router.js
 class Router &#123;
   constructor(&#123; routes &#125;) &#123;
     this.routeMap = routes.reduce((memo, current) =&gt;
@@ -409,12 +409,12 @@ class Router &#123;
 &#125;
 </code></pre></div>
 <p>但是我们的this.route.current并不是一个响应式数据，改了值以后视图不会刷新。<br><strong>如何将不是响应式的数据变成响应式数据呢？</strong></p>
-<div class="code-wrapper"><pre><code class="hljs"> Vue.util.defineReactive(this, &#39;route&#39;, &#123; current: &#39;/&#39; &#125;);
+<div class="hljs code-wrapper"><pre><code class="hljs"> Vue.util.defineReactive(this, &#39;route&#39;, &#123; current: &#39;/&#39; &#125;);
 </code></pre></div>
 <p>上面代码的意思：就是给这个人（<code>this</code>）,定义一个这样的数据（<code>route</code>），值是（<code>&#123; current: &#39;/&#39; &#125;</code>） ；</p>
 <p>接下来我们来写 <code>mini vuex</code>;</p>
 <h2 id="Store-👳‍♀️"><a href="#Store-👳‍♀️" class="headerlink" title="Store 👳‍♀️"></a>Store 👳‍♀️</h2><p>store的模式跟router的套路一样。它 new 了一个 <code>Vuex.Store</code>导出后，放到<code>/main.js</code>里面来，<br>然后放到它的实例里面。让每个人都有this.$store。<br>让我们来写出我们的套路,（也是<del>写插件</del>的套路），新建<code>/src/store/vuex.js</code>,代码如下：</p>
-<div class="code-wrapper"><pre><code class="hljs">//  /src/store/vuex.js
+<div class="hljs code-wrapper"><pre><code class="hljs">//  /src/store/vuex.js
 let Vue;
 class Store &#123;
 &#125;
@@ -427,7 +427,7 @@ export default &#123;
 &#125;;
 </code></pre></div>
 <p>接下来我们需要接收一下new传进来的参数，并且给组件注入一个$store。</p>
-<div class="code-wrapper"><pre><code class="hljs">//  /src/store/vuex.js
+<div class="hljs code-wrapper"><pre><code class="hljs">//  /src/store/vuex.js
 let Vue;
 class Store &#123;
   constructor(options) &#123;
@@ -451,18 +451,18 @@ export default &#123;
 &#125;;
 </code></pre></div>
 <h3 id="开始共享我们的数据-👲"><a href="#开始共享我们的数据-👲" class="headerlink" title="开始共享我们的数据 👲"></a>开始共享我们的数据 👲</h3><p>我们先在<code>/src/store/index.js</code>,放个值。</p>
-<div class="code-wrapper"><pre><code class="hljs"> state: &#123;
+<div class="hljs code-wrapper"><pre><code class="hljs"> state: &#123;
     name: &#39;waterbang&#39;
   &#125;,
 </code></pre></div>
 <p>然后在<code>/src/store/index.js</code>,接收：</p>
-<div class="code-wrapper"><pre><code class="hljs">constructor(options) &#123;
+<div class="hljs code-wrapper"><pre><code class="hljs">constructor(options) &#123;
     this.state = options.state;
  &#125;
 </code></pre></div>
 <p>这样我们就可以共享数据，并在组件内使用<code> &#123;&#123;this.$store.state&#125;&#125;</code>取到数据了。</p>
 <h3 id="接着修改我们的数据-🧔"><a href="#接着修改我们的数据-🧔" class="headerlink" title="接着修改我们的数据 🧔"></a>接着修改我们的数据 🧔</h3><p>第一步，先在<code>/src/store/index.js</code>,里定义<code>mutations</code>里的函数:</p>
-<div class="code-wrapper"><pre><code class="hljs"> mutations: &#123;
+<div class="hljs code-wrapper"><pre><code class="hljs"> mutations: &#123;
     setUsername(state) &#123;
       state.name = &#39;water&#39;;
     &#125;,
@@ -470,13 +470,13 @@ export default &#123;
   
 </code></pre></div>
 <p>第二步，在<code>App.vue</code>里，定义<code>commit</code>：</p>
-<div class="code-wrapper"><pre><code class="hljs">  mounted() &#123;
+<div class="hljs code-wrapper"><pre><code class="hljs">  mounted() &#123;
     this.$store.commit(&#39;setUsername&#39;);
   &#125;,
   
 </code></pre></div>
 <p>第三步，由于commit是$store里的方法，我们接下来在我们的<code>vuex</code>里面来新建这个方法：</p>
-<div class="code-wrapper"><pre><code class="hljs">// /src/store/vuex.js
+<div class="hljs code-wrapper"><pre><code class="hljs">// /src/store/vuex.js
 class Store &#123;
   constructor(options) &#123;
     this.state = options.state;
@@ -490,7 +490,7 @@ class Store &#123;
 </code></pre></div>
 <p>但是，问题来了，到现在为止，我们刷新，视图还是不会变，这是因为我们的数据是直接传进来的,并不是响应式数据。</p>
 <p>我们可以采用 <code>new Vue</code> 创建一个实例来解决，将状态变成响应式的，如果数据更新，则视图刷新。<br>如果想要深入了解响应式原理看这位大佬写的<a target="_blank" rel="noopener" href="https://juejin.im/post/5d4ad8686fb9a06b2766b625">Vue原理解析（六）：全面深入理解响应式原理(上)-对象基础篇</a>。</p>
-<div class="code-wrapper"><pre><code class="hljs"> // /src/store/vuex.js
+<div class="hljs code-wrapper"><pre><code class="hljs"> // /src/store/vuex.js
 class Store &#123;
   constructor(options) &#123;
     this.vm = new Vue(&#123;
@@ -508,7 +508,7 @@ class Store &#123;
 <p>这样就实现了基本的<code>mutations</code>。</p>
 <h4 id="actions-🎅"><a href="#actions-🎅" class="headerlink" title="actions 🎅"></a>actions 🎅</h4><p>接下来轮到了<code>actions</code>。</p>
 <p>第一步先来增加一下<code>actions</code>里的方法。</p>
-<div class="code-wrapper"><pre><code class="hljs">actions: &#123;
+<div class="hljs code-wrapper"><pre><code class="hljs">actions: &#123;
     setUsername(&#123; commit &#125;) &#123;
       setTimeout(() =&gt; &#123;
         commit(&#39;setUsername&#39;);
@@ -518,12 +518,12 @@ class Store &#123;
   
 </code></pre></div>
 <p>然后到App.vue里修改一下内容。</p>
-<div class="code-wrapper"><pre><code class="hljs"> mounted() &#123;
+<div class="hljs code-wrapper"><pre><code class="hljs"> mounted() &#123;
     this.$store.dispatch(&#39;setUsername&#39;);
   &#125;,
 </code></pre></div>
 <p>最后我们到<code>/src/store/vuex.js</code>，里增加我们的<code>dispatch</code>方法。</p>
-<div class="code-wrapper"><pre><code class="hljs">class Store &#123;
+<div class="hljs code-wrapper"><pre><code class="hljs">class Store &#123;
   constructor(options) &#123;
     this.vm = new Vue(&#123;
       data: &#123; state: options.state &#125;,

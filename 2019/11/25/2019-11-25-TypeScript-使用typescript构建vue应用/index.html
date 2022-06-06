@@ -44,7 +44,7 @@
     
     
       
-      <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@10/styles/tomorrow-night-eighties.min.css" />
+      <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@10/styles/atom-one-dark.min.css" />
     
   
 
@@ -254,7 +254,7 @@
             
               <p class="note note-info">
                 
-                  本文最后更新于：a day ago
+                  本文最后更新于：a month ago
                 
               </p>
             
@@ -268,7 +268,7 @@
 <li><p>打开Settings.json</p>
 </li>
 <li><p>将下面代码复制进去</p>
-<div class="code-wrapper"><pre><code class="hljs">    //setting.json
+<div class="hljs code-wrapper"><pre><code class="hljs">    //setting.json
   &#123; 
    &quot;editor.codeActionsOnSave&quot;: &#123;
         &quot;source.fixAll.tslint&quot;: true
@@ -295,7 +295,7 @@
 </li>
 </ol>
 <h3 id="使用vue-cli创建项目"><a href="#使用vue-cli创建项目" class="headerlink" title="使用vue-cli创建项目"></a>使用vue-cli创建项目</h3><p> 选择typescript,其他按照需求来</p>
-<div class="code-wrapper"><pre><code class="hljs">  (*) Babel
+<div class="hljs code-wrapper"><pre><code class="hljs">  (*) Babel
   (*) TypeScript
   ( ) Progressive Web App (PWA) Support
   (*) Router
@@ -306,7 +306,7 @@
   ( ) E2E Testing
 </code></pre></div>
 <h4 id="献上代码规范"><a href="#献上代码规范" class="headerlink" title="献上代码规范"></a>献上代码规范</h4><p>直接复制下面代码粘贴到你的<code>tslint.json</code>就可以了，然后想深入了解可以看<a target="_blank" rel="noopener" href="https://ts.xcatliu.com/engineering/lint">官方tslint.json设置篇</a></p>
-<div class="code-wrapper"><pre><code class="hljs">&#123;
+<div class="hljs code-wrapper"><pre><code class="hljs">&#123;
   &quot;defaultSeverity&quot;: &quot;warning&quot;,
   &quot;extends&quot;: [
       &quot;tslint:recommended&quot;
@@ -362,7 +362,7 @@
 &#125;
 </code></pre></div>
 <h3 id="我们来实现todoItem"><a href="#我们来实现todoItem" class="headerlink" title="我们来实现todoItem"></a>我们来实现todoItem</h3><h4 id="抽离接口文件"><a href="#抽离接口文件" class="headerlink" title="抽离接口文件"></a>抽离接口文件</h4><p>接口是可以导出的，我们将接口抽离出来<br>在src目录下新建types文件夹，新建todo.ts文件，内容如下</p>
-<div class="code-wrapper"><pre><code class="hljs">export interface ITodo &#123;
+<div class="hljs code-wrapper"><pre><code class="hljs">export interface ITodo &#123;
     text: string;
     complete: boolean;
 &#125;
@@ -371,7 +371,7 @@
 <blockquote>
 <p>@Prop<br>  @PropSync<br>  @Model<br>  @Watch<br>  @Provide<br>  @Inject<br>  @ProvideReactive<br>  @InjectReactive<br>  @Emit<br>  @Ref<br>  @Component（由 vue-class-component提供）<br>  Mixins（mixins 由 vue-class-component 提供的名为helper的函数）</p>
 </blockquote>
-<h5 id="Home-vue应该像这样"><a href="#Home-vue应该像这样" class="headerlink" title="Home.vue应该像这样"></a>Home.vue应该像这样</h5><div class="code-wrapper"><pre><code class="hljs">/src/views/Home.vue
+<h5 id="Home-vue应该像这样"><a href="#Home-vue应该像这样" class="headerlink" title="Home.vue应该像这样"></a>Home.vue应该像这样</h5><div class="hljs code-wrapper"><pre><code class="hljs">/src/views/Home.vue
 &lt;template&gt;
   &lt;div&gt;
     &lt;ul&gt;
@@ -408,7 +408,7 @@ export default class Home extends Vue &#123;
 &#125;
 </code></pre></div>
 <p>我们先来看一下@Component里面是什么东西</p>
-<div class="code-wrapper"><pre><code class="hljs">import Vue, &#123; ComponentOptions &#125; from &#39;vue&#39;;
+<div class="hljs code-wrapper"><pre><code class="hljs">import Vue, &#123; ComponentOptions &#125; from &#39;vue&#39;;
 import &#123; VueClass &#125; from &#39;./declarations&#39;;
 export &#123; createDecorator, VueDecorator, mixins &#125; from &#39;./util&#39;;
 declare function Component&lt;V extends Vue&gt;(options: ComponentOptions&lt;V&gt; &amp; ThisType&lt;V&gt;): &lt;VC extends VueClass&lt;V&gt;&gt;(target: VC) =&gt; VC;
@@ -422,14 +422,14 @@ declare namespace Component &#123;
 export default Component;  //这里我们看得懂
 </code></pre></div>
 <p>他给我们吐出了一个Component，所以他其实干了这样事</p>
-<div class="code-wrapper"><pre><code class="hljs">export default &#123;
+<div class="hljs code-wrapper"><pre><code class="hljs">export default &#123;
     component:&#123;&#125;,
     props: &#123;&#125;,
     watch: &#123; &#125;
 &#125;
 </code></pre></div>
 <h5 id="在-x2F-components里新建TodoItem-tsx"><a href="#在-x2F-components里新建TodoItem-tsx" class="headerlink" title="在 &#x2F;components里新建TodoItem.tsx"></a>在 &#x2F;components里新建TodoItem.tsx</h5><p>内容如下</p>
-<div class="code-wrapper"><pre><code class="hljs">    /components/TodoItem.tsx
+<div class="hljs code-wrapper"><pre><code class="hljs">    /components/TodoItem.tsx
  import &#123; Component, Vue, Prop &#125; from &#39;vue-property-decorator&#39;;
  import &#123; ITodo &#125; from &#39;../types/todo&#39;;
  
@@ -446,7 +446,7 @@ export default Component;  //这里我们看得懂
  &#125;
 </code></pre></div>
 <p>让我们来认识一下这个语法糖</p>
-<div class="code-wrapper"><pre><code class="hljs">//原来的写法
+<div class="hljs code-wrapper"><pre><code class="hljs">//原来的写法
 props: &#123;
     item: &#123;
         type: ITodo,
@@ -459,7 +459,7 @@ props: &#123;
 </code></pre></div>
 <p>加<code>！</code>的意思是如果是空的，就不校验，代表这个值一定有。</p>
 <h5 id="Emit语法糖"><a href="#Emit语法糖" class="headerlink" title="@Emit语法糖"></a>@Emit语法糖</h5><p>以上代码实现父向子传递数据，和子触发父方法。<br>但是这样写不够好看，官方给我们提供了一个更加美观的装饰器(<code>Emit</code>)。将TodoItem.tsx内容改写如下</p>
-<div class="code-wrapper"><pre><code class="hljs">/src/components/TodoItem.tsx
+<div class="hljs code-wrapper"><pre><code class="hljs">/src/components/TodoItem.tsx
 import &#123; Component, Vue, Prop, Emit &#125; from &#39;vue-property-decorator&#39;;
 import &#123; ITodo &#125; from &#39;../types/todo&#39;;
 
@@ -478,12 +478,12 @@ export default class TodoItem extends Vue &#123;
 </code></pre></div>
 <p><code> @Emit(&#39;say&#39;)</code>传入的是父亲的方法，但是如果父亲的方法和要装饰的方法名称相同，里面的内容可以不传<code> @Emit()</code></p>
 <p>那传参怎么传呢？ 我们现在已经return出了一个<code>hello</code>，现在只需要改写一下父亲的方法</p>
-<div class="code-wrapper"><pre><code class="hljs">public say(msg: string): void &#123;
+<div class="hljs code-wrapper"><pre><code class="hljs">public say(msg: string): void &#123;
     console.log(msg);
   &#125;
 </code></pre></div>
 <p>这样就能接收到数据。</p>
-<h4 id="实现点击加1的操作"><a href="#实现点击加1的操作" class="headerlink" title="实现点击加1的操作"></a>实现点击加1的操作</h4><div class="code-wrapper"><pre><code class="hljs">/src/components/TodoItem.tsx
+<h4 id="实现点击加1的操作"><a href="#实现点击加1的操作" class="headerlink" title="实现点击加1的操作"></a>实现点击加1的操作</h4><div class="hljs code-wrapper"><pre><code class="hljs">/src/components/TodoItem.tsx
 import &#123; Component, Vue, Prop, Emit &#125; from &#39;vue-property-decorator&#39;;
 import &#123; ITodo &#125; from &#39;../types/todo&#39;;
 
@@ -508,7 +508,7 @@ export default class TodoItem extends Vue &#123;
 &#125;
 </code></pre></div>
 <h5 id="现在我想监控count变化"><a href="#现在我想监控count变化" class="headerlink" title="现在我想监控count变化"></a>现在我想监控count变化</h5><p>Watch装饰器可以满足我们的要求，但是它只能监控方法，或类。</p>
-<div class="code-wrapper"><pre><code class="hljs">/src/components/TodoItem.tsx
+<div class="hljs code-wrapper"><pre><code class="hljs">/src/components/TodoItem.tsx
 import &#123; Component, Vue, Prop, Emit, Watch &#125; from &#39;vue-property-decorator&#39;;
 import &#123; ITodo &#125; from &#39;../types/todo&#39;;
 
@@ -539,7 +539,7 @@ export default class TodoItem extends Vue &#123;
 &#125;
 </code></pre></div>
 <h4 id="加上vuex"><a href="#加上vuex" class="headerlink" title="加上vuex"></a>加上vuex</h4><h5 id="我们首先改写我们的Home-vue"><a href="#我们首先改写我们的Home-vue" class="headerlink" title="我们首先改写我们的Home.vue"></a>我们首先改写我们的Home.vue</h5><p>该写完应该像下面这样</p>
-<div class="code-wrapper"><pre><code class="hljs">/src/views/Home.vue
+<div class="hljs code-wrapper"><pre><code class="hljs">/src/views/Home.vue
 &lt;template&gt;
   &lt;div&gt;
     &lt;ul&gt;
@@ -577,7 +577,7 @@ export default class Home extends Vue &#123;
 &#125;
 &lt;/script&gt;
 </code></pre></div>
-<h5 id="编写-x2F-store-x2F-index-ts-文件"><a href="#编写-x2F-store-x2F-index-ts-文件" class="headerlink" title="编写&#x2F;store&#x2F;index.ts 文件"></a>编写&#x2F;store&#x2F;index.ts 文件</h5><div class="code-wrapper"><pre><code class="hljs">/src/store/index.ts
+<h5 id="编写-x2F-store-x2F-index-ts-文件"><a href="#编写-x2F-store-x2F-index-ts-文件" class="headerlink" title="编写&#x2F;store&#x2F;index.ts 文件"></a>编写&#x2F;store&#x2F;index.ts 文件</h5><div class="hljs code-wrapper"><pre><code class="hljs">/src/store/index.ts
 import Vue from &#39;vue&#39;;
 import Vuex from &#39;vuex&#39;;
 

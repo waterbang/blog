@@ -44,7 +44,7 @@
     
     
       
-      <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@10/styles/tomorrow-night-eighties.min.css" />
+      <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@10/styles/atom-one-dark.min.css" />
     
   
 
@@ -254,7 +254,7 @@
             
               <p class="note note-info">
                 
-                  本文最后更新于：a day ago
+                  本文最后更新于：a month ago
                 
               </p>
             
@@ -268,7 +268,7 @@
 <br>
 
 <h4 id="在CacheStorage中储存请求"><a href="#在CacheStorage中储存请求" class="headerlink" title="在CacheStorage中储存请求"></a>在CacheStorage中储存请求</h4><p>示例：</p>
-<div class="code-wrapper"><pre><code class="hljs">//serviceworker.js
+<div class="hljs code-wrapper"><pre><code class="hljs">//serviceworker.js
 self.addEventListener(&quot;install&quot;,function(event)&#123;
        event.waitUntil(
         caches.open(&quot;gih-cache&quot;).then(function(cache)&#123;
@@ -282,7 +282,7 @@ self.addEventListener(&quot;install&quot;,function(event)&#123;
 <br>
 
 <h4 id="在CacheStorage中取回请求"><a href="#在CacheStorage中取回请求" class="headerlink" title="在CacheStorage中取回请求"></a>在CacheStorage中取回请求</h4><p>示例：</p>
-<div class="code-wrapper"><pre><code class="hljs">//servicesocker.js  
+<div class="hljs code-wrapper"><pre><code class="hljs">//servicesocker.js  
 self.addEventListener(&quot;fetch&quot;,function(event)&#123;
     event.respondWith(
         fetch(event.request).catch(function()&#123;
@@ -292,7 +292,7 @@ self.addEventListener(&quot;fetch&quot;,function(event)&#123;
 &#125;);
 </code></pre></div>
 <p>新的命令：<br><code>match(request,[options])</code> :<br>第一个参数是需要在缓存中寻找的内容，可以是request对象或者URL。<br>第二个参数是非必传的选项对象。（比如 caches.match(event.request,{<code>ignoreSearch:true</code>} 这样将会匹配到请求的URL，同时忽略查询的参数。 ）<br><code>match</code>返回的是一个pormise，由<code>resolve</code>方法包裹的在缓存中找到的第一个response对象。当找不到任何内容时，它返回<br>undefined。<br>因为在找不到内容时，返回的pormise也不会进入<code>reject</code>,所以应该在返回之前判断是否找到匹配。</p>
-<div class="code-wrapper"><pre><code class="hljs">//就像这样
+<div class="hljs code-wrapper"><pre><code class="hljs">//就像这样
 caches.match(&quot;/login.png&quot;).then(function(response)&#123;
     if(response)&#123;
     return response;
@@ -302,7 +302,7 @@ caches.match(&quot;/login.png&quot;).then(function(response)&#123;
 <br>
 
 <h4 id="缓存多个请求"><a href="#缓存多个请求" class="headerlink" title="缓存多个请求"></a>缓存多个请求</h4><p>示例：</p>
-<div class="code-wrapper"><pre><code class="hljs">//servicesocker.js  
+<div class="hljs code-wrapper"><pre><code class="hljs">//servicesocker.js  
 const CACHE_NAME = &quot;gih-cache&quot;;
 const CACHED_URLS = [
     &quot;index-offline.html&quot;,
@@ -324,7 +324,7 @@ self.addEventListener(&quot;install&quot;,function(event)&#123;
 <br>
 
 <h4 id="接收每个请求"><a href="#接收每个请求" class="headerlink" title="接收每个请求"></a>接收每个请求</h4><p>示例：</p>
-<div class="code-wrapper"><pre><code class="hljs">//servicesocker.js  
+<div class="hljs code-wrapper"><pre><code class="hljs">//servicesocker.js  
 self.addEventListener(&quot;fetch&quot;,function(event)&#123;
     event.respondWith(
         fetch(event.request).catch(function()&#123;
@@ -343,7 +343,7 @@ self.addEventListener(&quot;fetch&quot;,function(event)&#123;
 <br>
 
 <h5 id="陷阱"><a href="#陷阱" class="headerlink" title="陷阱"></a><code>陷阱</code></h5><p>通过传递request对象（例如：caches.match(event.request)）来查找缓存中的条目有一个潜在的陷阱需要注意。<br>例如：您的网站有一个爆款活动，用户从a页面点击进入活动页面，<br>您缓存的内容长这样（<code>https://waterbang.top/activity.html?source=a</code>）。<br>用户从b页面点击进入，您的内容长这样（<code>https://waterbang.top/activity.html？id=2&amp;source=b</code>）。<br>如果您从a页面使用caches.match(event.request),尝试去寻找(<code>/activity.html?source=a</code>),会找不到任何内容。<br>如果你可以确保查询字符串对于页面内容不会产生影响。可以使用ignoreSearch选项，通知match() 方法忽略字符串查询。</p>
-<div class="code-wrapper"><pre><code class="hljs">caches.match(event.request,&#123;ignoreSearch: true&#125;)
+<div class="hljs code-wrapper"><pre><code class="hljs">caches.match(event.request,&#123;ignoreSearch: true&#125;)
 </code></pre></div>
 <p>这样会匹配到请求的URL的条目，同时会忽略查询参数。</p>
 <br>
@@ -353,7 +353,7 @@ self.addEventListener(&quot;fetch&quot;,function(event)&#123;
 
 <h3 id="缓存管理，清除旧缓存"><a href="#缓存管理，清除旧缓存" class="headerlink" title="缓存管理，清除旧缓存"></a>缓存管理，清除旧缓存</h3><p>我们不仅要创建缓存，还应该负责的处理不再需要的旧资源缓存<br>熟悉新的命令：<br><code>caches.delete(cacheName) </code>:<br>接收一个缓存名字做为参数，并删除对应的缓存。</p>
 <p><code>caches.keys()</code> :<br>该函数能获取所有的缓存名称，返回一个promise，成功的时候会得到一个包含缓存名称的数组。</p>
-<div class="code-wrapper"><pre><code class="hljs">caches.keys().then(function()&#123;
+<div class="hljs code-wrapper"><pre><code class="hljs">caches.keys().then(function()&#123;
     cacheName.forEach(function(cacheName)&#123;
         caches.delete(cacheName);
     &#125;)
@@ -362,7 +362,7 @@ self.addEventListener(&quot;fetch&quot;,function(event)&#123;
  <br>
  
 <h5 id="我们如何管理我们的缓存"><a href="#我们如何管理我们的缓存" class="headerlink" title="我们如何管理我们的缓存"></a>我们如何管理我们的缓存</h5><p> 任何时候，我们的应用最多需要两份缓存，一份是当前激活的service worker,<br> 另外一份是正在安装但是未激活的service worker（如果存在的话）。<br> 我们上面的缓存请求的代码已经完成了，接下来我们要实现：当新的service worker激活的时候，<br> 安全清除旧的service worker创建的缓存。<br> 我们可以在serviceworker.js文件底部，添加一个新的监听事件来完成 ——<code>activate</code>事件</p>
-<div class="code-wrapper"><pre><code class="hljs">//servicesocker.js  
+<div class="hljs code-wrapper"><pre><code class="hljs">//servicesocker.js  
 self.addEventListener(&quot;activate&quot;,function(event) &#123;
   event.waitUntil(
     caches.keys().then(function(cacheNames)&#123;
@@ -382,7 +382,7 @@ self.addEventListener(&quot;activate&quot;,function(event) &#123;
 <br>
 
 <h4 id="重用已缓存的响应"><a href="#重用已缓存的响应" class="headerlink" title="重用已缓存的响应"></a>重用已缓存的响应</h4><p>当我们每次去安装service worker的时候，都会去创建一份新的缓存。这样是低效的，我们如果可以在创建新缓存的时候，<br>先去遍历一遍不可变文件的列表，然后从现有的缓存中复制到新的缓存。</p>
-<div class="code-wrapper"><pre><code class="hljs">//serviceworker.js
+<div class="hljs code-wrapper"><pre><code class="hljs">//serviceworker.js
 const immutableRequests = [ //我们的不可变资源
   &quot;/fancy_header_background.mp4&quot;,
   &quot;vendor/bootstrap/3.3.7/bootstrap.min.css&quot;,
@@ -414,7 +414,7 @@ self.addEventListener(&quot;install&quot;,function(event)&#123;
 &#125;);
 </code></pre></div>
 <p>在大部分的service worker中，上面这种模式是适用的，但是作者给我们提供了一种更加方便的方法。</p>
-<div class="code-wrapper"><pre><code class="hljs">importScript(cache.adderall.js);
+<div class="hljs code-wrapper"><pre><code class="hljs">importScript(cache.adderall.js);
 self.addEventListener(&quot;install&quot;,function(event)&#123;
     event.waitUntil(
         caches.open(&quot;cache-v2&quot;).then(function(cache)&#123;
