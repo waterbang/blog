@@ -16,16 +16,16 @@
   <meta name="author" content="waterbang">
   <meta name="keywords" content="waterbang">
   
-    <meta name="description" content="前言增加一下关键字防止搜索不到，这篇教程能让有需要的人少几天的琢磨时间。 rust调用androidrust通过ffi调用kotlin主要的流程主要流程是通过全局缓存保存了android的环境变量。以此来实现在rust调用android方法。 尝试过的方法 直接通过rust闭包保存android环境，出现了方法不安全。✖️ 通过线程通信，结合闭包传递信息给fni方法。出现了线程通信不安全。✖️ 通">
+    <meta name="description" content="前言网上这方面比较缺少或者不完整，因此记录一下整个流程。增加一下关键字防止搜索不到，这篇教程能让有需要的人少几天的琢磨时间。 使用rust写安卓库rust调用androidrust通过ffi调用kotlin主要的流程主要流程是通过全局缓存保存了android的环境变量。以此来实现在rust调用android方法。 尝试过的方法 直接通过rust闭包保存android环境，出现了方法不安全。✖️ 通">
 <meta property="og:type" content="article">
 <meta property="og:title" content="2022-6-6-rust如何通过jni调用kotlin方法">
 <meta property="og:url" content="https://www.waterbang.top/2022/06/06/2022-6-6-rust%E5%A6%82%E4%BD%95%E9%80%9A%E8%BF%87jni%E8%B0%83%E7%94%A8kotlin%E6%96%B9%E6%B3%95/index.html">
 <meta property="og:site_name" content="waterbang">
-<meta property="og:description" content="前言增加一下关键字防止搜索不到，这篇教程能让有需要的人少几天的琢磨时间。 rust调用androidrust通过ffi调用kotlin主要的流程主要流程是通过全局缓存保存了android的环境变量。以此来实现在rust调用android方法。 尝试过的方法 直接通过rust闭包保存android环境，出现了方法不安全。✖️ 通过线程通信，结合闭包传递信息给fni方法。出现了线程通信不安全。✖️ 通">
+<meta property="og:description" content="前言网上这方面比较缺少或者不完整，因此记录一下整个流程。增加一下关键字防止搜索不到，这篇教程能让有需要的人少几天的琢磨时间。 使用rust写安卓库rust调用androidrust通过ffi调用kotlin主要的流程主要流程是通过全局缓存保存了android的环境变量。以此来实现在rust调用android方法。 尝试过的方法 直接通过rust闭包保存android环境，出现了方法不安全。✖️ 通">
 <meta property="og:locale" content="ch_CN">
 <meta property="og:image" content="https://www.waterbang.top/2022/06/06/2022-6-6-rust%E5%A6%82%E4%BD%95%E9%80%9A%E8%BF%87jni%E8%B0%83%E7%94%A8kotlin%E6%96%B9%E6%B3%95/banner.jpeg">
 <meta property="article:published_time" content="2022-06-06T13:45:50.000Z">
-<meta property="article:modified_time" content="2022-06-06T15:31:33.203Z">
+<meta property="article:modified_time" content="2022-06-06T15:36:56.393Z">
 <meta property="article:author" content="waterbang">
 <meta property="article:tag" content="rust">
 <meta name="twitter:card" content="summary_large_image">
@@ -213,7 +213,7 @@
       <i class="iconfont icon-clock-fill"></i>
       
       
-      53 分钟
+      54 分钟
     </span>
   
 
@@ -259,8 +259,8 @@
               </p>
             
             <div class="markdown-body">
-              <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>增加一下关键字防止搜索不到，这篇教程能让有需要的人少几天的琢磨时间。</p>
-<h3 id="rust调用android"><a href="#rust调用android" class="headerlink" title="rust调用android"></a>rust调用android</h3><h3 id="rust通过ffi调用kotlin"><a href="#rust通过ffi调用kotlin" class="headerlink" title="rust通过ffi调用kotlin"></a>rust通过ffi调用kotlin</h3><h3 id="主要的流程"><a href="#主要的流程" class="headerlink" title="主要的流程"></a>主要的流程</h3><p>主要流程是通过全局缓存保存了android的环境变量。以此来实现在rust调用android方法。</p>
+              <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>网上这方面比较缺少或者不完整，因此记录一下整个流程。<br>增加一下关键字防止搜索不到，这篇教程能让有需要的人少几天的琢磨时间。</p>
+<h3 id="使用rust写安卓库"><a href="#使用rust写安卓库" class="headerlink" title="使用rust写安卓库"></a>使用rust写安卓库</h3><h3 id="rust调用android"><a href="#rust调用android" class="headerlink" title="rust调用android"></a>rust调用android</h3><h3 id="rust通过ffi调用kotlin"><a href="#rust通过ffi调用kotlin" class="headerlink" title="rust通过ffi调用kotlin"></a>rust通过ffi调用kotlin</h3><h3 id="主要的流程"><a href="#主要的流程" class="headerlink" title="主要的流程"></a>主要的流程</h3><p>主要流程是通过全局缓存保存了android的环境变量。以此来实现在rust调用android方法。</p>
 <h3 id="尝试过的方法"><a href="#尝试过的方法" class="headerlink" title="尝试过的方法"></a>尝试过的方法</h3><ol>
 <li>直接通过rust闭包保存android环境，出现了方法不安全。✖️</li>
 <li>通过线程通信，结合闭包传递信息给fni方法。出现了线程通信不安全。✖️</li>

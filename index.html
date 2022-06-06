@@ -204,7 +204,7 @@
       <p class="index-excerpt">
         <a href="/2022/06/06/2022-6-6-rust%E5%A6%82%E4%BD%95%E9%80%9A%E8%BF%87jni%E8%B0%83%E7%94%A8kotlin%E6%96%B9%E6%B3%95/" target="_self">
           
-          前言增加一下关键字防止搜索不到，这篇教程能让有需要的人少几天的琢磨时间。 rust调用androidrust通过ffi调用kotlin主要的流程主要流程是通过全局缓存保存了android的环境变量。以此来实现在rust调用android方法。 尝试过的方法 直接通过rust闭包保存android环境，出现了方法不安全。✖️ 通过线程通信，结合闭包传递信息给fni方法。出现了线程通信不安全。✖️ 通
+          前言网上这方面比较缺少或者不完整，因此记录一下整个流程。增加一下关键字防止搜索不到，这篇教程能让有需要的人少几天的琢磨时间。 使用rust写安卓库rust调用androidrust通过ffi调用kotlin主要的流程主要流程是通过全局缓存保存了android的环境变量。以此来实现在rust调用android方法。 尝试过的方法 直接通过rust闭包保存android环境，出现了方法不安全。✖️ 通
         </a>
       </p>
 
