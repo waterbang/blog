@@ -69,6 +69,7 @@ function op_rust_to_js_buffer() {
 }
 ```
 
+[Gaubee](https://github.com/Gaubee):
 
 ```javascript
 /// 两个核心函数
@@ -133,4 +134,65 @@ class MyModule {
     };
   }
 }
+```
+
+整理了一下：
+
+```typescript
+export function loopRustBuffer() {
+  return {
+    async next() {
+      let buffer = null;
+      try {
+        buffer = await Deno.core.opAsync("op_rust_to_js_buffer");
+        const string = new TextDecoder().decode(new Uint8Array(buffer));
+        console.log("rust send message to deno_js:", string);
+        return {
+          value: string,
+          done: false,
+        };
+      } catch (e) {
+        return {
+          value: buffer,
+          done: true,
+        };
+      }
+    },
+    return() {
+      /// Here you can manually control the asynchronous iterator to be "aborted" and released
+    },
+    throw() {
+      /// Here you can manually control the asynchronous iterator to be "aborted" and released
+    },
+  };
+}
+
+async *waterOverflow() {
+    do {
+        const buffer = await loopRustBuffer().next();
+        /// Data-based specification to define when to end
+        // if (isWaitingData > this.hightWaterMark) {
+        //   console.log(
+        //     "waterOverflow====>",
+        //     isWaitingData,
+        //     hightWaterMark
+        //   );
+        //   break;
+        // }
+        if (!buffer.done) {
+          this.isWaitingData++;
+        }
+        yield buffer;
+        /// Here is the point, use do-while instead of finally, you can avoid stack overflow。
+    } while (true);
+  }
+
+(async function () {
+  for await (let num of waterOverflow()) {
+    if (!num.done) {
+      console.log("webView.waterOverflow:", num);
+    }
+  }
+})();
+
 ```
