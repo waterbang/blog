@@ -4,6 +4,25 @@
   
   
   <entry>
+    <title>2022年终总结</title>
+    <link href="/2022/12/31/2022%E5%B9%B4%E7%BB%88%E6%80%BB%E7%BB%93/"/>
+    <url>/2022/12/31/2022%E5%B9%B4%E7%BB%88%E6%80%BB%E7%BB%93/</url>
+    
+    <content type="html"><![CDATA[<h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>嘻嘻哈哈呼呼！2022过完了，这一年的收获非常多，进了一家好公司，小伙伴们都很好，学习到很多的东西。<br>今年又是个老光棍了，好好学习天天向上，好好学习天天向上。</p><h3 id="工作内容"><a href="#工作内容" class="headerlink" title="工作内容"></a>工作内容</h3><p>今年在编程上学到了许多东西，代码主线也没有在写业务了，所以对我个人半桶水的编程技巧是很大的考验，也是机遇。（还好有超级大佬和小伙伴们带一下，不然问题有点大</p><p>今年的工作主要是开源工作：</p><p><img src="/./github-commit.png" alt="git commit"></p><p>主要工作内容围绕着<a href="https://github.com/BioforestChain/plaoc">plaoc</a>和<a href="https://github.com/BioforestChain/bfsa-std">bfsa-std</a>。</p><blockquote><p>总结：做着做着不会了问大佬。</p></blockquote><p>在这里打个广告哈哈，想要加入这个<a href="https://github.com/HighValyrian">HighValyrian</a>的留言你的github ID 哈。(求求了</p><p>这个代码组织没有啥实际作用，可以搞一些学习时候的笔记，或者是喜欢的项目，不会对个人产生任何约束。</p><h3 id="学习内容"><a href="#学习内容" class="headerlink" title="学习内容"></a>学习内容</h3><p>今年的编程技巧是没有较大的提升的，主要提升的还是代码的认知能力和整体的逻辑判断。<br>也学习了很多新语言，比如说<code>rust</code>,<code>kotlin</code>,<code>swift</code>。也是一些跟项目相关的语言，ios并不熟悉，可以理解为只会<code>hello world</code>水平。</p><p>最难的是<code>rust</code>部分，接触的主要是<code>deno</code>源码和<code>rusty_v8</code>，后者是rust对v8的rust绑定。也是学得一知半解，针对这部分的优化，还需要好好学习一下。</p><h3 id="硬件内容"><a href="#硬件内容" class="headerlink" title="硬件内容"></a>硬件内容</h3><p>今年我的电烙铁就修了一个冰箱😂，还是买好的电路板回来换了一下，十分简单的操作，装了一波哈哈哈，（人在某个方面总是爱装的，难受）。</p><p>今年最主要的是搞了个树莓派，8g的，用来当作个人服务器，不然每次都租太贵了，主要用来开我的世界服务器（要一起玩的留言，服务器没什么人的，也可以直接加QQ群：711745023）。还有就是用来做文件存储。挂载一些服务。</p><p><img src="/./pi.jpg" alt="树莓派"></p><h3 id="书籍阅读"><a href="#书籍阅读" class="headerlink" title="书籍阅读"></a>书籍阅读</h3><p>今年读的内容偏小说向，把余华的小说基本都读完了，太丧的一本《第七天》就没读了，膈应人啊哥哥们。<br>最喜欢的是《活着》，《文城》，《兄弟》也还行，不过我前半段看不太懂，年代距离有点久远，无法理解一些行为和事件，还有最近在看的刘慈欣的《三体》三部，现在才看到第二部。</p><p>阎真的《沧浪之海》看了一半，看不下去了，不喜欢这种等级森严，处处小心的官场氛围。</p><blockquote><p>总结：今年没有读程序方面的书籍，都在看小说，小说能让人快速体验别人的一生，体验作者的第二人格。</p></blockquote><h3 id="叽里呱啦"><a href="#叽里呱啦" class="headerlink" title="叽里呱啦"></a>叽里呱啦</h3><p>写总结，是为了让自己明白，这一年在干嘛，有没有浪费了一年，等我50岁再来看，不知道会咋样，突然想给自己写份遗嘱了，现在写会不会🥺太早了，在线问，挺急的。</p>]]></content>
+    
+    
+    
+    <tags>
+      
+      <tag>年度总结</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
     <title>Deno uses OP to call javaScript</title>
     <link href="/2022/08/10/Deno_uses_OP_to_call_javaScript/"/>
     <url>/2022/08/10/Deno_uses_OP_to_call_javaScript/</url>
