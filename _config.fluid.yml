@@ -940,10 +940,10 @@ links:
       avatar: '/img/zhengyang.png'
     }
     - {
-      title: '大厂刷题网',
-      intro: '提供真实大厂面试题库',
-      link: 'https://codebuff.94ant.com/',
-      avatar: '/img/codeBuff.png'
+      title: 'xing的站点',
+      intro: '一个啥都会的大佬',
+      link: 'www.javaxing.com',
+      avatar: '/img/javaxing.jpeg'
     }
 
   # 当成员头像加载失败时，替换为指定图片
