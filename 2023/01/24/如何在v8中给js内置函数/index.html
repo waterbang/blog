@@ -1,0 +1,583 @@
+
+
+<!DOCTYPE html>
+<html lang="ch_CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/apple-touch-icon.png">
+  <link rel="icon" href="/img/favicon.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="waterbang">
+  <meta name="keywords" content="waterbang">
+  
+    <meta name="description" content="前言在v8中，内置的函数可以理解为在VM运行的一些内置的代码块，他们处在相同的作用域下。如果您有ios(android)的javascriptCore(interface&#x2F;eventjavascript&#x2F;more)注入经验，或者其他的一些比较干净的js运行时的操作经验，您可以认为它们两者的共性是相同的。那么建议您阅读英文的官方文档，本片文档仅用作个人入门使用。 v8内置选择V8 的内置函数可以使用">
+<meta property="og:type" content="article">
+<meta property="og:title" content="如何在v8中给js内置函数">
+<meta property="og:url" content="https://www.waterbang.top/2023/01/24/%E5%A6%82%E4%BD%95%E5%9C%A8v8%E4%B8%AD%E7%BB%99js%E5%86%85%E7%BD%AE%E5%87%BD%E6%95%B0/index.html">
+<meta property="og:site_name" content="waterbang">
+<meta property="og:description" content="前言在v8中，内置的函数可以理解为在VM运行的一些内置的代码块，他们处在相同的作用域下。如果您有ios(android)的javascriptCore(interface&#x2F;eventjavascript&#x2F;more)注入经验，或者其他的一些比较干净的js运行时的操作经验，您可以认为它们两者的共性是相同的。那么建议您阅读英文的官方文档，本片文档仅用作个人入门使用。 v8内置选择V8 的内置函数可以使用">
+<meta property="og:locale" content="ch_CN">
+<meta property="og:image" content="https://www.waterbang.top/2023/01/24/%E5%A6%82%E4%BD%95%E5%9C%A8v8%E4%B8%AD%E7%BB%99js%E5%86%85%E7%BD%AE%E5%87%BD%E6%95%B0/header.png">
+<meta property="article:published_time" content="2023-01-24T04:56:20.000Z">
+<meta property="article:modified_time" content="2023-01-24T06:59:32.298Z">
+<meta property="article:author" content="waterbang">
+<meta property="article:tag" content="waterbang">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://www.waterbang.top/2023/01/24/%E5%A6%82%E4%BD%95%E5%9C%A8v8%E4%B8%AD%E7%BB%99js%E5%86%85%E7%BD%AE%E5%87%BD%E6%95%B0/header.png">
+  
+  
+  <title>如何在v8中给js内置函数 🏮 waterbang</title>
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4/dist/css/bootstrap.min.css" />
+
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/github-markdown-css@4/github-markdown.min.css" />
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hint.css@2/hint.min.css" />
+
+  
+    
+    
+      
+      <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@10/styles/atom-one-dark.min.css" />
+    
+  
+
+  
+    <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3/dist/jquery.fancybox.min.css" />
+  
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_ba1fz6golrf.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+<!-- 自定义样式保持在最底部 -->
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    var CONFIG = {"hostname":"www.waterbang.top","root":"/","version":"1.8.14","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"right","visible":"hover","icon":"🍦"},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"copy_btn":true,"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"baidu":"58e161bf4b884b2aa577f323f137ac0f","google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+<meta name="generator" content="Hexo 6.1.0"></head>
+
+
+<body>
+  <header style="height: 70vh;">
+    <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>waterbang</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                Startseite
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                Archiv
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                Etiketten
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                Über mich
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/links/">
+                <i class="iconfont icon-link-fill"></i>
+                Weblinks
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              &nbsp;<i class="iconfont icon-search"></i>&nbsp;
+            </a>
+          </li>
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">&nbsp;<i
+                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+    <div class="banner" id="banner" parallax=true
+         style="background: url('/img/post-banner.jpg') no-repeat center center;
+           background-size: cover;">
+      <div class="full-bg-img">
+        <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+          <div class="page-header text-center fade-in-up">
+            <span class="h2" id="subtitle" title="如何在v8中给js内置函数">
+              
+            </span>
+
+            
+              <div class="mt-3">
+  
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-author" aria-hidden="true"></i>
+      waterbang
+    </span>
+  
+  
+    <span class="post-meta">
+      <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+      <time datetime="2023-01-24 12:56" pubdate>
+        January 24, 2023 pm
+      </time>
+    </span>
+  
+</div>
+
+<div class="mt-1">
+  
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-chart"></i>
+      5.9k 字
+    </span>
+  
+
+  
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-clock-fill"></i>
+      
+      
+      49 分钟
+    </span>
+  
+
+  
+  
+    
+      <!-- 不蒜子统计文章PV -->
+      <span id="busuanzi_container_page_pv" style="display: none">
+        <i class="iconfont icon-eye" aria-hidden="true"></i>
+        <span id="busuanzi_value_page_pv"></span> 次
+      </span>
+    
+  
+</div>
+
+            
+          </div>
+
+          
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="d-none d-lg-block col-lg-2"></div>
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div class="py-5" id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">如何在v8中给js内置函数</h1>
+            
+              <p class="note note-info">
+                
+                  本文最后更新于：a few seconds ago
+                
+              </p>
+            
+            <div class="markdown-body">
+              <h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>在v8中，内置的函数可以理解为在VM运行的一些内置的代码块，他们处在相同的作用域下。<br>如果您有ios(android)的<code>javascriptCore(interface/eventjavascript/more)</code>注入经验，或者其他的一些比较干净的<code>js</code>运行时的操作经验，您可以认为它们两者的共性是相同的。<br>那么建议您阅读英文的官方文档，本片文档仅用作个人入门使用。</p>
+<h3 id="v8内置选择"><a href="#v8内置选择" class="headerlink" title="v8内置选择"></a>v8内置选择</h3><p>V8 的内置函数可以使用多种不同的方法来实现（每种方法都有不同的权衡）：</p>
+<ol>
+<li>Platform-dependent assembly language : 可以非常高效，但需要手动移植到所有平台并且难以维护。</li>
+<li>C++：在风格上与运行时函数非常相似，可以使用 V8 强大的运行时功能，但通常不适合性能敏感的领域。</li>
+<li>JavaScript：简洁易读的代码，访问快速内在函数，但频繁使用慢速运行时调用，由于类型污染导致不可预测的性能，以及围绕（复杂且不明显的）JS 语义的微妙问题。</li>
+<li>CodeStubAssembler：提供非常接近汇编语言的高效低级功能，同时保持平台独立性和可读性。</li>
+</ol>
+<blockquote>
+<p>Platform-dependent assembly language 即平台相关的汇编语言，<code>CodeStubAssembler</code>是更好的选择。</p>
+</blockquote>
+<h3 id="C"><a href="#C" class="headerlink" title="C++"></a>C++</h3><p><code>C++</code>的内置操作可以让您在<code>js</code>调用<code>C++</code>函数并且让<code>js</code>的对象能在<code>C++</code>上调用，适合C++程序员。</p>
+<h4 id="前言-1"><a href="#前言-1" class="headerlink" title="前言"></a>前言</h4><ul>
+<li>一个 isolate 是一个有自己堆的 VM 实例（从rusty_v8中能看到对isolate的操作）。</li>
+<li>本地句柄是指向对象的指针。所有 V8 对象都使用句柄​​访问。由于 V8 垃圾收集器的工作方式，它们是必需的。</li>
+<li>句柄范围可以被认为是任意数量句柄的容器。处理完句柄后，无需单独删除每个句柄，只需删除它们的作用域即可。</li>
+<li>上下文是一个执行环境，它允许独立的、不相关的 JavaScript 代码在 V8 的单个实例中运行。您必须明确指定要运行任何 JavaScript 代码的上下文。</li>
+</ul>
+<blockquote>
+<p>句柄包含一些持久化，不可复制之类的句柄，每次我们在js中new一个对象，就会在当前VM创建一个句柄。</p>
+</blockquote>
+<h4 id="inject-hello-world"><a href="#inject-hello-world" class="headerlink" title="inject hello world"></a>inject hello world</h4><p>直接来看这段代码，代码选自官方文档：<br><a target="_blank" rel="noopener" href="https://chromium.googlesource.com/v8/v8/+/branch-heads/6.8/samples/hello-world.cc">https://chromium.googlesource.com/v8/v8/+/branch-heads/6.8/samples/hello-world.cc</a></p>
+<figure class="highlight c++"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs C++"><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;stdio.h&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;stdlib.h&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;string.h&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&quot;include/libplatform/libplatform.h&quot;</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&quot;include/v8.h&quot;</span></span><br><span class="hljs-function"><span class="hljs-type">int</span> <span class="hljs-title">main</span><span class="hljs-params">(<span class="hljs-type">int</span> argc, <span class="hljs-type">char</span>* argv[])</span> </span>&#123;<br>  <span class="hljs-comment">// 初始化 V8。</span><br>  v8::V8::<span class="hljs-built_in">InitializeICUDefaultLocation</span>(argv[<span class="hljs-number">0</span>]);<br>  v8::V8::<span class="hljs-built_in">InitializeExternalStartupData</span>(argv[<span class="hljs-number">0</span>]);<br>  std::unique_ptr&lt;v8::Platform&gt; platform = v8::platform::<span class="hljs-built_in">NewDefaultPlatform</span>();<br>  v8::V8::<span class="hljs-built_in">InitializePlatform</span>(platform.<span class="hljs-built_in">get</span>());<br>  v8::V8::<span class="hljs-built_in">Initialize</span>();<br>  <span class="hljs-comment">// 创建一个新的 Isolate 并使其成为当前 Isolate。</span><br>  v8::Isolate::CreateParams create_params;<br>  create_params.array_buffer_allocator =<br>      v8::ArrayBuffer::Allocator::<span class="hljs-built_in">NewDefaultAllocator</span>();<br>  v8::Isolate* isolate = v8::Isolate::<span class="hljs-built_in">New</span>(create_params);<br>  &#123;<br>    v8::<span class="hljs-function">Isolate::Scope <span class="hljs-title">isolate_scope</span><span class="hljs-params">(isolate)</span></span>;<br>    <span class="hljs-comment">// 创建一个堆栈分配的句柄范围。</span><br>    <span class="hljs-function">v8::HandleScope <span class="hljs-title">handle_scope</span><span class="hljs-params">(isolate)</span></span>;<br>    <span class="hljs-comment">// 创建新的上下文.</span><br>    v8::Local&lt;v8::Context&gt; context = v8::Context::<span class="hljs-built_in">New</span>(isolate);<br>    <span class="hljs-comment">// 输入编译和运行 hello world 脚本的上下文。</span><br>    v8::<span class="hljs-function">Context::Scope <span class="hljs-title">context_scope</span><span class="hljs-params">(context)</span></span>;<br>    <span class="hljs-comment">// 创建一个包含 JavaScript 源代码的字符串。</span><br>    v8::Local&lt;v8::String&gt; source =<br>        v8::String::<span class="hljs-built_in">NewFromUtf8</span>(isolate, <span class="hljs-string">&quot;&#x27;Hello&#x27; + &#x27;, World!&#x27;&quot;</span>,<br>                                v8::NewStringType::kNormal)<br>            .<span class="hljs-built_in">ToLocalChecked</span>();<br>    <span class="hljs-comment">// 编译源代码。</span><br>    v8::Local&lt;v8::Script&gt; script =<br>        v8::Script::<span class="hljs-built_in">Compile</span>(context, source).<span class="hljs-built_in">ToLocalChecked</span>();<br>    <span class="hljs-comment">//运行脚本得到结果。</span><br>    v8::Local&lt;v8::Value&gt; result = script-&gt;<span class="hljs-built_in">Run</span>(context).<span class="hljs-built_in">ToLocalChecked</span>();<br>    <span class="hljs-comment">// 将结果转换为 UTF8 字符串并打印。</span><br>    v8::<span class="hljs-function">String::Utf8Value <span class="hljs-title">utf8</span><span class="hljs-params">(isolate, result)</span></span>;<br>    <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;%s\n&quot;</span>, *utf8);<br>  &#125;<br>  <span class="hljs-comment">// 处理 isolate 并拆除 V8。</span><br>  isolate-&gt;<span class="hljs-built_in">Dispose</span>();<br>  v8::V8::<span class="hljs-built_in">Dispose</span>();<br>  v8::V8::<span class="hljs-built_in">ShutdownPlatform</span>();<br>  <span class="hljs-keyword">delete</span> create_params.array_buffer_allocator;<br>  <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<br>&#125;<br></code></pre></div></td></tr></table></figure>
+
+<p>从上述的代码就能清楚的看到，本地句柄的创建，本地句柄保存在堆栈中，并在调用适当的析构函数时被删除。这些句柄的生命周期由句柄范围决定，通常在函数调用开始时创建。当 handle 作用域被删除时，垃圾收集器可以自由地释放 handle 作用域中 handle 先前引用的那些对象，前提是它们不再可以从 JavaScript 或其他 handle 访问。</p>
+<h3 id="CodeStubAssembler"><a href="#CodeStubAssembler" class="headerlink" title="CodeStubAssembler"></a>CodeStubAssembler</h3><p>V8 的 CodeStubAssembler 是一个定制的、与平台无关的汇编器，它提供低级原语作为对汇编的精简抽象，但也提供了一个广泛的高级功能库。</p>
+<h4 id="编写内置的CSA"><a href="#编写内置的CSA" class="headerlink" title="编写内置的CSA"></a>编写内置的CSA</h4><p>我们将编写一个简单的 CSA 内置函数，它接受一个参数，并返回它是否代表数字42。内置函数通过将其安装在Math对象上而暴露给 JS。</p>
+<p>这个例子演示了：</p>
+<ul>
+<li>创建一个带有 JavaScript 链接的内置 CSA，它可以像 JS 函数一样被调用。</li>
+<li>使用 CSA 实现简单逻辑：Smi 和堆编号处理、条件以及对 TFS 内置函数的调用。</li>
+<li>使用 CSA 变量。</li>
+<li>Math在对象上安装内置的 CSA 。</li>
+</ul>
+<h4 id="声明-MathIs42"><a href="#声明-MathIs42" class="headerlink" title="声明 MathIs42"></a>声明 <code>MathIs42</code></h4><p>在<code>src/builtins/builtins-definitions.h</code>声明如下内容：</p>
+<figure class="highlight c++"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs C++"><span class="hljs-meta">#<span class="hljs-keyword">define</span> BUILTIN_LIST_BASE(CPP, API, TFJ, TFC, TFS, TFH, ASM, DBG)              \</span><br><span class="hljs-meta">  <span class="hljs-comment">// […snip…]</span></span><br>  <span class="hljs-built_in">TFJ</span>(MathIs42, <span class="hljs-number">1</span>, kX)                                                         \<br>  <span class="hljs-comment">// […snip…]</span><br></code></pre></div></td></tr></table></figure>
+
+<p>可以看到内置函数在BUILTIN_LIST_BASE宏中声明，BUILTIN_LIST_BASE采用几个不同的宏来表示不同的内置类型。</p>
+<ul>
+<li>TFJ：JavaScript 链接。</li>
+<li>TFS：存根链接。</li>
+<li>TFC：需要自定义接口描述符的内置存根链接（例如，如果参数未标记或需要在特定寄存器中传递）。</li>
+<li>TFH：用于 IC 处理程序的内置专用存根链接。</li>
+</ul>
+<blockquote>
+<p>注意：如果定义了多个内置函数，需要注意他们的顺序。</p>
+</blockquote>
+<h4 id="定义MathIs42"><a href="#定义MathIs42" class="headerlink" title="定义MathIs42"></a>定义MathIs42</h4><p>在<code>src/builtins/builtins-math-gen.cc</code>编写如下内容，您也可以查看<code>src/builtins/builtins-*-gen.cc</code>这些文件，会找到很多熟悉的身影。</p>
+<figure class="highlight c++"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs C++"><span class="hljs-comment">// TF_BUILTIN是一个方便的宏，用于创建给定对象的一个新子类</span><br><span class="hljs-comment">//幕后的汇编程序。</span><br><span class="hljs-built_in">TF_BUILTIN</span>(MathIs42, MathBuiltinsAssembler) &#123;<br>  <span class="hljs-comment">//加载当前函数上下文(每个存根的隐式参数)和X参数。注意，我们可以通过名称来引用参数.</span><br>  Node* <span class="hljs-type">const</span> context = <span class="hljs-built_in">Parameter</span>(Descriptor::kContext);<br>  Node* <span class="hljs-type">const</span> x = <span class="hljs-built_in">Parameter</span>(Descriptor::kX);<br><br>  <span class="hljs-comment">//在这一点上，x基本上可以是任何东西- Smi, HeapNumber，undefined，或任何其他任意JS对象。</span><br>  <span class="hljs-comment">// 让我们调用ToNumber，将x转换为我们可以使用的数字。</span><br>  <span class="hljs-comment">// CallBuiltin可以方便地调用任何CSA内置。</span><br>  Node* <span class="hljs-type">const</span> number = <span class="hljs-built_in">CallBuiltin</span>(Builtins::kToNumber, context, x);<br><br>  <span class="hljs-comment">//创建一个CSA变量来存储结果值。</span><br>  <span class="hljs-comment">//变量是kTagged，因为我们将只存储带标记的指针。</span><br>  <span class="hljs-built_in">VARIABLE</span>(var_result, MachineRepresentation::kTagged);<br><br>  <span class="hljs-comment">//我们需要定义两个标签作为跳转目标。</span><br>  <span class="hljs-function">Label <span class="hljs-title">if_issmi</span><span class="hljs-params">(<span class="hljs-keyword">this</span>)</span>, <span class="hljs-title">if_isheapnumber</span><span class="hljs-params">(<span class="hljs-keyword">this</span>)</span>, <span class="hljs-title">out</span><span class="hljs-params">(<span class="hljs-keyword">this</span>)</span></span>;<br><br>  <span class="hljs-comment">// ToNumber总是返回一个数字。我们需要区分Smis和堆号——在这里，我们检查number是否为Smi，并且是有条件跳转到相应的标签。</span><br>  <span class="hljs-built_in">Branch</span>(<span class="hljs-built_in">TaggedIsSmi</span>(number)， &amp;if_issmi， &amp;if_isheapnumber);<br><br>  <span class="hljs-comment">//绑定标签开始为它生成代码。</span><br>  <span class="hljs-built_in">BIND</span>(&amp;if_issmi);<br>  ｛<br>    <span class="hljs-comment">// SelectBooleanConstant返回JS的true/false值</span><br>    <span class="hljs-comment">//传递的条件是否为true/false。结果必然是我们的</span><br>    <span class="hljs-comment">// var_result变量，然后无条件跳转到out标签。</span><br>    var_result.<span class="hljs-built_in">Bind</span>(<span class="hljs-built_in">SelectBooleanConstant</span>(<span class="hljs-built_in">SmiEqual</span>(number, <span class="hljs-built_in">SmiConstant</span>(<span class="hljs-number">42</span>))));<br>    <span class="hljs-built_in">Goto</span>(&amp;out);<br>  &#125;<br><br>  <span class="hljs-built_in">BIND</span>(&amp;if_isheapnumber);<br>  ｛<br>    <span class="hljs-comment">// 只是为了确保ToNumber只能返回Smi或堆号。我们在这里添加一个断言，验证number实际上是堆号。</span><br>    <span class="hljs-built_in">CSA_ASSERT</span>(<span class="hljs-keyword">this</span>, <span class="hljs-built_in">IsHeapNumber</span>(number));<br>    <span class="hljs-comment">// 堆数包装浮点值。我们需要显式地提取此值，执行浮点比较。</span><br>    <span class="hljs-comment">// 然后再次绑定基于结果的var_result。</span><br>    Node* <span class="hljs-type">const</span> value = <span class="hljs-built_in">LoadHeapNumberValue</span>(number);<br>    Node* <span class="hljs-type">const</span> is_42 = <span class="hljs-built_in">Float64Equal</span>(value, <span class="hljs-built_in">Float64Constant</span>(<span class="hljs-number">42</span>));<br>    var_result.<span class="hljs-built_in">Bind</span>(<span class="hljs-built_in">SelectBooleanConstant</span>(is_42));<br>    <span class="hljs-built_in">Goto</span>(&amp;out);<br>  &#125;<br><br>  <span class="hljs-built_in">BIND</span>(&amp;out);<br>  &#123;<br>    Node* <span class="hljs-type">const</span> result = var_result.<span class="hljs-built_in">value</span>();<br>    <span class="hljs-built_in">CSA_ASSERT</span>(<span class="hljs-keyword">this</span>, <span class="hljs-built_in">IsBoolean</span>(result));<br>    <span class="hljs-built_in">Return</span>(result);<br>  &#125;<br>&#125;<br> <br></code></pre></div></td></tr></table></figure>
+
+<h4 id="设置到js中"><a href="#设置到js中" class="headerlink" title="设置到js中"></a>设置到js中</h4><p>像Math这样的内置对象主要是在<code>src/bootstrapper.cc</code>中设置的。代码如下:</p>
+ <figure class="highlight c++"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs C++"><span class="hljs-comment">// 设置Math的现有代码，为了清晰起见包含在这里。</span><br>Handle&lt;JSObject&gt; math = factory-&gt;<span class="hljs-built_in">NewJSObject</span>(cons, TENURED);<br>JSObject::<span class="hljs-built_in">AddProperty</span>(global, name, math, DONT_ENUM);<br><span class="hljs-comment">// […snip…]</span><br><span class="hljs-built_in">SimpleInstallFunction</span>(math, <span class="hljs-string">&quot;is42&quot;</span>, Builtins::kMathIs42, <span class="hljs-number">1</span>, <span class="hljs-literal">true</span>);<span class="hljs-comment">//++</span><br></code></pre></div></td></tr></table></figure>
+
+<p> 当设置完之后，就可以编译调用了。</p>
+ <figure class="highlight shell"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs shell"><span class="hljs-meta prompt_"> $ </span><span class="language-bash">out/debug/d8</span><br><span class="hljs-meta prompt_">d8&gt; </span><span class="language-bash">Math.is42(42);</span><br>true<br><span class="hljs-meta prompt_">d8&gt; </span><span class="language-bash">Math.is42(<span class="hljs-string">&#x27;42.0&#x27;</span>);</span><br>true<br><span class="hljs-meta prompt_">d8&gt; </span><span class="language-bash">Math.is42(<span class="hljs-literal">true</span>);</span><br>false<br><span class="hljs-meta prompt_">d8&gt; </span><span class="language-bash">Math.is42(&#123; valueOf: () =&gt; 42 &#125;);</span><br>true<br></code></pre></div></td></tr></table></figure>
+
+<p> 使用 TFS 构建内置函数是在编译时生成的，并包含在 V8 快照中，不会在isolate中占用大量的空间。</p>
+<h4 id="为我们的内置函数编写测试代码"><a href="#为我们的内置函数编写测试代码" class="headerlink" title="为我们的内置函数编写测试代码"></a>为我们的内置函数编写测试代码</h4><p> 在<code>test/cctest/compiler/test-run-stubs.cc</code>编写内容如下：</p>
+ <figure class="highlight c++"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs C++"><span class="hljs-built_in">TEST</span>(MathIsHeapNumber42) &#123;<br>  HandleAndZoneScope scope;<br>  Isolate* isolate = scope.<span class="hljs-built_in">main_isolate</span>();<br>  Heap* heap = isolate-&gt;<span class="hljs-built_in">heap</span>();<br>  Zone* zone = scope.<span class="hljs-built_in">main_zone</span>();<br><br>  <span class="hljs-function">StubTester <span class="hljs-title">tester</span><span class="hljs-params">(isolate, zone, Builtins::kMathIs42)</span></span>;<br>  Handle&lt;Object&gt; result1 = tester.<span class="hljs-built_in">Call</span>(<span class="hljs-built_in">Handle</span>&lt;Smi&gt;(Smi::<span class="hljs-built_in">FromInt</span>(<span class="hljs-number">0</span>), isolate));<br>  <span class="hljs-built_in">CHECK</span>(result1-&gt;<span class="hljs-built_in">BooleanValue</span>());<br>&#125;<br></code></pre></div></td></tr></table></figure>
+
+<h3 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h3><ol>
+<li><a target="_blank" rel="noopener" href="https://v8.dev/docs">https://v8.dev/docs</a></li>
+</ol>
+<h3 id="叽里呱啦"><a href="#叽里呱啦" class="headerlink" title="叽里呱啦"></a>叽里呱啦</h3><p>欲吊文章太守，仍歌杨柳春风。<br>「西江月·平山堂」<br>苏轼</p>
+
+            </div>
+            <hr>
+            <div>
+              <div class="post-metas mb-3">
+                
+                
+              </div>
+              
+                <p class="note note-warning">
+                  
+                    本博客所有文章除特别声明外，均采用 <a target="_blank" href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh" rel="nofollow noopener noopener">CC BY-SA 4.0 协议</a> ，转载请注明出处！
+                  
+                </p>
+              
+              
+                <div class="post-prevnext">
+                  <article class="post-prev col-6">
+                    
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2022/12/31/%E9%81%97%E5%98%B1/">
+                        <span class="hidden-mobile">遗嘱</span>
+                        <span class="visible-mobile">Nächster</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+              <!-- Comments -->
+              <article class="comments" id="comments" lazyload>
+                
+                  
+                
+                
+  <script type="text/javascript">
+    Fluid.utils.loadComments('#comments', function() {
+      var light = 'github-light';
+      var dark = 'github-dark';
+      var schema = document.documentElement.getAttribute('data-user-color-scheme');
+      if (schema === 'dark') {
+        schema = dark;
+      } else {
+        schema = light;
+      }
+      window.UtterancesThemeLight = light;
+      window.UtterancesThemeDark = dark;
+      var s = document.createElement('script');
+      s.setAttribute('src', 'https://utteranc.es/client.js');
+      s.setAttribute('repo', 'waterbang/Comment');
+      s.setAttribute('issue-term', 'pathname');
+      
+      s.setAttribute('label', 'utterances');
+      
+      s.setAttribute('theme', schema);
+      s.setAttribute('crossorigin', 'anonymous');
+      document.getElementById('comments').appendChild(s);
+    })
+  </script>
+  <noscript>Please enable JavaScript to view the comments</noscript>
+
+
+              </article>
+            
+          </article>
+        </div>
+      </div>
+    </div>
+    
+      <div class="d-none d-lg-block col-lg-2 toc-container" id="toc-ctn">
+        <div id="toc">
+  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;TOC</p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+      </div>
+    
+  </div>
+</div>
+
+<!-- Custom -->
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">Suchen</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v"
+                 for="local-search-input">Stichwort</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+
+    
+  </main>
+
+  <footer class="text-center mt-5 py-3">
+  <div class="footer-content">
+     <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a>
+  </div>
+  
+
+  
+  <!-- 备案信息 -->
+  <div class="beian">
+    <span>
+      <a href="http://beian.miit.gov.cn/" target="_blank" rel="nofollow noopener">
+        闽ICP备18009949号-2
+      </a>
+    </span>
+    
+  </div>
+
+
+  
+</footer>
+
+
+  <!-- SCRIPTS -->
+  
+  <script  src="https://cdn.jsdelivr.net/npm/nprogress@0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/nprogress@0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js" ></script>
+<script  src="https://cdn.jsdelivr.net/npm/bootstrap@4/dist/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+<!-- Plugins -->
+
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+  
+
+
+
+  
+    <script  src="https://cdn.jsdelivr.net/npm/tocbot@4/dist/tocbot.min.js" ></script>
+  
+  
+    <script  src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3/dist/jquery.fancybox.min.js" ></script>
+  
+  
+    <script  src="https://cdn.jsdelivr.net/npm/anchor-js@4/anchor.min.js" ></script>
+  
+  
+    <script defer src="https://cdn.jsdelivr.net/npm/clipboard@2/dist/clipboard.min.js" ></script>
+  
+
+
+
+  <script defer src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" ></script>
+
+
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/typed.js@2/lib/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var title = document.getElementById('subtitle').title;
+      
+        typing(title);
+      
+    })(window, document);
+  </script>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+    <!-- Baidu Analytics -->
+    <script defer>
+      var _hmt = _hmt || [];
+      (function () {
+        var hm = document.createElement("script");
+        hm.src = "https://hm.baidu.com/hm.js?58e161bf4b884b2aa577f323f137ac0f";
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(hm, s);
+      })();
+    </script>
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+
+
+
+
+<!-- 主题的启动项 保持在最底部 -->
+<script  src="/js/boot.js" ></script>
+
+
+</body>
+</html>
