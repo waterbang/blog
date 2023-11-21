@@ -38,6 +38,10 @@ opensea: [https://opensea.io/waterbang](https://opensea.io/waterbang)
 
 ### 参与过的开源项目 🫓
 
+#### dweb-browser
+
+[dweb_browser](https://github.com/BioforestChain/dweb_browser) 一个分布式跨平台的浏览器。
+
 #### pkgm
 
 [pkgm](https://github.com/BioforestChain/pkgm) 是一套用于 BFS 生态下应用开发的工具集。 目前主要提供了@bfchain/pkgm-bfsp和@bfchain/pkgm-bfsw，分别用于管理单项目和多项目的开发。

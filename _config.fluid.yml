@@ -918,7 +918,7 @@ links:
     - {
       title: 'CTF Tools',
       intro: 'ctf资源库',
-      link: 'http://www.ctftools.com/down/',
+      link: 'http://www.ctftools.com',
       avatar: '/img/favicon.png'
     }
     - {
@@ -928,10 +928,16 @@ links:
       avatar: '/img/bfchain.png'
     }
     - {
-      title: '表严肃',
-      intro: '前端视频教程',
-      link: 'https://biaoyansu.com/',
-      avatar: '/img/biaoyansu_logo.svg'
+      title: '分布式浏览器',
+      intro: '区块链基建项目',
+      link: 'https://docs.dweb-browser.org/',
+      avatar: 'https://docs.dweb-browser.org/logo.svg'
+    }
+    - {
+      title: '技术领路人',
+      intro: 'guabee',
+      link: 'https://gaubee.com/',
+      avatar: 'https://gaubee.com/img/head.webp'
     }
     - {
       title: 'zhengyang',
