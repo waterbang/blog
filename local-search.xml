@@ -4,6 +4,25 @@
   
   
   <entry>
+    <title>2023年终总结</title>
+    <link href="/2023/12/25/2023%E5%B9%B4%E7%BB%88%E6%80%BB%E7%BB%93/"/>
+    <url>/2023/12/25/2023%E5%B9%B4%E7%BB%88%E6%80%BB%E7%BB%93/</url>
+    
+    <content type="html"><![CDATA[<h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>写于 2023 年的圣诞节，冷飕飕。今年的主题是！ “生活一分钟，快乐 60 秒！”</p><blockquote><p><a href="https://www.bilibili.com/video/BV1vb4y137gh/?spm_id_from=333.999.0.0">2023 发生了什么</a>。</p></blockquote><h2 id="2023-🎄-🧧"><a href="#2023-🎄-🧧" class="headerlink" title="2023 🎄 🧧"></a>2023 🎄 🧧</h2><p>2023 世界大事频发。</p><ol><li>巴以冲突继续激化，以色列进攻加沙地带，哈马斯奋起反抗，巴勒斯坦人民的一生浓缩成了 出生-成为哈马斯-战死。</li><li>小日本排放核废水。</li><li>俄乌冲突第二年。</li><li>重大电信诈骗。</li><li>GPT 诞生，生成式 AI(AIGC)大规模爆发，个人生产力大幅提高。（首页的图片就是 ai 生成），在基础科学停滞的年代，这是令人非常兴奋的！</li></ol><h3 id="代码相关"><a href="#代码相关" class="headerlink" title="代码相关"></a>代码相关</h3><p>感觉今年的代码量少了，但是也精简了，总体的质量有在提升。但是宏观来说没有一些突破。</p><p>今年的业余时间搞代码的时间都少了，做的一些项目也都弃坑当中，从今年的 commit 可以看出，如果放假了基本没有在打代码了，不利于进步。（工作日没提交是难题卡住了）</p><p><img src="/./git.png" alt="commit"></p><p>今年是出成果的一年，gaubee 带领整个团队并推动了整个项目的更新。 <a href="https://github.com/BioforestChain/dweb_browser">dweb_browser</a>，这整个项目的 commit<br>来到了 3000 个的关口。</p><p>陆续发布了 ios 和 Android，接下来桌面端也将迁移到<code>kotlin multiplatform</code>，不过坑确实多，很多库现在还不完善，需要依靠 rust 去实现，或者做一些牺牲。</p><p>新的一年还得继续耕耘，为了区块链基础建设平台努力。</p><h3 id="书籍相关"><a href="#书籍相关" class="headerlink" title="书籍相关"></a>书籍相关</h3><p>读完了 《生死疲劳》，《我的地坛》，《理想国》,《两晋悲歌》只读完了第一本 3 分之一。<br>今年读的书也比较少，生死疲劳还是在公司举行读书会读的，不然回到宿舍都懒得读。</p><blockquote><p>不行了以后约会得约在图书馆，不然一躺玩手机，一天就过去了。</p></blockquote><h3 id="运动相关"><a href="#运动相关" class="headerlink" title="运动相关"></a>运动相关</h3><p>今年参加了人生第一次半程马拉松。嘎嘎，跑了 2 小时 31 分钟，差一点就进预定目标的 20 小时 30 分钟了，人太多了，尿尿还要排半天，我裤带关键时候还解开解半天难受。</p><h3 id="生活相关"><a href="#生活相关" class="headerlink" title="生活相关"></a>生活相关</h3><p>今年养了兔子，去抓了 4 只，只剩两只，小灰和小白。他两正好是一公一母，生了好几胎。嘎嘎。最近担心生太多了，公的放一边母的放一边，导致公的那边非常不安分。天天上演二人转！</p><p><img src="/./tz.jpg" alt="兔子"></p><p>也陆续噶了几只，有一只蛋蛋掉了噶了，一只蛋蛋掉了，这次狠心剪掉，现在还是活蹦乱跳的，小小灰也拉肚子，吃药没作用噶了，新的一年希望小兔子们也平平安安的。</p><h2 id="2024-taget"><a href="#2024-taget" class="headerlink" title="2024 taget"></a>2024 taget</h2><ol><li>希望公司的项目能够闭环，整个基础建设能全部完成，需要做的工作内容还要很多，希望能在2024年接入网络层，变成完全体。</li><li>爬一座名山。</li><li>参加一次半马。</li><li>多读点书。</li><li>输出一些分支项目，期望能有所盈利。（有好的想法，欢迎联系我）</li><li>在代码架构的编写中有所精进，而不是像无头苍蝇。 需要输出自己的见解。</li><li>开始kmp&#x2F;ios，swiftUI&#x2F;compose，ArkUI的编写，或者达到能写的程度。</li><li>天天开心。</li></ol><h3 id="结束语"><a href="#结束语" class="headerlink" title="结束语"></a>结束语</h3><p>奇怪了，今年咋感觉没干啥就过去了，2333.</p><p>分享一个，用到最好用的ai <a href="https://www.coze.com/space/7314878406460653569/bot/7314879339231723521">coze</a></p><p>公告：</p><div class="hljs code-wrapper"><pre><code class="hljs">敬以《地球OL》所有玩家，2023赛季即将结束，请所有玩家做好迎接2024新赛季的准备。</code></pre></div>]]></content>
+    
+    
+    
+    <tags>
+      
+      <tag>年度总结</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
     <title>如何编写符合用户直觉的rust代码</title>
     <link href="/2023/07/12/%E5%A6%82%E4%BD%95%E7%BC%96%E5%86%99%E7%AC%A6%E5%90%88%E7%94%A8%E6%88%B7%E7%9B%B4%E8%A7%89%E7%9A%84rust%E4%BB%A3%E7%A0%81/"/>
     <url>/2023/07/12/%E5%A6%82%E4%BD%95%E7%BC%96%E5%86%99%E7%AC%A6%E5%90%88%E7%94%A8%E6%88%B7%E7%9B%B4%E8%A7%89%E7%9A%84rust%E4%BB%A3%E7%A0%81/</url>
