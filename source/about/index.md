@@ -24,37 +24,36 @@ opensea: [https://opensea.io/waterbang](https://opensea.io/waterbang)
 
 ### 技术内容 💻
 
-主力语言：`typescript`,`javascript`
-了解：`python`,`rust`,`PHP`,`bash`
+主力语言：`typescript`,`kotlin`,`rust`
+了解：~~`python`~~,~~`PHP`~~,~~`bash`~~
 
-技术栈：`VUE`,`Node.js`,`React-native`,`tensorflow.js`,`Google插件`，`PWA`,`微信小程序`
-
+#`deno`,`kotlin multiplatform`,`VUE`,`Node.js`,`electron`,~~`React-native`~~,~~`tensorflow.js`~~,`Google插件`，`PWA`,~~`微信小程序`~~
 
 ### 出售的网站 💰
 
-  `bfchain.work`
+~~`bfchain.work`~~
 
-  `bfchain.shop`
+~~`bfchain.shop`~~
 
 ### 参与过的开源项目 🫓
 
+具体点击 [GitHub](https://github.com/waterbang)
+
 #### dweb-browser
 
-[dweb_browser](https://github.com/BioforestChain/dweb_browser) 一个分布式跨平台的浏览器。
+[dweb_browser](https://github.com/BioforestChain/dweb_browser) 一个分布式跨平台的浏览器,区块链基建项目，可部署应用，具体查看[开发者文档](https://docs.dweb-browser.org/)。
 
 #### pkgm
 
-[pkgm](https://github.com/BioforestChain/pkgm) 是一套用于 BFS 生态下应用开发的工具集。 目前主要提供了@bfchain/pkgm-bfsp和@bfchain/pkgm-bfsw，分别用于管理单项目和多项目的开发。
+[pkgm](https://github.com/BioforestChain/pkgm) 是一套用于 BFS 生态下应用开发的工具集。 目前主要提供了@bfchain/pkgm-bfsp 和@bfchain/pkgm-bfsw，分别用于管理单项目和多项目的开发。
 
 #### lin-cms-koa
 
 [Lin-CMS](https://github.com/waterbang/lin-cms-koa) 是林间有风团队经过大量项目实践所提炼出的一套内容管理系统框架。Lin-CMS 可以有效的帮助开发者提高 CMS 的开发效率。
 
-
 #### object-deteation-train
 
-[object-deteation-train](https://github.com/waterbang/object-deteation-train),对象检测模型训练,此仓库已经集成了cocoAPI，Object deteationAPI等环境，让您开箱即用。
-
+[object-deteation-train](https://github.com/waterbang/object-deteation-train),对象检测模型训练,此仓库已经集成了 cocoAPI，Object deteationAPI 等环境，让您开箱即用。
 
 ### 联系方式 📫.
 
