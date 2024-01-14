@@ -171,11 +171,11 @@ async *waterOverflow() {
     do {
         const buffer = await loopRustBuffer().next();
         /// Data-based specification to define when to end
-        // if (isWaitingData > this.hightWaterMark) {
+        // if (isWaitingData > this.heightWaterMark) {
         //   console.log(
         //     "waterOverflow====>",
         //     isWaitingData,
-        //     hightWaterMark
+        //     heightWaterMark
         //   );
         //   break;
         // }

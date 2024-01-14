@@ -191,7 +191,7 @@ BaseController代码如下
 
 #### 2. 先登录一下让服务端记录token
 
-<img src="./login.png" width="700" hight="300">
+<img src="./login.png" width="700" height="300">
 
 <br>
 
@@ -206,14 +206,14 @@ BaseController代码如下
 
 ##### 进行加密
 
-<img src="./jiami.png" width="700" hight="300">
+<img src="./jiami.png" width="700" height="300">
 
 
 <br>
 
 #### 4. 将加密获得的sign拿到header中
 
-<img src="./headers.png" width="700" hight="300">
+<img src="./headers.png" width="700" height="300">
 
 <br>
 
