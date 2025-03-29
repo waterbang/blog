@@ -915,41 +915,41 @@ links:
   # 友链的成员项
   # Member item of page
   items:
-    - {
+  - {
+      title: 'guabee',
+      intro: '技术领路人，技术天花板,一个走路都在学习的人。',
+      link: 'https://gaubee.com/',
+      avatar: 'https://gaubee.com/img/head.webp'
+    }
+  - {
+      title: 'kingsword09',
+      intro: '开源热心群众！热爱专研的高手。',
+      link: 'https://blog.kingsword.tech/',
+      avatar: 'https://blog.kingsword.tech/favicon.png'
+    }
+  - {
+      title: 'javaxing',
+      intro: '一个啥都会的大佬',
+      link: 'http://www.javaxing.com',
+      avatar: '/img/javaxing.jpeg'
+    }
+  - {
       title: 'CTF Tools',
       intro: 'ctf资源库',
       link: 'http://www.ctftools.com',
       avatar: '/img/favicon.png'
     }
-    - {
-      title: '生物链林',
-      intro: '立刻加入成为区块链共识节点',
-      link: 'https://www.bfchain.com/home',
-      avatar: '/img/bfchain.png'
+  - {
+      title: 'do-we-web',
+      intro: '这是一个开放,进步，现代化的组织，如果您的兴趣爱好是编写代码，加入我们。',
+      link: 'https://github.com/dweb-channel',
+      avatar: 'https://avatars.githubusercontent.com/u/116732176?s=200&v=4'
     }
-    - {
-      title: '分布式浏览器',
+  - {
+      title: 'DWeb Browser',
       intro: '区块链基建项目',
       link: 'https://docs.dweb-browser.org/',
       avatar: 'https://docs.dweb-browser.org/logo.svg'
-    }
-    - {
-      title: '技术领路人',
-      intro: 'guabee',
-      link: 'https://gaubee.com/',
-      avatar: 'https://gaubee.com/img/head.webp'
-    }
-    - {
-      title: 'zhengyang',
-      intro: '小伙伴的站点',
-      link: 'http://zyloufeng.top',
-      avatar: '/img/zhengyang.png'
-    }
-    - {
-      title: 'xing的站点',
-      intro: '一个啥都会的大佬',
-      link: 'www.javaxing.com',
-      avatar: '/img/javaxing.jpeg'
     }
 
   # 当成员头像加载失败时，替换为指定图片
