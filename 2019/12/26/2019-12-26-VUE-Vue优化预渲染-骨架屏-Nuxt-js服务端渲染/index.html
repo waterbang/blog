@@ -1,0 +1,641 @@
+
+
+<!DOCTYPE html>
+<html lang="ch_CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/apple-touch-icon.png">
+  <link rel="icon" href="/img/favicon.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="waterbang">
+  <meta name="keywords" content="waterbang">
+  
+    <meta name="description" content="1.   编码优化🍞1.data属性data中的数据都会增加getter和setter，会收集对应的watcher，只有在需要渲染到视图上的才需要放到data，所以没有响应式需求的不要放在data里面。defineReactive源码 123456789101112131415161718192021222324252627282930313233343536373839404142434445">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Vue优化预渲染,骨架屏,Nuxt.js服务端渲染">
+<meta property="og:url" content="https://www.waterbang.top/2019/12/26/2019-12-26-VUE-Vue%E4%BC%98%E5%8C%96%E9%A2%84%E6%B8%B2%E6%9F%93-%E9%AA%A8%E6%9E%B6%E5%B1%8F-Nuxt-js%E6%9C%8D%E5%8A%A1%E7%AB%AF%E6%B8%B2%E6%9F%93/index.html">
+<meta property="og:site_name" content="waterbang">
+<meta property="og:description" content="1.   编码优化🍞1.data属性data中的数据都会增加getter和setter，会收集对应的watcher，只有在需要渲染到视图上的才需要放到data，所以没有响应式需求的不要放在data里面。defineReactive源码 123456789101112131415161718192021222324252627282930313233343536373839404142434445">
+<meta property="og:locale" content="ch_CN">
+<meta property="og:image" content="https://www.waterbang.top/2019/12/26/2019-12-26-VUE-Vue%E4%BC%98%E5%8C%96%E9%A2%84%E6%B8%B2%E6%9F%93-%E9%AA%A8%E6%9E%B6%E5%B1%8F-Nuxt-js%E6%9C%8D%E5%8A%A1%E7%AB%AF%E6%B8%B2%E6%9F%93/nuxt-emoji.png">
+<meta property="article:published_time" content="2019-12-26T04:50:14.000Z">
+<meta property="article:modified_time" content="2024-12-21T11:43:23.158Z">
+<meta property="article:author" content="waterbang">
+<meta property="article:tag" content="VUE">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://www.waterbang.top/2019/12/26/2019-12-26-VUE-Vue%E4%BC%98%E5%8C%96%E9%A2%84%E6%B8%B2%E6%9F%93-%E9%AA%A8%E6%9E%B6%E5%B1%8F-Nuxt-js%E6%9C%8D%E5%8A%A1%E7%AB%AF%E6%B8%B2%E6%9F%93/nuxt-emoji.png">
+  
+  
+  <title>Vue优化预渲染,骨架屏,Nuxt.js服务端渲染 🏮 waterbang</title>
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4/dist/css/bootstrap.min.css" />
+
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/github-markdown-css@4/github-markdown.min.css" />
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hint.css@2/hint.min.css" />
+
+  
+    
+    
+      
+      <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@10/styles/atom-one-dark.min.css" />
+    
+  
+
+  
+    <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3/dist/jquery.fancybox.min.css" />
+  
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_ba1fz6golrf.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+<!-- 自定义样式保持在最底部 -->
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    var CONFIG = {"hostname":"www.waterbang.top","root":"/","version":"1.8.14","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"right","visible":"hover","icon":"🍦"},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"copy_btn":true,"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"baidu":"58e161bf4b884b2aa577f323f137ac0f","google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+
+<body>
+  <header style="height: 70vh;">
+    <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>waterbang</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                Startseite
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                Archiv
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                Etiketten
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                Über mich
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/links/">
+                <i class="iconfont icon-link-fill"></i>
+                Weblinks
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              &nbsp;<i class="iconfont icon-search"></i>&nbsp;
+            </a>
+          </li>
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">&nbsp;<i
+                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+    <div class="banner" id="banner" parallax=true
+         style="background: url('/img/post-banner.jpg') no-repeat center center;
+           background-size: cover;">
+      <div class="full-bg-img">
+        <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+          <div class="page-header text-center fade-in-up">
+            <span class="h2" id="subtitle" title="Vue优化预渲染,骨架屏,Nuxt.js服务端渲染">
+              
+            </span>
+
+            
+              <div class="mt-3">
+  
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-author" aria-hidden="true"></i>
+      waterbang
+    </span>
+  
+  
+    <span class="post-meta">
+      <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+      <time datetime="2019-12-26 12:50" pubdate>
+        December 26, 2019 pm
+      </time>
+    </span>
+  
+</div>
+
+<div class="mt-1">
+  
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-chart"></i>
+      11k 字
+    </span>
+  
+
+  
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-clock-fill"></i>
+      
+      
+      89 分钟
+    </span>
+  
+
+  
+  
+    
+      <!-- 不蒜子统计文章PV -->
+      <span id="busuanzi_container_page_pv" style="display: none">
+        <i class="iconfont icon-eye" aria-hidden="true"></i>
+        <span id="busuanzi_value_page_pv"></span> 次
+      </span>
+    
+  
+</div>
+
+            
+          </div>
+
+          
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="d-none d-lg-block col-lg-2"></div>
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div class="py-5" id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">Vue优化预渲染,骨架屏,Nuxt.js服务端渲染</h1>
+            
+              <p class="note note-info">
+                
+                  本文最后更新于：5 hours ago
+                
+              </p>
+            
+            <div class="markdown-body">
+              <h2 id="1-编码优化🍞"><a href="#1-编码优化🍞" class="headerlink" title="1.   编码优化🍞"></a>1.   编码优化🍞</h2><h3 id="1-data属性"><a href="#1-data属性" class="headerlink" title="1.data属性"></a>1.data属性</h3><p>data中的数据都会增加getter和setter，会收集对应的watcher，只有在需要渲染到视图上的才需要放到data，所以没有响应式需求的不要放在data里面。<br>defineReactive源码</p>
+<figure class="highlight javascript"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs javascript"><span class="hljs-comment">//在Object上定义反应属性。</span><br><span class="hljs-keyword">function</span> <span class="hljs-title function_">defineReactive</span> (<br>  obj,<br>  key,<br>  val,<br>  customSetter,<br>  shallow<br>) &#123;<br>  <span class="hljs-keyword">var</span> dep = <span class="hljs-keyword">new</span> <span class="hljs-title class_">Dep</span>(); <br><br>  <span class="hljs-keyword">var</span> property = <span class="hljs-title class_">Object</span>.<span class="hljs-title function_">getOwnPropertyDescriptor</span>(obj, key);<br>  <span class="hljs-keyword">if</span> (property &amp;&amp; property.<span class="hljs-property">configurable</span> === <span class="hljs-literal">false</span>) &#123;<br>    <span class="hljs-keyword">return</span><br>  &#125;<br>  <span class="hljs-keyword">var</span> getter = property &amp;&amp; property.<span class="hljs-property">get</span>;<br>  <span class="hljs-keyword">if</span> (!getter &amp;&amp; <span class="hljs-variable language_">arguments</span>.<span class="hljs-property">length</span> === <span class="hljs-number">2</span>) &#123;<br>    val = obj[key];<br>  &#125;<br>  <span class="hljs-keyword">var</span> setter = property &amp;&amp; property.<span class="hljs-property">set</span>;<br><br>  <span class="hljs-keyword">var</span> childOb = !shallow &amp;&amp; <span class="hljs-title function_">observe</span>(val);<br>  <span class="hljs-title class_">Object</span>.<span class="hljs-title function_">defineProperty</span>(obj, key, &#123;<br>    <span class="hljs-attr">enumerable</span>: <span class="hljs-literal">true</span>,<br>    <span class="hljs-attr">configurable</span>: <span class="hljs-literal">true</span>,<br>    <span class="hljs-attr">get</span>: <span class="hljs-keyword">function</span> <span class="hljs-title function_">reactiveGetter</span> () &#123; <br>      <span class="hljs-keyword">var</span> value = getter ? getter.<span class="hljs-title function_">call</span>(obj) : val;<br>      <span class="hljs-keyword">if</span> (<span class="hljs-title class_">Dep</span>.<span class="hljs-property">target</span>) &#123; <span class="hljs-comment">//把watcher放到target里</span><br>        dep.<span class="hljs-title function_">depend</span>();  <span class="hljs-comment">//依赖搜集</span><br>        <span class="hljs-keyword">if</span> (childOb) &#123; <span class="hljs-comment">//如果有子集</span><br>          childOb.<span class="hljs-property">dep</span>.<span class="hljs-title function_">depend</span>(); <span class="hljs-comment">//也塞进去，目的是兼容数组。</span><br>          <span class="hljs-keyword">if</span> (<span class="hljs-title class_">Array</span>.<span class="hljs-title function_">isArray</span>(value)) &#123;<br>            <span class="hljs-title function_">dependArray</span>(value);<br>          &#125;<br>        &#125;<br>      &#125;<br>      <span class="hljs-keyword">return</span> value<br>    &#125;,<br>    <span class="hljs-attr">set</span>: <span class="hljs-keyword">function</span> <span class="hljs-title function_">reactiveSetter</span> (newVal) &#123; <span class="hljs-comment">//每次更新的时候</span><br>      <span class="hljs-keyword">var</span> value = getter ? getter.<span class="hljs-title function_">call</span>(obj) : val;<br>      <span class="hljs-comment">/* eslint-disable no-self-compare */</span><br>      <span class="hljs-keyword">if</span> (newVal === value || (newVal !== newVal &amp;&amp; value !== value)) &#123;<br>        <span class="hljs-keyword">return</span><br>      &#125;<br>      <span class="hljs-comment">/* eslint-enable no-self-compare */</span><br>      <span class="hljs-keyword">if</span> (process.<span class="hljs-property">env</span>.<span class="hljs-property">NODE_ENV</span> !== <span class="hljs-string">&#x27;production&#x27;</span> &amp;&amp; customSetter) &#123;<br>        <span class="hljs-title function_">customSetter</span>();<br>      &#125;<br>      <span class="hljs-keyword">if</span> (setter) &#123;<br>        setter.<span class="hljs-title function_">call</span>(obj, newVal);<br>      &#125; <span class="hljs-keyword">else</span> &#123;<br>        val = newVal;<br>      &#125;<br>      childOb = !shallow &amp;&amp; <span class="hljs-title function_">observe</span>(newVal);<br>      dep.<span class="hljs-title function_">notify</span>(); <span class="hljs-comment">//通知watcher去更新，执行watcher的update</span><br>    &#125;<br>  &#125;);<br>&#125;<br></code></pre></div></td></tr></table></figure>
+
+<h3 id="2-SPA页面采用keep-alive缓存组件"><a href="#2-SPA页面采用keep-alive缓存组件" class="headerlink" title="2.SPA页面采用keep-alive缓存组件"></a>2.SPA页面采用keep-alive缓存组件</h3><p>keep-alive会缓存我们的组件，它会把组件缓存到内存中，下一次访问的时候，会从缓存中拿出来。<br>keep-alive是个函数式组件，里面有个render()方法。他会把默认的插槽拿出来，找到第一个组件(里面只能放一个组件)。<br>拿到后先去判断是否有include和exclude，这两个是判断缓存哪一些，不缓存哪一些。</p>
+<figure class="highlight html"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs html">render () &#123;<br>    const slot = this.$slots.default<br>    const vnode: VNode = getFirstComponentChild(slot)  // 获取第一个组件节点<br>    const componentOptions: ?VNodeComponentOptions = vnode &amp;&amp; vnode.componentOptions<br>    if (componentOptions) &#123;<br>      // check pattern<br>      const name: ?string = getComponentName(componentOptions)<br>      const &#123; include, exclude &#125; = this<br>      if (<br>        // not included<br>        (include &amp;&amp; (!name || !matches(include, name))) ||<br>        // excluded<br>        (exclude &amp;&amp; name &amp;&amp; matches(exclude, name))<br>      ) &#123;<br>        return vnode<br>      &#125;<br><br>      // 缓存vnode<br>      const &#123; cache, keys &#125; = this<br>      const key: ?string = vnode.key == null<br>        // same constructor may get registered as different local components<br>        // so cid alone is not enough (#3269)<br>        ? componentOptions.Ctor.cid + (componentOptions.tag ? `::$&#123;componentOptions.tag&#125;` : &#x27;&#x27;)<br>        : vnode.key<br>      if (cache[key]) &#123; //如果有缓存，直接将缓存返回<br>        vnode.componentInstance = cache[key].componentInstance<br>        // make current key freshest<br>        remove(keys, key)<br>        keys.push(key)<br>      &#125; else &#123;<br>        cache[key] = vnode //缓存下来下次用<br>        keys.push(key)<br>        // 超过缓存限制，就从第一个开始删除<br>        if (this.max &amp;&amp; keys.length &gt; parseInt(this.max)) &#123;<br>          pruneCacheEntry(cache, keys[0], keys, this._vnode)<br>        &#125;<br>      &#125;<br><br>      vnode.data.keepAlive = true<br>    &#125;<br>    return vnode || (slot &amp;&amp; slot[0])<br>  &#125;<br>&#125;<br></code></pre></div></td></tr></table></figure>
+
+<h3 id="3-拆分组件"><a href="#3-拆分组件" class="headerlink" title="3.拆分组件"></a>3.拆分组件</h3><p>不拆分和拆分有什么区别呢？<br>vue有个特点，它是按组件刷新的。数据一变，就会刷新当前组件，如果都写到一起了，如果数据一变，整个组件都要刷新。<br>拆分之后，一个组件的数据变了，可以只更新那个小组件。核心就是：<strong>减少不必要的渲染（尽可能细化拆分组件）</strong><br>还有就是<strong>提高复用性，增加代码可维护性</strong>。</p>
+<h3 id="4-v-if"><a href="#4-v-if" class="headerlink" title="4.v-if"></a>4.v-if</h3><p>当前值为false时内部指令不会执行，具有阻断功能。比如说面板，弹框，里面包含很多逻辑，用户不点我们可以使里面先不执行。</p>
+<h3 id="5-key保证唯一性"><a href="#5-key保证唯一性" class="headerlink" title="5.key保证唯一性"></a>5.key保证唯一性</h3><p>·   vue默认采用就地复用原则，可以加key保证唯一性</p>
+<figure class="highlight html"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs html"><span class="hljs-tag">&lt;<span class="hljs-name">template</span>&gt;</span><br>  <span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">id</span>=<span class="hljs-string">&quot;app&quot;</span>&gt;</span><br>    <span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">id</span>=<span class="hljs-string">&quot;nav&quot;</span>&gt;</span><br>      <span class="hljs-tag">&lt;<span class="hljs-name">button</span> @<span class="hljs-attr">click</span>=<span class="hljs-string">&quot;show =! show&quot;</span>&gt;</span>按钮<span class="hljs-tag">&lt;/<span class="hljs-name">button</span>&gt;</span><br>      <span class="hljs-tag">&lt;<span class="hljs-name">input</span> <span class="hljs-attr">type</span>=<span class="hljs-string">&quot;text&quot;</span> <span class="hljs-attr">v-if</span>=<span class="hljs-string">&quot;show&quot;</span> <span class="hljs-attr">:key</span>=<span class="hljs-string">&quot;1&quot;</span>&gt;</span><br>      <span class="hljs-tag">&lt;<span class="hljs-name">input</span> <span class="hljs-attr">type</span>=<span class="hljs-string">&quot;password&quot;</span> <span class="hljs-attr">v-else</span>  <span class="hljs-attr">:key</span>=<span class="hljs-string">&quot;2&quot;</span>&gt;</span><br>    <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span><br>  <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span><br><span class="hljs-tag">&lt;/<span class="hljs-name">template</span>&gt;</span><br><span class="hljs-tag">&lt;<span class="hljs-name">script</span>&gt;</span><span class="language-javascript"></span><br><span class="language-javascript"><span class="hljs-keyword">export</span> <span class="hljs-keyword">default</span> &#123;</span><br><span class="language-javascript">  <span class="hljs-title function_">data</span>(<span class="hljs-params"></span>) &#123;</span><br><span class="language-javascript">    <span class="hljs-keyword">return</span> &#123;</span><br><span class="language-javascript">      <span class="hljs-attr">show</span>: <span class="hljs-literal">true</span>,</span><br><span class="language-javascript">    &#125;;</span><br><span class="language-javascript">  &#125;,</span><br><span class="language-javascript">&#125;;</span><br><span class="language-javascript"></span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span><br></code></pre></div></td></tr></table></figure>
+<p>·   如果数据项的顺序被改变，Vue不会移动DOM元素来匹配数据项的顺序。它默认会比对内容，如果内容有变，就会多次去创建DOM，删除DOM。<br>这样的性能消耗更大，所以我们如果写循环代码，尽量用唯一的key来实现。这里面主要是DOM Diff的策略。</p>
+<p>·   应该使用数据的id作为key的属性。</p>
+<h3 id="6-Object-freeze"><a href="#6-Object-freeze" class="headerlink" title="6.Object.freeze"></a>6.Object.freeze</h3><p>vue会实现数据劫持，给每个数据增加getter和setter,如果希望数据只是用来展示到页面上而已，并不需要改数据视图会刷新。<br>这样的话，就可以用Object.freeze冻结数据。</p>
+<figure class="highlight html"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs html">Object.freeze([&#123;value: 1&#125;,&#123;value: 2&#125;])<br></code></pre></div></td></tr></table></figure>
+
+<p>在数据劫持时，属性不会被配置，不会从新定义</p>
+<figure class="highlight html"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs html">const property = Object.getOwnPropertyDescriptor(obj, key)<br>if (property &amp;&amp; property.configurable === false) &#123;<br>return<br>&#125;<br></code></pre></div></td></tr></table></figure>
+
+
+<p>深冻结</p>
+<figure class="highlight html"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs html">// 深冻结函数.<br>function deepFreeze(obj) &#123;<br>  // 取回定义在obj上的属性名<br>  var propNames = Object.getOwnPropertyNames(obj);<br>  // 在冻结自身之前冻结属性<br>  propNames.forEach(function(name) &#123;<br>    var prop = obj[name];<br>    // 如果prop是个对象，冻结它<br>    if (typeof prop == &#x27;object&#x27; &amp;&amp; prop !== null)<br>      deepFreeze(prop);<br>  &#125;);<br>  // 冻结自身(no-op if already frozen)<br>  return Object.freeze(obj);<br>&#125;<br></code></pre></div></td></tr></table></figure>
+
+<h3 id="7-路由懒加载，异步组件"><a href="#7-路由懒加载，异步组件" class="headerlink" title="7.路由懒加载，异步组件"></a>7.路由懒加载，异步组件</h3><p>动态加载组件，依赖<code>webpack-codespliting</code>功能，不能单独去用，它会拆分这个路由。<br>比如：当我们这个路由匹配到了，它会调用这个函数将路由动态加载上去。<br>webpack如果遇到import语法，会单独打包出js文件，加载的时候使用<code>JSONP</code>的语法，动态加载上去。</p>
+<figure class="highlight html"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs html"> const router = new VueRouter(&#123;<br>    router: [<br>        &#123;path: &#x27;/footer&#x27;,component: () =&gt; import(/* webpackChunkName: &quot;footer&quot; */ &#x27;../views/Footer.vue&#x27;),&#125;,<br>        &#123;path: &#x27;/about&#x27;,component: () =&gt; import(/* webpackChunkName: &quot;about&quot; */ &#x27;../views/About.vue&#x27;),&#125;,<br>    ]<br>&#125;)<br></code></pre></div></td></tr></table></figure>
+
+<p>动态导入组件，如果我们有一个组件特别复杂，希望用户点了这个按钮，它才弹出来，这时候就可以使用异步组件。<br>它返回的是一个Promise，它会等待这个组件渲染完成再去显示。</p>
+<figure class="highlight html"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs html">import Search from &quot;./Search&quot;;<br>export default &#123;<br>    components: &#123;<br>        Search: () =&gt; import(&quot;./Search&quot;);<br>    &#125;<br>&#125;;<br></code></pre></div></td></tr></table></figure>
+<blockquote>
+<p>注意</p>
+<p>如果您使用的是 Babel，你将需要添加 <a target="_blank" rel="noopener" href="https://babeljs.io/docs/en/babel-plugin-syntax-dynamic-import/">syntax-dynamic-import</a> 插件，才能使 Babel 可以正确地解析语法。</p>
+</blockquote>
+<p>但是这里有个坑，不能直接传入一个变量，下面是概要，具体看<a target="_blank" rel="noopener" href="https://webpack.js.org/api/module-methods/#import">官方文档</a></p>
+<blockquote>
+<p>无法使用完全动态的import语句，例如import(foo)。因为foo可能是系统或项目中任何文件的任何路径。这样把全部文件打包了是会报错的。</p>
+</blockquote>
+<p>我们还可以使用webpackInclude和webpackExclude选项，来减少webpack导入的文件数量，他们接受一个正则表达式。<br>webpackInclude和webpackExclude选项不会干扰前缀。例如：.&#x2F;locale。</p>
+<p><code>webpackInclude</code>：在导入解析期间将与之匹配的正则表达式。仅将匹配的模块捆绑在一起。</p>
+<p><code>webpackExclude</code>：在导入解析期间将与之匹配的正则表达式。匹配的任何模块都不会捆绑在一起。</p>
+<figure class="highlight html"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs html">//官方文档中的例子<br>import(<br>  /* webpackInclude: /\.json$/ */<br>  /* webpackExclude: /\.noimport\.json$/ */<br>  `./locale/$&#123;language&#125;`<br>);<br></code></pre></div></td></tr></table></figure>
+<h3 id="8-runtime运行时"><a href="#8-runtime运行时" class="headerlink" title="8.runtime运行时"></a>8.runtime运行时</h3><p>在开发时尽量采用单文件的方式（.vue），他不需要我们运行时去编译template。<br> webpack打包时会将模板进行编译(<a target="_blank" rel="noopener" href="https://www.npmjs.com/package/vue-template-compiler">vue-template-compiler</a>)<br> 但是如果使用new Vue({template}),里面的template是在代码运行的时候去编译模板，对性能有损耗。</p>
+<h3 id="9-数据持久化问题"><a href="#9-数据持久化问题" class="headerlink" title="9.数据持久化问题"></a>9.数据持久化问题</h3><p> 可以使用<code>vuex-persist</code>进行数据持久化，因为我们vue里的数据，一刷新就会丢，所以我们要把数据存到localStorage里。<br> 但是如果频繁的对localStorage进行操作，对性能的损耗也很大，<code>vuex-persist</code>提供了一个过滤功能来解决这个问题，您可以过滤掉不想引起存储更新的任何改变。<br> 第二个方法是进行节流。</p>
+<blockquote>
+<p>vuex-persist具体用法看其的<a target="_blank" rel="noopener" href="https://github.com/championswimmer/vuex-persist">GitHub文档</a>；<br>window.localStorage（在PC重新启动后仍然存在，直到您清除浏览器数据为止）<br> window.sessionStorage（关闭浏览器选项卡时消失）</p>
+</blockquote>
+<h2 id="2-vue加载性能优化-🌓"><a href="#2-vue加载性能优化-🌓" class="headerlink" title="2.   vue加载性能优化 🌓"></a>2.   vue加载性能优化 🌓</h2><ol>
+<li><p>第三方模块按需引入，如element-ui。也可以使用babel-plugin-component按需加载组件。</p>
+<blockquote>
+<p><a target="_blank" rel="noopener" href="https://juejin.im/post/5b35c49bf265da598f156446">babel-plugin-component</a>用法和<a target="_blank" rel="noopener" href="https://www.npmjs.com/package/babel-plugin-component">npm官方文档</a></p>
+</blockquote>
+</li>
+<li><p>图片懒加载，滚动到可视区域动态加载。比如像<a target="_blank" rel="noopener" href="https://www.npmjs.com/package/vue-lazyload">vue-lazyload</a>;</p>
+</li>
+<li><p>滚动渲染可视区域，数据较大时只渲染可视区域，如果一次性渲染太多的节点，可能会挂掉或者卡顿。</p>
+<blockquote>
+<p>具体用法看<a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/34585166">再谈前端虚拟列表的实现</a><br>也有现成的插件可以使用<a target="_blank" rel="noopener" href="https://www.npmjs.com/package/vue-scroll">vue-scroll</a>。</p>
+</blockquote>
+</li>
+</ol>
+<h2 id="3-用户体验👍"><a href="#3-用户体验👍" class="headerlink" title="3.   用户体验👍"></a>3.   用户体验👍</h2><h3 id="1-app-skeleton"><a href="#1-app-skeleton" class="headerlink" title="1.  app-skeleton"></a>1.  app-skeleton</h3><p>配置webpack插件 <a target="_blank" rel="noopener" href="https://www.npmjs.com/package/vue-skeleton-webpack-plugin">vue-skeleton-webpack-plugin</a><br>单页骨架屏</p>
+<figure class="highlight html"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs html">import Vue from &#x27;vue&#x27;<br>// 引入的骨架屏组件<br>import skeletonHome from &#x27;./skeleton/skeletonHome.vue&#x27;<br>export default new Vue(&#123;<br>    components: &#123;<br>        skeletonHome,<br>    &#125;,<br>    template: `<span class="hljs-tag">&lt;<span class="hljs-name">skeletonHome</span>/&gt;</span> `<br>&#125;);<br>plugins: [<br>    new SkeletonWebpackPlugin(&#123; // 我们编写的插件<br>        webpackConfig: &#123;<br>            entry: &#123;<br>                app: require(&#x27;./src/entry-skeleton.js&#x27;)<br>            &#125;<br>        &#125;<br>    &#125;)<br>]<br></code></pre></div></td></tr></table></figure>
+
+<p>带路由的骨架屏，编写skeleton.js文件</p>
+<figure class="highlight html"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs html">import Vue from &#x27;vue&#x27;;<br>import Skeleton1 from &#x27;./Skeleton1&#x27;;<br>import Skeleton2 from &#x27;./Skeleton2&#x27;;<br><br>export default new Vue(&#123;<br>    components: &#123;<br>        Skeleton1,<br>        Skeleton2<br>    &#125;,<br>    template: `<br>        <span class="hljs-tag">&lt;<span class="hljs-name">div</span>&gt;</span><br>            <span class="hljs-tag">&lt;<span class="hljs-name">skeleton1</span> <span class="hljs-attr">id</span>=<span class="hljs-string">&quot;skeleton1&quot;</span> <span class="hljs-attr">style</span>=<span class="hljs-string">&quot;display:none&quot;</span>/&gt;</span><br>            <span class="hljs-tag">&lt;<span class="hljs-name">skeleton2</span> <span class="hljs-attr">id</span>=<span class="hljs-string">&quot;skeleton2&quot;</span> <span class="hljs-attr">style</span>=<span class="hljs-string">&quot;display:none&quot;</span>/&gt;</span><br>        <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span><br>    `<br>&#125;);<br></code></pre></div></td></tr></table></figure>
+<p>configureWebpack里的配置</p>
+<figure class="highlight html"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs html">new SkeletonWebpackPlugin(&#123;<br>    webpackConfig: &#123;<br>        entry: &#123;<br>            app: path.join(__dirname, &#x27;./src/skeleton.js&#x27;),<br>        &#125;,<br>    &#125;,<br>    router: &#123;<br>        mode: &#x27;history&#x27;,<br>        routes: [<br>            &#123;<br>                path: &#x27;/&#x27;,<br>                skeletonId: &#x27;skeleton1&#x27;<br>            &#125;,<br>            &#123;<br>                path: &#x27;/about&#x27;,<br>                skeletonId: &#x27;skeleton2&#x27;<br>            &#125;,<br>        ]<br>    &#125;,<br>    minimize: true,<br>    quiet: true,<br>&#125;)<br></code></pre></div></td></tr></table></figure>
+<h4 id="具体用法"><a href="#具体用法" class="headerlink" title="具体用法"></a>具体用法</h4><p>先来创建一个单页的骨架屏</p>
+<h5 id="1-先在根目录创建一个vue-config-js"><a href="#1-先在根目录创建一个vue-config-js" class="headerlink" title="1. 先在根目录创建一个vue.config.js"></a>1. 先在根目录创建一个vue.config.js</h5><p>粘贴下面代码</p>
+<figure class="highlight html"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs html">let SkeletonWebpackPlugin = require(&#x27;vue-skeleton-webpack-plugin&#x27;);<br>const path = require(&#x27;path&#x27;);<br>module.exports = &#123;<br>  configureWebpack:&#123;<br>    plugins:[<br>      new SkeletonWebpackPlugin(&#123; <br>          webpackConfig: &#123;<br>              entry: &#123;<br>                  app: path.resolve(&#x27;./src/entry-skeleton.js&#x27;)<br>              &#125;<br>          &#125;<br>      &#125;)<br>  ]<br>  &#125;<br>&#125;<br><br></code></pre></div></td></tr></table></figure>
+<h5 id="2-创建-src-entry-skeleton-js"><a href="#2-创建-src-entry-skeleton-js" class="headerlink" title="2. 创建.&#x2F;src&#x2F;entry-skeleton.js"></a>2. 创建.&#x2F;src&#x2F;entry-skeleton.js</h5><p>放上我们的骨架屏</p>
+<figure class="highlight html"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs html">import Vue from &#x27;vue&#x27;;<br><br>export default new Vue(&#123;<br>  render() &#123;<br>    return <span class="hljs-tag">&lt;<span class="hljs-name">h1</span>&gt;</span>hello Vue<span class="hljs-tag">&lt;/<span class="hljs-name">h1</span>&gt;</span>;<br>  &#125;,<br>&#125;);<br></code></pre></div></td></tr></table></figure>
+<h5 id="这样就ok啦"><a href="#这样就ok啦" class="headerlink" title="这样就ok啦"></a>这样就ok啦</h5><p>用npm run serve 试试！</p>
+<blockquote>
+<p>参考<br><a target="_blank" rel="noopener" href="https://xiaoiver.github.io/coding/2017/07/30/%E4%B8%BAvue%E9%A1%B9%E7%9B%AE%E6%B7%BB%E5%8A%A0%E9%AA%A8%E6%9E%B6%E5%B1%8F.html">为vue项目添加骨架屏</a><br><a target="_blank" rel="noopener" href="https://juejin.im/post/5d457bad5188255d8249c7f4">基于 vue-skeleton-webpack-plugin 的骨架屏实战</a></p>
+</blockquote>
+<h4 id="姜文大佬实现的原理"><a href="#姜文大佬实现的原理" class="headerlink" title="姜文大佬实现的原理"></a>姜文大佬实现的原理</h4><p>实现骨架屏插件</p>
+<figure class="highlight html"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs html">class MyPlugin &#123;<br>    apply(compiler) &#123;<br>        compiler.plugin(&#x27;compilation&#x27;, (compilation) =&gt; &#123;<br>            compilation.plugin(<br>                &#x27;html-webpack-plugin-before-html-processing&#x27;,<br>                (data) =&gt; &#123;<br>                    data.html = data.html.replace(`<span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">id</span>=<span class="hljs-string">&quot;app&quot;</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>`, `<br>                        <span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">id</span>=<span class="hljs-string">&quot;app&quot;</span>&gt;</span><br>                            <span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">id</span>=<span class="hljs-string">&quot;home&quot;</span> <span class="hljs-attr">style</span>=<span class="hljs-string">&quot;display:none&quot;</span>&gt;</span>首页 骨架屏<span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span><br>                            <span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">id</span>=<span class="hljs-string">&quot;about&quot;</span> <span class="hljs-attr">style</span>=<span class="hljs-string">&quot;display:none&quot;</span>&gt;</span>about页面骨架屏<span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span><br>                        <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span><br>                        <span class="hljs-tag">&lt;<span class="hljs-name">script</span>&gt;</span><span class="language-javascript"></span><br><span class="language-javascript">                            <span class="hljs-keyword">if</span>(<span class="hljs-variable language_">window</span>.<span class="hljs-property">hash</span> == <span class="hljs-string">&#x27;#/about&#x27;</span> ||  location.<span class="hljs-property">pathname</span>==<span class="hljs-string">&#x27;/about&#x27;</span>)&#123;</span><br><span class="language-javascript">                                <span class="hljs-variable language_">document</span>.<span class="hljs-title function_">getElementById</span>(<span class="hljs-string">&#x27;about&#x27;</span>).<span class="hljs-property">style</span>.<span class="hljs-property">display</span>=<span class="hljs-string">&quot;block&quot;</span></span><br><span class="language-javascript">                            &#125;<span class="hljs-keyword">else</span>&#123;</span><br><span class="language-javascript">                                <span class="hljs-variable language_">document</span>.<span class="hljs-title function_">getElementById</span>(<span class="hljs-string">&#x27;home&#x27;</span>).<span class="hljs-property">style</span>.<span class="hljs-property">display</span>=<span class="hljs-string">&quot;block&quot;</span></span><br><span class="language-javascript">                            &#125;</span><br><span class="language-javascript">                        </span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span><br>                    `);<br>                    return data;<br>                &#125;<br>            )<br>        &#125;);<br>    &#125;<br>&#125;<br></code></pre></div></td></tr></table></figure>
+
+<h3 id="2-app-shell"><a href="#2-app-shell" class="headerlink" title="2.  app-shell"></a>2.  app-shell</h3><p>一般配合PWA使用,百度的<a target="_blank" rel="noopener" href="https://lavas.baidu.com/pwa">Lavas</a>。<br>使用serviceWorker，第一次加载，第二次到本地。</p>
+<h2 id="4-SEO优化方案-🏃"><a href="#4-SEO优化方案-🏃" class="headerlink" title="4.   SEO优化方案 🏃"></a>4.   SEO优化方案 🏃</h2><h3 id="1-vue的预渲染插件"><a href="#1-vue的预渲染插件" class="headerlink" title="1.vue的预渲染插件"></a>1.vue的预渲染插件</h3><p><code>npm install prerender-spa-lpugin</code></p>
+<p>缺陷是数据不够动态，可以使用ssr服务端渲染</p>
+<figure class="highlight html"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs html">const path = require(&#x27;path&#x27;)<br>const PrerenderSPAPlugin = require(&#x27;prerender-spa-plugin&#x27;)<br><br>module.exports = &#123;<br>  plugins: [<br>    ...<br>    new PrerenderSPAPlugin(&#123;<br>      // Required - The path to the webpack-outputted app to prerender.<br>      staticDir: path.join(__dirname, &#x27;dist&#x27;),<br>      // Required - Routes to render.<br>      routes: [ &#x27;/&#x27;, &#x27;/about&#x27;, &#x27;/some/deep/nested/route&#x27; ],<br>    &#125;)<br>  ]<br>&#125;<br></code></pre></div></td></tr></table></figure>
+<p>里面主要用到一个包是puppeteer，他是一个无头浏览器，运行它会打开一个浏览器，但是你看不见它，<br>它会先将页面放在浏览器上去跑，然后生成节点，渲染成HTML,一般用作e2e,或爬虫。</p>
+<h3 id="2-服务端渲染"><a href="#2-服务端渲染" class="headerlink" title="2.  服务端渲染"></a>2.  服务端渲染</h3><p>概念：放在浏览器进行就是浏览器渲染，放在服务器进行就是服务器渲染。就跟以前的模板渲染一样。</p>
+<p>客户端渲染不利于SEO搜索引擎优化<br>服务端渲染是可以被爬虫抓取到的，客户端异步渲染是很难被爬虫抓取到的<br>SSR直接将HTML轴向传递给浏览器。大大加快了首屏加载时间。<br>SSR占用更多的CPU和内存资源<br>一些常用的浏览器API可能无法正常使用<br>在vue中只支持beforeCreate和created两个生命周期</p>
+<h3 id="3-什么是nuxt"><a href="#3-什么是nuxt" class="headerlink" title="3. 什么是nuxt"></a>3. 什么是nuxt</h3><p>Nuxt.js是使用Webpack和Node.js进行封装的基于Vue的SSR框架</p>
+<h4 id="nuxt特点"><a href="#nuxt特点" class="headerlink" title="nuxt特点"></a>nuxt特点</h4><p>优点：<br>更好的SEO，由于搜索引擎爬虫抓取工具可以直接查看完全渲染的页面。首屏渲染速度快</p>
+<p>缺点：<br>Node.js中渲染完整的应用程序，显然只比提供静态文件的服务器更多占用CPU资源。需要考虑服务器负载，缓存策略</p>
+<p>具体查看<a target="_blank" rel="noopener" href="https://zh.nuxtjs.org/guide/installation">nuxt.js官方文档</a></p>
+<h3 id="4-webpack打包优化"><a href="#4-webpack打包优化" class="headerlink" title="4.  webpack打包优化"></a>4.  webpack打包优化</h3><ol>
+<li>使用cdn方式加载第三方模块，设置<a target="_blank" rel="noopener" href="https://webpack.docschina.org/configuration/externals/">externals</a>.</li>
+</ol>
+<p>例如，从 CDN 引入 jQuery，而不是把它打包：<br>index.html</p>
+<figure class="highlight html"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs html"><span class="hljs-tag">&lt;<span class="hljs-name">script</span></span><br><span class="hljs-tag">  <span class="hljs-attr">src</span>=<span class="hljs-string">&quot;https://code.jquery.com/jquery-3.1.0.js&quot;</span></span><br><span class="hljs-tag">  <span class="hljs-attr">integrity</span>=<span class="hljs-string">&quot;sha256-slogkvB1K3VOkzAI8QITxV3VzpOnkeNVsKvtkYLMjfk=&quot;</span></span><br><span class="hljs-tag">  <span class="hljs-attr">crossorigin</span>=<span class="hljs-string">&quot;anonymous&quot;</span>&gt;</span><br><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span><br></code></pre></div></td></tr></table></figure>
+<p>webpack.config.js</p>
+<figure class="highlight html"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs html">module.exports = &#123;<br>  //...<br>  externals: &#123;<br>    jquery: &#x27;jQuery&#x27;<br>  &#125;<br>&#125;<br></code></pre></div></td></tr></table></figure>
+
+<ol start="2">
+<li><p>多线程打包<code>happypack</code><br>具体查看这篇文章<a target="_blank" rel="noopener" href="https://juejin.im/post/5c6e0c3a518825621f2a6f45">使用 happypack 提升 Webpack 项目构建速度</a></p>
+</li>
+<li><p>splitChunks抽离公共文件</p>
+</li>
+<li><p>sourceMap的配置</p>
+<blockquote>
+<p>webpack性能优化具体看<a href="https://www.waterbang.top/2019/11/24/2019-11-24-webpack-webpack%E5%90%84%E7%A7%8D%E4%BC%98%E5%8C%96/">webpack各种优化</a><br>webpack-bundle-analyzer 分析打包插件</p>
+</blockquote>
+</li>
+</ol>
+<h3 id="5-服务端缓存，客户端缓存"><a href="#5-服务端缓存，客户端缓存" class="headerlink" title="5.  服务端缓存，客户端缓存"></a>5.  服务端缓存，客户端缓存</h3><p>##6.   服务端gzip压缩<br>可以减小文件体积，传输速度更快。gzip是节省带宽和加快站点速度的有效方法。<br>具体查看<a target="_blank" rel="noopener" href="https://juejin.im/post/5cb7ee0e51882532fe3440ea">「简明性能优化」双端开启Gzip指南</a></p>
+<h2 id="结束语-🏐"><a href="#结束语-🏐" class="headerlink" title="结束语 🏐"></a>结束语 🏐</h2><p>人悄悄，帘外月胧明。「小重山·昨夜寒蛩不住鸣」——岳飞</p>
+
+            </div>
+            <hr>
+            <div>
+              <div class="post-metas mb-3">
+                
+                
+                  <div class="post-meta">
+                    <i class="iconfont icon-tags"></i>
+                    
+                      <a class="hover-with-bg" href="/tags/VUE/">VUE</a>
+                    
+                  </div>
+                
+              </div>
+              
+                <p class="note note-warning">
+                  
+                    本博客所有文章除特别声明外，均采用 <a target="_blank" href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh" rel="nofollow noopener noopener">CC BY-SA 4.0 协议</a> ，转载请注明出处！
+                  
+                </p>
+              
+              
+                <div class="post-prevnext">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2019/12/28/2019%E5%B9%B4%E5%BA%A6%E6%80%BB%E7%BB%93/">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">2019年度总结</span>
+                        <span class="visible-mobile">Vorheriger</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2019/12/10/2019-12-10-VUE-vuex-vue-router%E6%BA%90%E7%A0%81%E5%AE%9E%E7%8E%B0/">
+                        <span class="hidden-mobile">手写Mini Vue-Router && Mini Vuex</span>
+                        <span class="visible-mobile">Nächster</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+              <!-- Comments -->
+              <article class="comments" id="comments" lazyload>
+                
+                  
+                
+                
+  <script type="text/javascript">
+    Fluid.utils.loadComments('#comments', function() {
+      var light = 'github-light';
+      var dark = 'github-dark';
+      var schema = document.documentElement.getAttribute('data-user-color-scheme');
+      if (schema === 'dark') {
+        schema = dark;
+      } else {
+        schema = light;
+      }
+      window.UtterancesThemeLight = light;
+      window.UtterancesThemeDark = dark;
+      var s = document.createElement('script');
+      s.setAttribute('src', 'https://utteranc.es/client.js');
+      s.setAttribute('repo', 'waterbang/Comment');
+      s.setAttribute('issue-term', 'pathname');
+      
+      s.setAttribute('label', 'utterances');
+      
+      s.setAttribute('theme', schema);
+      s.setAttribute('crossorigin', 'anonymous');
+      document.getElementById('comments').appendChild(s);
+    })
+  </script>
+  <noscript>Please enable JavaScript to view the comments</noscript>
+
+
+              </article>
+            
+          </article>
+        </div>
+      </div>
+    </div>
+    
+      <div class="d-none d-lg-block col-lg-2 toc-container" id="toc-ctn">
+        <div id="toc">
+  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;TOC</p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+      </div>
+    
+  </div>
+</div>
+
+<!-- Custom -->
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">Suchen</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v"
+                 for="local-search-input">Stichwort</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+
+    
+  </main>
+
+  <footer class="text-center mt-5 py-3">
+  <div class="footer-content">
+     <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a>
+  </div>
+  
+
+  
+  <!-- 备案信息 -->
+  <div class="beian">
+    <span>
+      <a href="http://beian.miit.gov.cn/" target="_blank" rel="nofollow noopener">
+        闽ICP备18009949号-2
+      </a>
+    </span>
+    
+  </div>
+
+
+  
+</footer>
+
+
+  <!-- SCRIPTS -->
+  
+  <script  src="https://cdn.jsdelivr.net/npm/nprogress@0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/nprogress@0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js" ></script>
+<script  src="https://cdn.jsdelivr.net/npm/bootstrap@4/dist/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+<!-- Plugins -->
+
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+  
+
+
+
+  
+    <script  src="https://cdn.jsdelivr.net/npm/tocbot@4/dist/tocbot.min.js" ></script>
+  
+  
+    <script  src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3/dist/jquery.fancybox.min.js" ></script>
+  
+  
+    <script  src="https://cdn.jsdelivr.net/npm/anchor-js@4/anchor.min.js" ></script>
+  
+  
+    <script defer src="https://cdn.jsdelivr.net/npm/clipboard@2/dist/clipboard.min.js" ></script>
+  
+
+
+
+  <script defer src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" ></script>
+
+
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/typed.js@2/lib/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var title = document.getElementById('subtitle').title;
+      
+        typing(title);
+      
+    })(window, document);
+  </script>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+    <!-- Baidu Analytics -->
+    <script defer>
+      var _hmt = _hmt || [];
+      (function () {
+        var hm = document.createElement("script");
+        hm.src = "https://hm.baidu.com/hm.js?58e161bf4b884b2aa577f323f137ac0f";
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(hm, s);
+      })();
+    </script>
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+
+
+
+
+<!-- 主题的启动项 保持在最底部 -->
+<script  src="/js/boot.js" ></script>
+
+
+</body>
+</html>

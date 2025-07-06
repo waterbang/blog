@@ -1,0 +1,586 @@
+
+
+<!DOCTYPE html>
+<html lang="ch_CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/apple-touch-icon.png">
+  <link rel="icon" href="/img/favicon.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="waterbang">
+  <meta name="keywords" content="waterbang">
+  
+    <meta name="description" content="前言由于阿里云的公网 ip 绑定的网卡在外层网关，所以机器地监听不到 基本环境得安装Debian &#x2F; Ubuntu1234567apt-get update &amp;&amp; apt-get install -y apt-transport-httpscurl https:&#x2F;&#x2F;mirrors.aliyun.com&#x2F;kubernetes&#x2F;apt&#x2F;doc&#x2F;apt-key.gpg | ap">
+<meta property="og:type" content="article">
+<meta property="og:title" content="解决阿里云与公网的其他机器部署Kubernetes问题">
+<meta property="og:url" content="https://www.waterbang.top/2021/03/31/%E8%A7%A3%E5%86%B3%E9%98%BF%E9%87%8C%E4%BA%91%E4%B8%8E%E5%85%AC%E7%BD%91%E7%9A%84%E5%85%B6%E4%BB%96%E6%9C%BA%E5%99%A8%E9%83%A8%E7%BD%B2Kubernetes%E9%97%AE%E9%A2%98/index.html">
+<meta property="og:site_name" content="waterbang">
+<meta property="og:description" content="前言由于阿里云的公网 ip 绑定的网卡在外层网关，所以机器地监听不到 基本环境得安装Debian &#x2F; Ubuntu1234567apt-get update &amp;&amp; apt-get install -y apt-transport-httpscurl https:&#x2F;&#x2F;mirrors.aliyun.com&#x2F;kubernetes&#x2F;apt&#x2F;doc&#x2F;apt-key.gpg | ap">
+<meta property="og:locale" content="ch_CN">
+<meta property="og:image" content="https://www.waterbang.top/2020/01/26/CentOS7%E8%99%9A%E6%8B%9F%E6%9C%BA%E4%B8%8AMinikube%E5%AE%89%E8%A3%85Kubernetes/kubernetes.png">
+<meta property="article:published_time" content="2021-03-31T06:25:36.000Z">
+<meta property="article:modified_time" content="2024-12-21T11:43:23.179Z">
+<meta property="article:author" content="waterbang">
+<meta property="article:tag" content="Kubernetes">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://www.waterbang.top/2020/01/26/CentOS7%E8%99%9A%E6%8B%9F%E6%9C%BA%E4%B8%8AMinikube%E5%AE%89%E8%A3%85Kubernetes/kubernetes.png">
+  
+  
+  <title>解决阿里云与公网的其他机器部署Kubernetes问题 🏮 waterbang</title>
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4/dist/css/bootstrap.min.css" />
+
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/github-markdown-css@4/github-markdown.min.css" />
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hint.css@2/hint.min.css" />
+
+  
+    
+    
+      
+      <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@10/styles/atom-one-dark.min.css" />
+    
+  
+
+  
+    <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3/dist/jquery.fancybox.min.css" />
+  
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_ba1fz6golrf.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+<!-- 自定义样式保持在最底部 -->
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    var CONFIG = {"hostname":"www.waterbang.top","root":"/","version":"1.8.14","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"right","visible":"hover","icon":"🍦"},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"copy_btn":true,"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"baidu":"58e161bf4b884b2aa577f323f137ac0f","google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+
+<body>
+  <header style="height: 70vh;">
+    <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>waterbang</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                Startseite
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                Archiv
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                Etiketten
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                Über mich
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/links/">
+                <i class="iconfont icon-link-fill"></i>
+                Weblinks
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              &nbsp;<i class="iconfont icon-search"></i>&nbsp;
+            </a>
+          </li>
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">&nbsp;<i
+                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+    <div class="banner" id="banner" parallax=true
+         style="background: url('/img/post-banner.jpg') no-repeat center center;
+           background-size: cover;">
+      <div class="full-bg-img">
+        <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+          <div class="page-header text-center fade-in-up">
+            <span class="h2" id="subtitle" title="解决阿里云与公网的其他机器部署Kubernetes问题">
+              
+            </span>
+
+            
+              <div class="mt-3">
+  
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-author" aria-hidden="true"></i>
+      waterbang
+    </span>
+  
+  
+    <span class="post-meta">
+      <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+      <time datetime="2021-03-31 14:25" pubdate>
+        March 31, 2021 pm
+      </time>
+    </span>
+  
+</div>
+
+<div class="mt-1">
+  
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-chart"></i>
+      4.1k 字
+    </span>
+  
+
+  
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-clock-fill"></i>
+      
+      
+      35 分钟
+    </span>
+  
+
+  
+  
+    
+      <!-- 不蒜子统计文章PV -->
+      <span id="busuanzi_container_page_pv" style="display: none">
+        <i class="iconfont icon-eye" aria-hidden="true"></i>
+        <span id="busuanzi_value_page_pv"></span> 次
+      </span>
+    
+  
+</div>
+
+            
+          </div>
+
+          
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="d-none d-lg-block col-lg-2"></div>
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div class="py-5" id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">解决阿里云与公网的其他机器部署Kubernetes问题</h1>
+            
+              <p class="note note-info">
+                
+                  本文最后更新于：5 hours ago
+                
+              </p>
+            
+            <div class="markdown-body">
+              <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>由于阿里云的公网 ip 绑定的网卡在外层网关，所以机器地监听不到</p>
+<h3 id="基本环境得安装"><a href="#基本环境得安装" class="headerlink" title="基本环境得安装"></a>基本环境得安装</h3><h4 id="Debian-Ubuntu"><a href="#Debian-Ubuntu" class="headerlink" title="Debian &#x2F; Ubuntu"></a>Debian &#x2F; Ubuntu</h4><figure class="highlight shell"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs shell">apt-get update &amp;&amp; apt-get install -y apt-transport-https<br>curl https://mirrors.aliyun.com/kubernetes/apt/doc/apt-key.gpg | apt-key add -<br>cat &lt;&lt;EOF &gt;/etc/apt/sources.list.d/kubernetes.list<br>deb https://mirrors.aliyun.com/kubernetes/apt/ kubernetes-xenial main<br>EOF<br>apt-get update<br>apt-get install -y kubelet kubeadm kubectl<br></code></pre></div></td></tr></table></figure>
+
+<blockquote>
+<p>另外，你也可以指定版本安装<br>apt-get install kubectl&#x3D;1.19.3-00 kubelet&#x3D;1.19.3-00 kubeadm&#x3D;1.19.3-00</p>
+</blockquote>
+<h4 id="CentOS-RHEL-Fedora"><a href="#CentOS-RHEL-Fedora" class="headerlink" title="CentOS &#x2F; RHEL &#x2F; Fedora"></a>CentOS &#x2F; RHEL &#x2F; Fedora</h4><figure class="highlight shell"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs shell">cat &lt;&lt;EOF &gt; /etc/yum.repos.d/kubernetes.repo<br>[kubernetes]<br>name=Kubernetes<br>baseurl=https://mirrors.aliyun.com/kubernetes/yum/repos/kubernetes-el7-x86_64/<br>enabled=1<br>gpgcheck=1<br>repo_gpgcheck=1<br>gpgkey=https://mirrors.aliyun.com/kubernetes/yum/doc/yum-key.gpg https://mirrors.aliyun.com/kubernetes/yum/doc/rpm-package-key.gpg<br>EOF<br>setenforce 0<br>yum install -y kubelet kubeadm kubectl<br>systemctl enable kubelet &amp;&amp; systemctl start kubelet<br></code></pre></div></td></tr></table></figure>
+
+<h2 id="Main"><a href="#Main" class="headerlink" title="Main"></a>Main</h2><p><strong>_ 下面代码除特殊说明的 x.x.x.x 都是您的 master 节点公网地址 _</strong></p>
+<h3 id="构建-etcd"><a href="#构建-etcd" class="headerlink" title="构建 etcd"></a>构建 etcd</h3><p>k8s 1.8 版本后，允许分段构建，所以我们要先构建一下 etcd phase。执行下面代码</p>
+<figure class="highlight shell"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs shell">kubeadm init phase etcd local<br></code></pre></div></td></tr></table></figure>
+
+<p>您需要<strong>打开两个终端</strong>，一个执行 <code>kubeadm init ...</code> 也就是下面创建集群的代码,此时会卡住。<br>另一个需要修改<code>etcd.yaml</code>里面的<code>listen-client-urls</code>和<code>listen-peer-urls</code>，具体看下面代码，</p>
+<h3 id="第一个终端创建集群"><a href="#第一个终端创建集群" class="headerlink" title="第一个终端创建集群"></a>第一个终端创建集群</h3><figure class="highlight shell"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs shell">kubeadm init --image-repository=registry.aliyuncs.com/google_containers --apiserver-advertise-address=x.x.x.x --service-cidr=10.1.0.0/16  --pod-network-cidr=10.244.0.0/16<br></code></pre></div></td></tr></table></figure>
+
+<p>执行完第一个窗口会卡住，接着切换 master 的到第二个终端，执行下面代码。</p>
+<h3 id="第二个终端修改-etcd-监听地址"><a href="#第二个终端修改-etcd-监听地址" class="headerlink" title="第二个终端修改 etcd 监听地址"></a>第二个终端修改 etcd 监听地址</h3><figure class="highlight shell"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs shell"><span class="hljs-meta prompt_">#</span><span class="language-bash">第二个终端执行</span><br>vim /etc/kubernetes/manifests/etcd.yaml<br></code></pre></div></td></tr></table></figure>
+
+<h4 id="第二个终端原来的内容："><a href="#第二个终端原来的内容：" class="headerlink" title="第二个终端原来的内容："></a>第二个终端原来的内容：</h4><figure class="highlight shell"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs shell"><span class="hljs-meta prompt_">#</span><span class="language-bash">······ more</span><br>  - --client-cert-auth=true<br>    - --data-dir=/var/lib/etcd<br>    - --initial-advertise-peer-urls=https://x.x.x.x:2380<br>    - --initial-cluster=master=https://x.x.x.x:2380<br>    - --key-file=/etc/kubernetes/pki/etcd/server.key<br>    - --listen-client-urls=https://127.0.0.1:2379,https://x.x.x.x:2379<br>    - --listen-metrics-urls=http://127.0.0.1:2381<br>    - --listen-peer-urls=https://x.x.x.x:2380<br>    - --name=master<br><span class="hljs-meta prompt_">#</span><span class="language-bash">······ more</span><br></code></pre></div></td></tr></table></figure>
+
+<h4 id="第二个终端修改后的内容："><a href="#第二个终端修改后的内容：" class="headerlink" title="第二个终端修改后的内容："></a>第二个终端修改后的内容：</h4><figure class="highlight shell"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs shell"><span class="hljs-meta prompt_">#</span><span class="language-bash">······ more</span><br>  - --client-cert-auth=true<br>    - --data-dir=/var/lib/etcd<br>    - --initial-advertise-peer-urls=https://x.x.x.x:2380<br>    - --initial-cluster=master=https://x.x.x.x:2380<br>    - --key-file=/etc/kubernetes/pki/etcd/server.key<br>    - --listen-client-urls=https://127.0.0.1:2379<br>    - --listen-metrics-urls=http://127.0.0.1:2381<br>    - --listen-peer-urls=https://127.0.0.1:2380<br>    - --name=master<br><span class="hljs-meta prompt_">#</span><span class="language-bash">······  more</span><br></code></pre></div></td></tr></table></figure>
+
+<p>稍等一会，第一个窗口 <code>kubeadm init ...</code>就执行成功了。</p>
+<h3 id="执行成功，终端会提醒我们执行下面命令"><a href="#执行成功，终端会提醒我们执行下面命令" class="headerlink" title="执行成功，终端会提醒我们执行下面命令"></a>执行成功，终端会提醒我们执行下面命令</h3><figure class="highlight shell"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs shell">mkdir -p $HOME/.kube<br>sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config<br>sudo chown $(id -u):$(id -g) $HOME/.kube/config<br></code></pre></div></td></tr></table></figure>
+
+<h4 id="将-worker-加入集群"><a href="#将-worker-加入集群" class="headerlink" title="将 worker 加入集群"></a>将 worker 加入集群</h4><p>接着在 worker 节点 执行 <code>kubeadm join</code> 的代码， token 有效期默认 2 小时。</p>
+<h3 id="查看加入的节点"><a href="#查看加入的节点" class="headerlink" title="查看加入的节点"></a>查看加入的节点</h3><figure class="highlight shell"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs shell">kubectl get ndoes<br></code></pre></div></td></tr></table></figure>
+
+<p>会查看到 master 节点和 node 节点都是 NotReady 状态。</p>
+<h3 id="接着就需要安装网络环境"><a href="#接着就需要安装网络环境" class="headerlink" title="接着就需要安装网络环境"></a>接着就需要安装网络环境</h3><h4 id="在-master-节点和-node-节点都安装-flannel-插件"><a href="#在-master-节点和-node-节点都安装-flannel-插件" class="headerlink" title="在 master 节点和 node 节点都安装 flannel 插件"></a>在 master 节点和 node 节点都安装 flannel 插件</h4><figure class="highlight shell"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs shell">kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml<br></code></pre></div></td></tr></table></figure>
+
+<h2 id="如果遇到错误就看日志"><a href="#如果遇到错误就看日志" class="headerlink" title="如果遇到错误就看日志"></a>如果遇到错误就看日志</h2><h3 id="执行下面命令看看是否都处于-runing-状态"><a href="#执行下面命令看看是否都处于-runing-状态" class="headerlink" title="执行下面命令看看是否都处于 runing 状态"></a>执行下面命令看看是否都处于 runing 状态</h3><figure class="highlight shell"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs shell">kubectl get pods --all-namespaces<br></code></pre></div></td></tr></table></figure>
+
+<p>看 kubelet</p>
+<figure class="highlight shell"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs shell">journalctl -f -u kubelet<br></code></pre></div></td></tr></table></figure>
+
+<h3 id="pod-一直-CrashLoopBackOff"><a href="#pod-一直-CrashLoopBackOff" class="headerlink" title="pod 一直 CrashLoopBackOff"></a>pod 一直 CrashLoopBackOff</h3><p>看看 log 对症下药</p>
+<figure class="highlight shell"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs shell">kubectl logs pod-name<br></code></pre></div></td></tr></table></figure>
+
+<p>看看是不是有缺少什么东西，如果缺少了就从 master 节点复制,如：</p>
+<h3 id="The-connection-to-the-server-localhost-8080-was-refused-did-you-specify-the-right-host-or-port"><a href="#The-connection-to-the-server-localhost-8080-was-refused-did-you-specify-the-right-host-or-port" class="headerlink" title="The connection to the server localhost:8080 was refused - did you specify the right host or port?"></a>The connection to the server localhost:8080 was refused - did you specify the right host or port?</h3><figure class="highlight shell"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs shell"><span class="hljs-meta prompt_"># </span><span class="language-bash">这命令在 master 节点执行，x.x.x.x为你报错的节点的公网ip</span><br>scp /etc/docker/daemon.json root@x.x.x.x:/etc/docker/daemon.json<br></code></pre></div></td></tr></table></figure>
+
+<p>或者前往 对于的<a target="_blank" rel="noopener" href="https://github.com/kubernetes/kubernetes/issues/50295">github issuse</a></p>
+<h3 id="failed-open-run-systemd-resolve-resolv-conf-no-such-file-or-directory"><a href="#failed-open-run-systemd-resolve-resolv-conf-no-such-file-or-directory" class="headerlink" title="failed: open &#x2F;run&#x2F;systemd&#x2F;resolve&#x2F;resolv.conf: no such file or directory"></a>failed: open &#x2F;run&#x2F;systemd&#x2F;resolve&#x2F;resolv.conf: no such file or directory</h3><figure class="highlight shell"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs shell"><span class="hljs-meta prompt_">#</span><span class="language-bash"><span class="hljs-comment"># 复制master的文件</span></span><br>scp /run/systemd/resolve/resolv.conf root@x.x.x.x:/run/systemd/resolve/resolv.conf<br>systemctl daemon-reload<br></code></pre></div></td></tr></table></figure>
+
+<h3 id="sys-fs-cgroup-pids-system-slice-etcd-service-no-such-file-or-directory"><a href="#sys-fs-cgroup-pids-system-slice-etcd-service-no-such-file-or-directory" class="headerlink" title="&#x2F;sys&#x2F;fs&#x2F;cgroup&#x2F;pids&#x2F;system.slice&#x2F;etcd.service: no such file or directory"></a>&#x2F;sys&#x2F;fs&#x2F;cgroup&#x2F;pids&#x2F;system.slice&#x2F;etcd.service: no such file or directory</h3><figure class="highlight shell"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs shell"> vim /etc/docker/daemon.json<br>vim /run/flannel/subnet.env<br></code></pre></div></td></tr></table></figure>
+
+<h3 id="network-plugin-is-not-ready-cni-config-uninitialized"><a href="#network-plugin-is-not-ready-cni-config-uninitialized" class="headerlink" title="network plugin is not ready: cni config uninitialized"></a>network plugin is not ready: cni config uninitialized</h3><figure class="highlight shell"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs shell">vim /etc/cni/net.d/10-flannel.conflist<br><span class="hljs-meta prompt_">#</span><span class="language-bash"><span class="hljs-comment">#输入下面内容</span></span><br>&#123;<br>  &quot;name&quot;: &quot;cbr0&quot;,<br>  &quot;cniVersion&quot;: &quot;0.3.1&quot;,<br>  &quot;plugins&quot;: [<br>    &#123;<br>      &quot;type&quot;: &quot;flannel&quot;,<br>      &quot;delegate&quot;: &#123;<br>        &quot;hairpinMode&quot;: true,<br>        &quot;isDefaultGateway&quot;: true<br>      &#125;<br>    &#125;,<br>    &#123;<br>      &quot;type&quot;: &quot;portmap&quot;,<br>      &quot;capabilities&quot;: &#123;<br>        &quot;portMappings&quot;: true<br>      &#125;<br>    &#125;<br>  ]<br>&#125;<br><br></code></pre></div></td></tr></table></figure>
+
+<h3 id="network-run-flannel-subnet-env-is-missing-FLANNEL-NETWORK"><a href="#network-run-flannel-subnet-env-is-missing-FLANNEL-NETWORK" class="headerlink" title="network: &#x2F;run&#x2F;flannel&#x2F;subnet.env is missing FLANNEL_NETWORK"></a>network: &#x2F;run&#x2F;flannel&#x2F;subnet.env is missing FLANNEL_NETWORK</h3><figure class="highlight shell"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs shell">kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml<br>kubectl get pods --all-namespaces<br></code></pre></div></td></tr></table></figure>
+
+<blockquote>
+<p>排错技巧，<a target="_blank" rel="noopener" href="https://kubernetes.io/zh/docs/setup/production-environment/tools/kubeadm/troubleshooting-kubeadm/">kubeadm 进行故障排查</a>， <a target="_blank" rel="noopener" href="https://www.jianshu.com/p/2ded3a8cc788">Kubernetes 常用命令</a>.</p>
+</blockquote>
+
+            </div>
+            <hr>
+            <div>
+              <div class="post-metas mb-3">
+                
+                
+                  <div class="post-meta">
+                    <i class="iconfont icon-tags"></i>
+                    
+                      <a class="hover-with-bg" href="/tags/Kubernetes/">Kubernetes</a>
+                    
+                  </div>
+                
+              </div>
+              
+                <p class="note note-warning">
+                  
+                    本博客所有文章除特别声明外，均采用 <a target="_blank" href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh" rel="nofollow noopener noopener">CC BY-SA 4.0 协议</a> ，转载请注明出处！
+                  
+                </p>
+              
+              
+                <div class="post-prevnext">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2021/12/31/2021%E5%B9%B4%E5%BA%A6%E6%80%BB%E7%BB%93/">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">2021年度总结</span>
+                        <span class="visible-mobile">Vorheriger</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2020/12/31/2020%E5%B9%B4%E5%BA%A6%E6%80%BB%E7%BB%93/">
+                        <span class="hidden-mobile">2020年度总结</span>
+                        <span class="visible-mobile">Nächster</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+              <!-- Comments -->
+              <article class="comments" id="comments" lazyload>
+                
+                  
+                
+                
+  <script type="text/javascript">
+    Fluid.utils.loadComments('#comments', function() {
+      var light = 'github-light';
+      var dark = 'github-dark';
+      var schema = document.documentElement.getAttribute('data-user-color-scheme');
+      if (schema === 'dark') {
+        schema = dark;
+      } else {
+        schema = light;
+      }
+      window.UtterancesThemeLight = light;
+      window.UtterancesThemeDark = dark;
+      var s = document.createElement('script');
+      s.setAttribute('src', 'https://utteranc.es/client.js');
+      s.setAttribute('repo', 'waterbang/Comment');
+      s.setAttribute('issue-term', 'pathname');
+      
+      s.setAttribute('label', 'utterances');
+      
+      s.setAttribute('theme', schema);
+      s.setAttribute('crossorigin', 'anonymous');
+      document.getElementById('comments').appendChild(s);
+    })
+  </script>
+  <noscript>Please enable JavaScript to view the comments</noscript>
+
+
+              </article>
+            
+          </article>
+        </div>
+      </div>
+    </div>
+    
+      <div class="d-none d-lg-block col-lg-2 toc-container" id="toc-ctn">
+        <div id="toc">
+  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;TOC</p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+      </div>
+    
+  </div>
+</div>
+
+<!-- Custom -->
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">Suchen</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v"
+                 for="local-search-input">Stichwort</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+
+    
+  </main>
+
+  <footer class="text-center mt-5 py-3">
+  <div class="footer-content">
+     <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a>
+  </div>
+  
+
+  
+  <!-- 备案信息 -->
+  <div class="beian">
+    <span>
+      <a href="http://beian.miit.gov.cn/" target="_blank" rel="nofollow noopener">
+        闽ICP备18009949号-2
+      </a>
+    </span>
+    
+  </div>
+
+
+  
+</footer>
+
+
+  <!-- SCRIPTS -->
+  
+  <script  src="https://cdn.jsdelivr.net/npm/nprogress@0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/nprogress@0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js" ></script>
+<script  src="https://cdn.jsdelivr.net/npm/bootstrap@4/dist/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+<!-- Plugins -->
+
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+  
+
+
+
+  
+    <script  src="https://cdn.jsdelivr.net/npm/tocbot@4/dist/tocbot.min.js" ></script>
+  
+  
+    <script  src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3/dist/jquery.fancybox.min.js" ></script>
+  
+  
+    <script  src="https://cdn.jsdelivr.net/npm/anchor-js@4/anchor.min.js" ></script>
+  
+  
+    <script defer src="https://cdn.jsdelivr.net/npm/clipboard@2/dist/clipboard.min.js" ></script>
+  
+
+
+
+  <script defer src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" ></script>
+
+
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/typed.js@2/lib/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var title = document.getElementById('subtitle').title;
+      
+        typing(title);
+      
+    })(window, document);
+  </script>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+    <!-- Baidu Analytics -->
+    <script defer>
+      var _hmt = _hmt || [];
+      (function () {
+        var hm = document.createElement("script");
+        hm.src = "https://hm.baidu.com/hm.js?58e161bf4b884b2aa577f323f137ac0f";
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(hm, s);
+      })();
+    </script>
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+
+
+
+
+<!-- 主题的启动项 保持在最底部 -->
+<script  src="/js/boot.js" ></script>
+
+
+</body>
+</html>

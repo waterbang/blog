@@ -1,0 +1,572 @@
+
+
+<!DOCTYPE html>
+<html lang="ch_CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/apple-touch-icon.png">
+  <link rel="icon" href="/img/favicon.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="waterbang">
+  <meta name="keywords" content="waterbang">
+  
+    <meta name="description" content="前言BFS运行时本质上是一个操作系统，主要目的是  为了解决现代单页面应用（SPA）的性能不足问题。 为开发者提供android,ios和desktop端的应用开发。 为了契合面向角色编程和开发BFS资产做准备，为区块链开发做社区基础建设。  rust混合编译问题修复 failed to run custom build command for ring v0.16.20运行   1RUST_BA">
+<meta property="og:type" content="article">
+<meta property="og:title" content="BFS开发问题汇总">
+<meta property="og:url" content="https://www.waterbang.top/2022/08/08/BFS%E5%BC%80%E5%8F%91%E9%97%AE%E9%A2%98%E6%B1%87%E6%80%BB/index.html">
+<meta property="og:site_name" content="waterbang">
+<meta property="og:description" content="前言BFS运行时本质上是一个操作系统，主要目的是  为了解决现代单页面应用（SPA）的性能不足问题。 为开发者提供android,ios和desktop端的应用开发。 为了契合面向角色编程和开发BFS资产做准备，为区块链开发做社区基础建设。  rust混合编译问题修复 failed to run custom build command for ring v0.16.20运行   1RUST_BA">
+<meta property="og:locale" content="ch_CN">
+<meta property="og:image" content="https://www.waterbang.top/jni.jpeg">
+<meta property="article:published_time" content="2022-08-08T15:11:26.000Z">
+<meta property="article:modified_time" content="2024-12-21T11:43:23.181Z">
+<meta property="article:author" content="waterbang">
+<meta property="article:tag" content="rust kotlin deno javascript">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://www.waterbang.top/jni.jpeg">
+  
+  
+  <title>BFS开发问题汇总 🏮 waterbang</title>
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4/dist/css/bootstrap.min.css" />
+
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/github-markdown-css@4/github-markdown.min.css" />
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hint.css@2/hint.min.css" />
+
+  
+    
+    
+      
+      <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@10/styles/atom-one-dark.min.css" />
+    
+  
+
+  
+    <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3/dist/jquery.fancybox.min.css" />
+  
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_ba1fz6golrf.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+<!-- 自定义样式保持在最底部 -->
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    var CONFIG = {"hostname":"www.waterbang.top","root":"/","version":"1.8.14","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"right","visible":"hover","icon":"🍦"},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"copy_btn":true,"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"baidu":"58e161bf4b884b2aa577f323f137ac0f","google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+
+<body>
+  <header style="height: 70vh;">
+    <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>waterbang</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                Startseite
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                Archiv
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                Etiketten
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                Über mich
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/links/">
+                <i class="iconfont icon-link-fill"></i>
+                Weblinks
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              &nbsp;<i class="iconfont icon-search"></i>&nbsp;
+            </a>
+          </li>
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">&nbsp;<i
+                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+    <div class="banner" id="banner" parallax=true
+         style="background: url('/img/post-banner.jpg') no-repeat center center;
+           background-size: cover;">
+      <div class="full-bg-img">
+        <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+          <div class="page-header text-center fade-in-up">
+            <span class="h2" id="subtitle" title="BFS开发问题汇总">
+              
+            </span>
+
+            
+              <div class="mt-3">
+  
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-author" aria-hidden="true"></i>
+      waterbang
+    </span>
+  
+  
+    <span class="post-meta">
+      <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+      <time datetime="2022-08-08 23:11" pubdate>
+        August 8, 2022 pm
+      </time>
+    </span>
+  
+</div>
+
+<div class="mt-1">
+  
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-chart"></i>
+      2.4k 字
+    </span>
+  
+
+  
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-clock-fill"></i>
+      
+      
+      20 分钟
+    </span>
+  
+
+  
+  
+    
+      <!-- 不蒜子统计文章PV -->
+      <span id="busuanzi_container_page_pv" style="display: none">
+        <i class="iconfont icon-eye" aria-hidden="true"></i>
+        <span id="busuanzi_value_page_pv"></span> 次
+      </span>
+    
+  
+</div>
+
+            
+          </div>
+
+          
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="d-none d-lg-block col-lg-2"></div>
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div class="py-5" id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">BFS开发问题汇总</h1>
+            
+              <p class="note note-info">
+                
+                  本文最后更新于：5 hours ago
+                
+              </p>
+            
+            <div class="markdown-body">
+              <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>BFS运行时本质上是一个操作系统，主要目的是</p>
+<ol>
+<li>为了解决现代单页面应用（SPA）的性能不足问题。</li>
+<li>为开发者提供<code>android</code>,<code>ios</code>和<code>desktop</code>端的应用开发。</li>
+<li>为了契合面向角色编程和开发BFS资产做准备，为区块链开发做社区基础建设。</li>
+</ol>
+<h2 id="rust混合编译问题"><a href="#rust混合编译问题" class="headerlink" title="rust混合编译问题"></a>rust混合编译问题</h2><h3 id="修复-failed-to-run-custom-build-command-for-ring-v0-16-20"><a href="#修复-failed-to-run-custom-build-command-for-ring-v0-16-20" class="headerlink" title="修复 failed to run custom build command for ring v0.16.20"></a>修复 failed to run custom build command for <code>ring v0.16.20</code></h3><p>运行  </p>
+<figure class="highlight bash"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs bash">RUST_BACKTRACE=1 cargo build --target=aarch64-linux-android --release<br></code></pre></div></td></tr></table></figure>
+
+<p>发现</p>
+<figure class="highlight bash"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs bash">--- stderr<br> error occurred: Failed to find tool. Is `aarch64-linux-android-clang` installed?<br></code></pre></div></td></tr></table></figure>
+
+<p>原因是环境变量的名称错误，需要更改一下</p>
+<figure class="highlight bash"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs bash"><span class="hljs-built_in">cd</span> /Users/mac/Library/Android/sdk/ndk/21.3.6528147/toolchains/llvm/prebuilt/darwin-x86_64/bin/<br><br><span class="hljs-built_in">cp</span> aarch64-linux-android28-clang aarch64-linux-android-clang <br></code></pre></div></td></tr></table></figure>
+
+<h3 id="修复error-failed-to-run-custom-build-command-for-libffi-sys-v1-3-2"><a href="#修复error-failed-to-run-custom-build-command-for-libffi-sys-v1-3-2" class="headerlink" title="修复error: failed to run custom build command for libffi-sys v1.3.2"></a>修复error: failed to run custom build command for <code>libffi-sys v1.3.2</code></h3><figure class="highlight bash"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs bash">brew install autoconf automake libtool   <br></code></pre></div></td></tr></table></figure>
+
+<p>然后 在ext&#x2F;ffi&#x2F;cargo.toml<br>修改版本为：libffi &#x3D; “3.0.0”</p>
+<h2 id="rust-v8-问题汇总"><a href="#rust-v8-问题汇总" class="headerlink" title="rust_v8 问题汇总"></a>rust_v8 问题汇总</h2><h3 id="解决使用容器编译下载报错问题（这块仅供参考，具体位置查看build-rs文件）"><a href="#解决使用容器编译下载报错问题（这块仅供参考，具体位置查看build-rs文件）" class="headerlink" title="解决使用容器编译下载报错问题（这块仅供参考，具体位置查看build.rs文件）"></a>解决使用容器编译下载报错问题（这块仅供参考，具体位置查看build.rs文件）</h3><ol>
+<li><p>下载: <a target="_blank" rel="noopener" href="https://codeload.github.com/denoland/ninja_gn_binaries/tar.gz/refs/tags/20220517">https://codeload.github.com/denoland/ninja_gn_binaries/tar.gz/refs/tags/20220517</a><br>解压到：tools目录下</p>
+</li>
+<li><p>下载: <a target="_blank" rel="noopener" href="https://commondatastorage.googleapis.com/chromium-browser-clang/Linux_x64/clang-llvmorg-15-init-9576-g75f9e83a-3.tgz">https://commondatastorage.googleapis.com/chromium-browser-clang/Linux_x64/clang-llvmorg-15-init-9576-g75f9e83a-3.tgz</a><br>解压到：tools&#x2F;clang  </p>
+</li>
+<li><p>下载: <a target="_blank" rel="noopener" href="https://commondatastorage.googleapis.com/chrome-linux-sysroot/toolchain/3dc473ad845d3ae810c3e1be6f377e3eaa301c6e/debian_bullseye_arm64_sysroot.tar.xz">https://commondatastorage.googleapis.com/chrome-linux-sysroot/toolchain/3dc473ad845d3ae810c3e1be6f377e3eaa301c6e/debian_bullseye_arm64_sysroot.tar.xz</a><br>解压到：build&#x2F;linux&#x2F;debian_bullseye_arm64-sysroot</p>
+</li>
+<li><p>下载：git clone <a target="_blank" rel="noopener" href="https://chromium.googlesource.com/chromium/src/third_party/android_platform">https://chromium.googlesource.com/chromium/src/third_party/android_platform</a></p>
+</li>
+<li><p>下载：git clone <a target="_blank" rel="noopener" href="https://github.com/denoland/android_ndk.git">https://github.com/denoland/android_ndk.git</a></p>
+</li>
+<li><p>下载：git clone <a target="_blank" rel="noopener" href="https://chromium.googlesource.com/catapult.git">https://chromium.googlesource.com/catapult.git</a><br>到 third_party<br>并且需要添加到环境变量：<code>GN</code>, <code>NINJA</code>,<code>CLANG_BASE_PATH</code>, <code>GN_ARGS</code></p>
+</li>
+</ol>
+<h4 id="ERROR-at-build-config-mac-mac-sdk-gni-95-31-No-value-named-“xcode-build”-in-scope-“-mac-sdk-result”-v8-0-48-0-xcode-build-mac-sdk-result-xcode-build"><a href="#ERROR-at-build-config-mac-mac-sdk-gni-95-31-No-value-named-“xcode-build”-in-scope-“-mac-sdk-result”-v8-0-48-0-xcode-build-mac-sdk-result-xcode-build" class="headerlink" title="ERROR at &#x2F;&#x2F;build&#x2F;config&#x2F;mac&#x2F;mac_sdk.gni:95:31: No value named “xcode_build” in scope “_mac_sdk_result”[v8 0.48.0] xcode_build &#x3D;_mac_sdk_result.xcode_build"></a>ERROR at &#x2F;&#x2F;build&#x2F;config&#x2F;mac&#x2F;mac_sdk.gni:95:31: No value named “xcode_build” in scope “_mac_sdk_result”[v8 0.48.0] xcode_build &#x3D;_mac_sdk_result.xcode_build</h4><p>安装 xcode</p>
+<h4 id="ERROR-at-dynamically-parsed-input-that-build-config-mac-mac-sdk-gni-93-19-loaded-1-15-This-is-not-a-valid-number-xcode-build-11C505"><a href="#ERROR-at-dynamically-parsed-input-that-build-config-mac-mac-sdk-gni-93-19-loaded-1-15-This-is-not-a-valid-number-xcode-build-11C505" class="headerlink" title="ERROR at dynamically parsed input that &#x2F;&#x2F;build&#x2F;config&#x2F;mac&#x2F;mac_sdk.gni:93:19 loaded :1:15: This is not a valid number.xcode_build&#x3D;11C505"></a>ERROR at dynamically parsed input that &#x2F;&#x2F;build&#x2F;config&#x2F;mac&#x2F;mac_sdk.gni:93:19 loaded :1:15: This is not a valid number.xcode_build&#x3D;11C505</h4><p>File “&#x2F;Users&#x2F;mac&#x2F;Desktop&#x2F;waterbang&#x2F;project&#x2F;rust&#x2F;rusty_v8&#x2F;build&#x2F;config&#x2F;apple&#x2F;sdk_info.py”, line 71<br>修改为 <code>int[lines[-1].split(](-1),16)</code></p>
+<h4 id="fatal-error-‘features-h’-file-not-found"><a href="#fatal-error-‘features-h’-file-not-found" class="headerlink" title="fatal error: ‘features.h’ file not found"></a>fatal error: ‘features.h’ file not found</h4><p>检查  <code>--sysroot=../../../../third_party/android_ndk/toolchains/llvm/prebuilt/darwin-x86_64/sysroot</code><br>观察ndk,是否没有<code>darwin-x86_64</code>,把目录下：<br><code>third_party/android_ndk/toolchains/llvm/prebuilt/</code>的其他版本复制一分重命名为<code>darwin-x86_64</code>，或者是别的系统名。</p>
+<h2 id="android-问题汇总"><a href="#android-问题汇总" class="headerlink" title="android 问题汇总"></a>android 问题汇总</h2><h3 id="使用android-studio生成JNI"><a href="#使用android-studio生成JNI" class="headerlink" title="使用android studio生成JNI"></a>使用android studio生成JNI</h3><p>打开设置路径：Tools-&gt;External Tools , 点击添加。</p>
+<p><img src="/./jni.jpeg" srcset="/img/loading.gif" lazyload alt="add jni"></p>
+<blockquote>
+<p>-classpath -v -jni -d $ContentRoot$&#x2F;jni<br>-d $ContentRoot$&#x2F;jni  -cp “$Classpath$” $FileFQPackage$.$FileNameWithoutAllExtensions$<br>$ModuleFileDir$</p>
+</blockquote>
+
+            </div>
+            <hr>
+            <div>
+              <div class="post-metas mb-3">
+                
+                
+                  <div class="post-meta">
+                    <i class="iconfont icon-tags"></i>
+                    
+                      <a class="hover-with-bg" href="/tags/rust-kotlin-deno-javascript/">rust kotlin deno javascript</a>
+                    
+                  </div>
+                
+              </div>
+              
+                <p class="note note-warning">
+                  
+                    本博客所有文章除特别声明外，均采用 <a target="_blank" href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh" rel="nofollow noopener noopener">CC BY-SA 4.0 协议</a> ，转载请注明出处！
+                  
+                </p>
+              
+              
+                <div class="post-prevnext">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2022/08/10/Deno_uses_OP_to_call_javaScript/">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">Deno uses OP to call javaScript</span>
+                        <span class="visible-mobile">Vorheriger</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2022/06/06/2022-6-6-rust%E5%A6%82%E4%BD%95%E9%80%9A%E8%BF%87jni%E8%B0%83%E7%94%A8kotlin%E6%96%B9%E6%B3%95/">
+                        <span class="hidden-mobile">2022-6-6-rust如何通过jni调用kotlin方法</span>
+                        <span class="visible-mobile">Nächster</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+              <!-- Comments -->
+              <article class="comments" id="comments" lazyload>
+                
+                  
+                
+                
+  <script type="text/javascript">
+    Fluid.utils.loadComments('#comments', function() {
+      var light = 'github-light';
+      var dark = 'github-dark';
+      var schema = document.documentElement.getAttribute('data-user-color-scheme');
+      if (schema === 'dark') {
+        schema = dark;
+      } else {
+        schema = light;
+      }
+      window.UtterancesThemeLight = light;
+      window.UtterancesThemeDark = dark;
+      var s = document.createElement('script');
+      s.setAttribute('src', 'https://utteranc.es/client.js');
+      s.setAttribute('repo', 'waterbang/Comment');
+      s.setAttribute('issue-term', 'pathname');
+      
+      s.setAttribute('label', 'utterances');
+      
+      s.setAttribute('theme', schema);
+      s.setAttribute('crossorigin', 'anonymous');
+      document.getElementById('comments').appendChild(s);
+    })
+  </script>
+  <noscript>Please enable JavaScript to view the comments</noscript>
+
+
+              </article>
+            
+          </article>
+        </div>
+      </div>
+    </div>
+    
+      <div class="d-none d-lg-block col-lg-2 toc-container" id="toc-ctn">
+        <div id="toc">
+  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;TOC</p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+      </div>
+    
+  </div>
+</div>
+
+<!-- Custom -->
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">Suchen</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v"
+                 for="local-search-input">Stichwort</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+
+    
+  </main>
+
+  <footer class="text-center mt-5 py-3">
+  <div class="footer-content">
+     <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a>
+  </div>
+  
+
+  
+  <!-- 备案信息 -->
+  <div class="beian">
+    <span>
+      <a href="http://beian.miit.gov.cn/" target="_blank" rel="nofollow noopener">
+        闽ICP备18009949号-2
+      </a>
+    </span>
+    
+  </div>
+
+
+  
+</footer>
+
+
+  <!-- SCRIPTS -->
+  
+  <script  src="https://cdn.jsdelivr.net/npm/nprogress@0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/nprogress@0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js" ></script>
+<script  src="https://cdn.jsdelivr.net/npm/bootstrap@4/dist/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+<!-- Plugins -->
+
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+  
+
+
+
+  
+    <script  src="https://cdn.jsdelivr.net/npm/tocbot@4/dist/tocbot.min.js" ></script>
+  
+  
+    <script  src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3/dist/jquery.fancybox.min.js" ></script>
+  
+  
+    <script  src="https://cdn.jsdelivr.net/npm/anchor-js@4/anchor.min.js" ></script>
+  
+  
+    <script defer src="https://cdn.jsdelivr.net/npm/clipboard@2/dist/clipboard.min.js" ></script>
+  
+
+
+
+  <script defer src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" ></script>
+
+
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/typed.js@2/lib/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var title = document.getElementById('subtitle').title;
+      
+        typing(title);
+      
+    })(window, document);
+  </script>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+    <!-- Baidu Analytics -->
+    <script defer>
+      var _hmt = _hmt || [];
+      (function () {
+        var hm = document.createElement("script");
+        hm.src = "https://hm.baidu.com/hm.js?58e161bf4b884b2aa577f323f137ac0f";
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(hm, s);
+      })();
+    </script>
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+
+
+
+
+<!-- 主题的启动项 保持在最底部 -->
+<script  src="/js/boot.js" ></script>
+
+
+</body>
+</html>

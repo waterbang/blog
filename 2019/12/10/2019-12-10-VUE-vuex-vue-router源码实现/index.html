@@ -1,0 +1,817 @@
+
+
+<!DOCTYPE html>
+<html lang="ch_CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/apple-touch-icon.png">
+  <link rel="icon" href="/img/favicon.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="waterbang">
+  <meta name="keywords" content="waterbang">
+  
+    <meta name="description" content="初始化项目 🏃首先用vue-cli初始化我们的项目，分别选择 ? Please pick a preset: Manually select features ? Check the features needed for your project: Babel, Router, Vuex, Linter ? Use history mode for router? (Requires prop">
+<meta property="og:type" content="article">
+<meta property="og:title" content="手写Mini Vue-Router &amp;&amp; Mini Vuex">
+<meta property="og:url" content="https://www.waterbang.top/2019/12/10/2019-12-10-VUE-vuex-vue-router%E6%BA%90%E7%A0%81%E5%AE%9E%E7%8E%B0/index.html">
+<meta property="og:site_name" content="waterbang">
+<meta property="og:description" content="初始化项目 🏃首先用vue-cli初始化我们的项目，分别选择 ? Please pick a preset: Manually select features ? Check the features needed for your project: Babel, Router, Vuex, Linter ? Use history mode for router? (Requires prop">
+<meta property="og:locale" content="ch_CN">
+<meta property="og:image" content="https://www.waterbang.top/2019/12/10/2019-12-10-VUE-vuex-vue-router%E6%BA%90%E7%A0%81%E5%AE%9E%E7%8E%B0/routes1.png">
+<meta property="article:published_time" content="2019-12-10T11:52:08.000Z">
+<meta property="article:modified_time" content="2024-12-21T11:43:23.157Z">
+<meta property="article:author" content="waterbang">
+<meta property="article:tag" content="VUE">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://www.waterbang.top/2019/12/10/2019-12-10-VUE-vuex-vue-router%E6%BA%90%E7%A0%81%E5%AE%9E%E7%8E%B0/routes1.png">
+  
+  
+  <title>手写Mini Vue-Router &amp;&amp; Mini Vuex 🏮 waterbang</title>
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4/dist/css/bootstrap.min.css" />
+
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/github-markdown-css@4/github-markdown.min.css" />
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hint.css@2/hint.min.css" />
+
+  
+    
+    
+      
+      <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@10/styles/atom-one-dark.min.css" />
+    
+  
+
+  
+    <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3/dist/jquery.fancybox.min.css" />
+  
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_ba1fz6golrf.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+<!-- 自定义样式保持在最底部 -->
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    var CONFIG = {"hostname":"www.waterbang.top","root":"/","version":"1.8.14","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"right","visible":"hover","icon":"🍦"},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"copy_btn":true,"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"baidu":"58e161bf4b884b2aa577f323f137ac0f","google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+
+<body>
+  <header style="height: 70vh;">
+    <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>waterbang</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                Startseite
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                Archiv
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                Etiketten
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                Über mich
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/links/">
+                <i class="iconfont icon-link-fill"></i>
+                Weblinks
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              &nbsp;<i class="iconfont icon-search"></i>&nbsp;
+            </a>
+          </li>
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">&nbsp;<i
+                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+    <div class="banner" id="banner" parallax=true
+         style="background: url('/img/post-banner.jpg') no-repeat center center;
+           background-size: cover;">
+      <div class="full-bg-img">
+        <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+          <div class="page-header text-center fade-in-up">
+            <span class="h2" id="subtitle" title="手写Mini Vue-Router &amp;&amp; Mini Vuex">
+              
+            </span>
+
+            
+              <div class="mt-3">
+  
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-author" aria-hidden="true"></i>
+      waterbang
+    </span>
+  
+  
+    <span class="post-meta">
+      <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+      <time datetime="2019-12-10 19:52" pubdate>
+        December 10, 2019 pm
+      </time>
+    </span>
+  
+</div>
+
+<div class="mt-1">
+  
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-chart"></i>
+      8.3k 字
+    </span>
+  
+
+  
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-clock-fill"></i>
+      
+      
+      70 分钟
+    </span>
+  
+
+  
+  
+    
+      <!-- 不蒜子统计文章PV -->
+      <span id="busuanzi_container_page_pv" style="display: none">
+        <i class="iconfont icon-eye" aria-hidden="true"></i>
+        <span id="busuanzi_value_page_pv"></span> 次
+      </span>
+    
+  
+</div>
+
+            
+          </div>
+
+          
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="d-none d-lg-block col-lg-2"></div>
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div class="py-5" id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">手写Mini Vue-Router &amp;&amp; Mini Vuex</h1>
+            
+              <p class="note note-info">
+                
+                  本文最后更新于：5 hours ago
+                
+              </p>
+            
+            <div class="markdown-body">
+              <h4 id="初始化项目-🏃"><a href="#初始化项目-🏃" class="headerlink" title="初始化项目 🏃"></a>初始化项目 🏃</h4><p>首先用vue-cli初始化我们的项目，分别选择</p>
+<div class="hljs code-wrapper"><pre><code class="hljs">? Please pick a preset: Manually select features
+? Check the features needed for your project: Babel, Router, Vuex, Linter
+? Use history mode for router? (Requires proper server setup for index fallback in production) No
+? Pick a linter / formatter config: Airbnb
+? Pick additional lint features: Lint on save, Lint and fix on commit
+? Where do you prefer placing config for Babel, ESLint, etc.? In dedicated config files
+? Save this as a preset for future projects? No
+</code></pre></div>
+<br>
+
+<p>在<code>.eslintrc.js</code>里添加规则，</p>
+<div class="hljs code-wrapper"><pre><code class="hljs">  rules: &#123;
+    &#39;no-console&#39;: process.env.NODE_ENV === &#39;production&#39; ? &#39;error&#39; : &#39;off&#39;,
+    &#39;no-debugger&#39;: process.env.NODE_ENV === &#39;production&#39; ? &#39;error&#39; : &#39;off&#39;,
+    &#39;no-sequences&#39;: 0,
+    &#39;no-param-reassign&#39;: 0,
+    &#39;implicit-arrow-linebreak&#39;: 0,
+    &#39;no-return-assign&#39;: 0,
+    &#39;no-underscore-dangle&#39;: 0,
+    &#39;no-restricted-globals&#39;: 0,
+    &#39;no-unused-expressions&#39;: 0,
+    &#39;no-unused-vars&#39;: 0,
+  &#125;,
+</code></pre></div>
+<h2 id="Vue-router-🍭"><a href="#Vue-router-🍭" class="headerlink" title="Vue-router 🍭"></a>Vue-router 🍭</h2><p>首先我们将 <code>/router/index.js</code> 文件里的vue-router 改写成我们的,&#x2F;vue-router</p>
+<div class="hljs code-wrapper"><pre><code class="hljs">//   /src/router/index.js
+import Vue from &#39;vue&#39;;
+import VueRouter from &#39;./vue-router&#39;;//改成自己的
+import Home from &#39;../views/Home.vue&#39;;
+import About from &#39;../views/About.vue&#39;;
+
+Vue.use(VueRouter);
+</code></pre></div>
+<br>
+
+<h3 id="初始化自己的vue-router-🎨"><a href="#初始化自己的vue-router-🎨" class="headerlink" title="初始化自己的vue-router 🎨"></a>初始化自己的vue-router 🎨</h3><p>第一步<code>Vue.use(VueRouter)</code>,默认调用了install方法，并传入了一个vue的构造函数。<br> 可以用来扩展属性或者组件或者指令。   </p>
+<div class="hljs code-wrapper"><pre><code class="hljs">//   /src/router/vue-router.js
+let Vue;// 存起来
+class Router &#123;
+&#125;;
+Router.install = (_Vue) =&gt; &#123;
+  Vue = _Vue; 
+&#125;;
+export default Router;
+</code></pre></div>
+<p>第二步，我们的根组件里面会传一个<code>router</code>,让子组件都可以拿到这个<code>router</code>。</p>
+<div class="hljs code-wrapper"><pre><code class="hljs">//  /main.js
+new Vue(&#123;
+  router,
+  store,
+  render: h =&gt; h(App),
+&#125;).$mount(&#39;#app&#39;);
+</code></pre></div>
+<p>我们可以直接这样写</p>
+<div class="hljs code-wrapper"><pre><code class="hljs">Vue.prototype.router = xxxx;
+</code></pre></div>
+<p>但是这样在每次<code>new Vue</code> 的时候都会带上router，我们希望在根组件以下才有。所以我们使用<code>Vue.mixin</code>,<br>它内部会把这个对象给每个属性，混合在一起。它内部就是将组件的生命周期做个数组，它会把mixin的方法放在前面，<br>组件的方法放在后面，像这样 <code>[beforeCreate,befoureCrate]</code>,执行的时候，循环。</p>
+<div class="hljs code-wrapper"><pre><code class="hljs"> //   /src/router/vue-router.js
+Router.install = (_Vue) =&gt; &#123;
+  Vue = _Vue;
+  Vue.mixin(&#123;
+    beforeCreate() &#123; // 组件创建之前，走这方法
+      if(this.$options.router)&#123; //  判断根组件是谁
+      &#125;
+    &#125;,
+  &#125;)
+&#125;;
+</code></pre></div>
+<p>这个<code>$options</code>,指的是<code>new Vue</code>传的内容，也就是下面代码的3，4，5行。</p>
+<div class="hljs code-wrapper"><pre><code class="hljs">//  /main.js
+new Vue(&#123;
+  router,
+  store,
+  render: h =&gt; h(App),
+&#125;).$mount(&#39;#app&#39;);
+</code></pre></div>
+<br>
+
+<h4 id="完善mixin-🏋️‍♂️"><a href="#完善mixin-🏋️‍♂️" class="headerlink" title="完善mixin 🏋️‍♂️"></a>完善mixin 🏋️‍♂️</h4><p>让根组件下都有这个<code>router</code>。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs javascript"><span class="hljs-comment">//  /src/router/vue-router.js</span><br><span class="hljs-title class_">Router</span>.<span class="hljs-property">install</span> = <span class="hljs-function">(<span class="hljs-params">_Vue</span>) =&gt;</span> &#123;<br>  <span class="hljs-title class_">Vue</span> = _Vue;<br>  <span class="hljs-title class_">Vue</span>.<span class="hljs-title function_">mixin</span>(&#123;<br>    <span class="hljs-title function_">beforeCreate</span>(<span class="hljs-params"></span>) &#123; <span class="hljs-comment">// 组件创建之前，走这方法</span><br>      <span class="hljs-keyword">if</span> (<span class="hljs-variable language_">this</span>.<span class="hljs-property">$options</span> &amp;&amp; <span class="hljs-variable language_">this</span>.<span class="hljs-property">$options</span>.<span class="hljs-property">router</span>) &#123; <span class="hljs-comment">//看看是不是根组件</span><br>        <span class="hljs-variable language_">this</span>.<span class="hljs-property">router</span> = <span class="hljs-variable language_">this</span>.<span class="hljs-property">$options</span>.<span class="hljs-property">router</span>;<br>      &#125; <span class="hljs-keyword">else</span> &#123; <span class="hljs-comment">//  如果不是父亲就是儿子</span><br>        <span class="hljs-comment">//  让所有的子组件都有router属性，指向当前 router</span><br>        <span class="hljs-variable language_">this</span>.<span class="hljs-property">router</span> = <span class="hljs-variable language_">this</span>.<span class="hljs-property">$parent</span> &amp;&amp; <span class="hljs-variable language_">this</span>.<span class="hljs-property">$parent</span>.<span class="hljs-property">router</span>;<br>      &#125;<br>    &#125;,<br>  &#125;);<br>&#125;;<span class="hljs-string">``</span><span class="hljs-string">`</span><br><span class="hljs-string"></span><br><span class="hljs-string">&lt;br&gt;</span><br><span class="hljs-string"></span><br><span class="hljs-string"></span><br><span class="hljs-string">### 添加$route $router router-link router-view 🍕</span><br><span class="hljs-string">每个组件都有 `</span>$route<span class="hljs-string">` `</span>$router<span class="hljs-string">` 我们接下来来添加它们，并注册一下两个组件</span><br><span class="hljs-string"></span><br><span class="hljs-string">`</span><span class="hljs-string">``</span>javascript<br><span class="hljs-comment">//  /src/router/vue-router.js</span><br><span class="hljs-keyword">let</span> <span class="hljs-title class_">Vue</span>;<span class="hljs-comment">// 存起来</span><br><span class="hljs-keyword">class</span> <span class="hljs-title class_">Router</span> &#123;<br>&#125;<br><br><span class="hljs-title class_">Router</span>.<span class="hljs-property">install</span> = <span class="hljs-function">(<span class="hljs-params">_Vue</span>) =&gt;</span> &#123;<br>  <span class="hljs-title class_">Vue</span> = _Vue;<br>  <span class="hljs-title class_">Vue</span>.<span class="hljs-title function_">mixin</span>(&#123;<br>    <span class="hljs-title function_">beforeCreate</span>(<span class="hljs-params"></span>) &#123; <span class="hljs-comment">// 组件创建之前，走这方法</span><br>      <span class="hljs-comment">//  判断根组件是谁</span><br>      <span class="hljs-keyword">if</span> (<span class="hljs-variable language_">this</span>.<span class="hljs-property">$options</span> &amp;&amp; <span class="hljs-variable language_">this</span>.<span class="hljs-property">$options</span>.<span class="hljs-property">router</span>) &#123;<br>        <span class="hljs-variable language_">this</span>.<span class="hljs-property">router</span> = <span class="hljs-variable language_">this</span>.<span class="hljs-property">$options</span>.<span class="hljs-property">router</span>;<br>      &#125; <span class="hljs-keyword">else</span> &#123; <span class="hljs-comment">//  如果不是父亲就是儿子</span><br>        <span class="hljs-comment">//  让所有的子组件都有router属性，指向当前 router</span><br>        <span class="hljs-variable language_">this</span>.<span class="hljs-property">router</span> = <span class="hljs-variable language_">this</span>.<span class="hljs-property">$parent</span> &amp;&amp; <span class="hljs-variable language_">this</span>.<span class="hljs-property">$parent</span>.<span class="hljs-property">router</span>;<br>      &#125;<br>        <span class="hljs-comment">//  $route $router</span><br>      <span class="hljs-title class_">Object</span>.<span class="hljs-title function_">defineProperty</span>(<span class="hljs-variable language_">this</span>, <span class="hljs-string">&#x27;$route&#x27;</span>, &#123;<br>        <span class="hljs-attr">value</span>: &#123;&#125;,<br>      &#125;);<br>      <span class="hljs-title class_">Object</span>.<span class="hljs-title function_">defineProperty</span>(<span class="hljs-variable language_">this</span>, <span class="hljs-string">&#x27;$router&#x27;</span>, &#123;<br>        <span class="hljs-attr">value</span>: &#123;&#125;,<br>      &#125;);<br>    &#125;,<br>  &#125;);<br> <span class="hljs-comment">// router-link router-view</span><br>      <span class="hljs-title class_">Vue</span>.<span class="hljs-title function_">component</span>(<span class="hljs-string">&#x27;router-link&#x27;</span>, &#123;<br>        <span class="hljs-title function_">render</span>(<span class="hljs-params"></span>) &#123;<br>          <span class="hljs-keyword">return</span> <span class="hljs-literal">null</span>;<br>        &#125;,<br>      &#125;);<br>      <span class="hljs-title class_">Vue</span>.<span class="hljs-title function_">component</span>(<span class="hljs-string">&#x27;router-view&#x27;</span>, &#123;<br>        <span class="hljs-title function_">render</span>(<span class="hljs-params"></span>) &#123;<br>          <span class="hljs-keyword">return</span> <span class="hljs-literal">null</span>;<br>        &#125;,<br>      &#125;);<br>&#125;;<br><span class="hljs-keyword">export</span> <span class="hljs-keyword">default</span> <span class="hljs-title class_">Router</span>;<br></code></pre></div></td></tr></table></figure>
+
+
+<h4 id="完善-router-link-🍔"><a href="#完善-router-link-🍔" class="headerlink" title="完善 router-link 🍔"></a>完善 router-link 🍔</h4><p>第一步，我们完善<code>to</code>。（<del>我们也就一步</del>）</p>
+<div class="hljs code-wrapper"><pre><code class="hljs">&lt;!-- 字符串 --&gt;
+&lt;router-link to=&quot;home&quot;&gt;Home&lt;/router-link&gt;
+</code></pre></div>
+<p>像这样</p>
+<figure class="highlight javascript"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs javascript"><span class="hljs-comment">//  /src/router/vue-router.js</span><br><span class="hljs-title class_">Vue</span>.<span class="hljs-title function_">component</span>(<span class="hljs-string">&#x27;router-link&#x27;</span>, &#123;<br><span class="hljs-attr">props</span>: &#123;<br>  <span class="hljs-attr">to</span>: <span class="hljs-title class_">String</span>,<br>&#125;,<br><span class="hljs-title function_">render</span>(<span class="hljs-params"></span>) &#123;<br>  <span class="hljs-keyword">return</span> <span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">a</span> <span class="hljs-attr">href</span>=<span class="hljs-string">&#123;</span>`#$&#123;<span class="hljs-attr">this.to</span>&#125;`&#125;&gt;</span>&#123;this.$slots.default&#125;<span class="hljs-tag">&lt;/<span class="hljs-name">a</span>&gt;</span></span>;<br>&#125;,<br>&#125;);<br></code></pre></div></td></tr></table></figure>
+
+<h3 id="接收路由，渲染组件-🚄"><a href="#接收路由，渲染组件-🚄" class="headerlink" title="接收路由，渲染组件 🚄"></a>接收路由，渲染组件 🚄</h3><p>我们在<code>/src/router/index.js</code>里，有个路由表，并在<code>new VueRouter</code>的时候传了进去，<br>接下来我们在VueRouter的构造函数里接收一下，并将它格式化为这样的格式：</p>
+<div align=center>
+`{'/': Home, '/about':'xxx'}`
+</div>
+这样我切谁，就将对于的组件渲染上去。
+
+
+<p>我们的routes长这样。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs javascript"><span class="hljs-comment">//  /src/router/index.js</span><br><span class="hljs-keyword">const</span> routes = [ <span class="hljs-comment">// &#123;&#x27;/&#x27;: Home, &#x27;/about&#x27;:&#x27;xxx&#x27;&#125;</span><br>  &#123;<br>    <span class="hljs-attr">path</span>: <span class="hljs-string">&#x27;/&#x27;</span>,<br>    <span class="hljs-attr">name</span>: <span class="hljs-string">&#x27;home&#x27;</span>,<br>    <span class="hljs-attr">component</span>: <span class="hljs-title class_">Home</span>,<br>  &#125;,<br>  &#123;<br>    <span class="hljs-attr">path</span>: <span class="hljs-string">&#x27;/about&#x27;</span>,<br>    <span class="hljs-attr">name</span>: <span class="hljs-string">&#x27;about&#x27;</span>,<br>    <span class="hljs-attr">component</span>: <span class="hljs-title class_">About</span>,<br>  &#125;,<br>];<br></code></pre></div></td></tr></table></figure>
+
+
+<p>我们在构造函数里接收，并格式化<code>routes</code>。</p>
+<div class="hljs code-wrapper"><pre><code class="hljs">//  /src/router/vue-router.js
+class Router &#123;
+  constructor(&#123; routes &#125;) &#123;
+    this.routeMap = routes.reduce((memo, current) =&gt;
+    (memo[current.path] = current.component, memo), &#123;&#125;);
+    console.log(this.routeMap);
+  &#125;
+&#125;
+</code></pre></div>
+<p>上面的意思是：将值取出来（current）,将path赋给当前的memo，值为current.component。<br>打印后长这样<br><img src="/./routes1.png" srcset="/img/loading.gif" lazyload alt="router1"></p>
+<h4 id="渲染组件到-router-view-🚅"><a href="#渲染组件到-router-view-🚅" class="headerlink" title="渲染组件到 router-view 🚅"></a>渲染组件到 router-view 🚅</h4><p>我们先将路由固定为<code>home</code>页面</p>
+<div class="hljs code-wrapper"><pre><code class="hljs"> //  /src/router/vue-router.js
+    class Router &#123;
+      constructor(&#123; routes &#125;) &#123;
+        this.routeMap = routes.reduce((memo, current) =&gt;
+        (memo[current.path] = current.component, memo), &#123;&#125;);
+        this.route = &#123; current: &#39;/&#39; &#125;;   // 增加了这行
+      &#125;
+    &#125;
+</code></pre></div>
+<p>然后修改<code>router-view</code>来渲染。</p>
+<div class="hljs code-wrapper"><pre><code class="hljs">  Vue.component(&#39;router-view&#39;, &#123;
+    render(h) &#123; //  这个this是个代理对象
+      return h(this.router.routeMap[this.router.route.current]);
+    &#125;,
+  &#125;);
+</code></pre></div>
+<h4 id="监听几个事件-🚈"><a href="#监听几个事件-🚈" class="headerlink" title="监听几个事件 🚈"></a>监听几个事件 🚈</h4><p>监听<code>load</code>事件。（组件加载完会执行），先看看当前组件有没有hash.</p>
+<blockquote>
+<p>路由分为两种：一种是hash的<code>#</code> ，另一种是h5的API <code>/</code> .<br>hash不利已SEO优化，但是比较容易。</p>
+</blockquote>
+<p>监听<code>hashchange</code>事件，在改变的时候将路由改掉。</p>
+<div class="hljs code-wrapper"><pre><code class="hljs">//  /src/router/vue-router.js
+class Router &#123;
+  constructor(&#123; routes &#125;) &#123;
+    this.routeMap = routes.reduce((memo, current) =&gt;
+      (memo[current.path] = current.component, memo), &#123;&#125;);
+    this.route = &#123; current: &#39;/ &#125;;
+    window.addEventListener(&#39;load&#39;, () =&gt; &#123;
+      location.hash ? &#39;&#39; : location.hash = &#39;/&#39;;
+    &#125;);
+    window.addEventListener(&#39;hashchange&#39;, () =&gt; &#123;
+      this.route.current = location.hash.slice(1);
+    &#125;);
+  &#125;
+&#125;
+</code></pre></div>
+<p>但是我们的this.route.current并不是一个响应式数据，改了值以后视图不会刷新。<br><strong>如何将不是响应式的数据变成响应式数据呢？</strong></p>
+<div class="hljs code-wrapper"><pre><code class="hljs"> Vue.util.defineReactive(this, &#39;route&#39;, &#123; current: &#39;/&#39; &#125;);
+</code></pre></div>
+<p>上面代码的意思：就是给这个人（<code>this</code>）,定义一个这样的数据（<code>route</code>），值是（<code>&#123; current: &#39;/&#39; &#125;</code>） ；</p>
+<p>接下来我们来写 <code>mini vuex</code>;</p>
+<h2 id="Store-👳‍♀️"><a href="#Store-👳‍♀️" class="headerlink" title="Store 👳‍♀️"></a>Store 👳‍♀️</h2><p>store的模式跟router的套路一样。它 new 了一个 <code>Vuex.Store</code>导出后，放到<code>/main.js</code>里面来，<br>然后放到它的实例里面。让每个人都有this.$store。<br>让我们来写出我们的套路,（也是<del>写插件</del>的套路），新建<code>/src/store/vuex.js</code>,代码如下：</p>
+<div class="hljs code-wrapper"><pre><code class="hljs">//  /src/store/vuex.js
+let Vue;
+class Store &#123;
+&#125;
+const install = (_Vue) =&gt; &#123;
+  Vue = _Vue;
+&#125;;
+export default &#123;
+  Store,
+  install,
+&#125;;
+</code></pre></div>
+<p>接下来我们需要接收一下new传进来的参数，并且给组件注入一个$store。</p>
+<div class="hljs code-wrapper"><pre><code class="hljs">//  /src/store/vuex.js
+let Vue;
+class Store &#123;
+  constructor(options) &#123;
+  &#125;
+&#125;
+const install = (_Vue) =&gt; &#123;
+  Vue = _Vue;
+  Vue.mixin(&#123;
+    beforeCreate() &#123;
+      if (this.$options &amp;&amp; this.$options.store) &#123;
+        this.$store = this.$options.store;
+      &#125; else &#123;
+        this.$store = this.$parent &amp;&amp; this.$parent.$store;
+      &#125;
+    &#125;,
+  &#125;)
+&#125;;
+export default &#123;
+  Store,
+  install,
+&#125;;
+</code></pre></div>
+<h3 id="开始共享我们的数据-👲"><a href="#开始共享我们的数据-👲" class="headerlink" title="开始共享我们的数据 👲"></a>开始共享我们的数据 👲</h3><p>我们先在<code>/src/store/index.js</code>,放个值。</p>
+<div class="hljs code-wrapper"><pre><code class="hljs"> state: &#123;
+    name: &#39;waterbang&#39;
+  &#125;,
+</code></pre></div>
+<p>然后在<code>/src/store/index.js</code>,接收：</p>
+<div class="hljs code-wrapper"><pre><code class="hljs">constructor(options) &#123;
+    this.state = options.state;
+ &#125;
+</code></pre></div>
+<p>这样我们就可以共享数据，并在组件内使用<code> &#123;&#123;this.$store.state&#125;&#125;</code>取到数据了。</p>
+<h3 id="接着修改我们的数据-🧔"><a href="#接着修改我们的数据-🧔" class="headerlink" title="接着修改我们的数据 🧔"></a>接着修改我们的数据 🧔</h3><p>第一步，先在<code>/src/store/index.js</code>,里定义<code>mutations</code>里的函数:</p>
+<div class="hljs code-wrapper"><pre><code class="hljs"> mutations: &#123;
+    setUsername(state) &#123;
+      state.name = &#39;water&#39;;
+    &#125;,
+  &#125;,
+  
+</code></pre></div>
+<p>第二步，在<code>App.vue</code>里，定义<code>commit</code>：</p>
+<div class="hljs code-wrapper"><pre><code class="hljs">  mounted() &#123;
+    this.$store.commit(&#39;setUsername&#39;);
+  &#125;,
+  
+</code></pre></div>
+<p>第三步，由于commit是$store里的方法，我们接下来在我们的<code>vuex</code>里面来新建这个方法：</p>
+<div class="hljs code-wrapper"><pre><code class="hljs">// /src/store/vuex.js
+class Store &#123;
+  constructor(options) &#123;
+    this.state = options.state;
+    this.mutations = options.mutations; // 取出mutations
+  &#125;
+
+  commit = (eventName) =&gt; &#123;
+    this.mutations[eventName](this.state); //   匹配对应的函数，并执行
+  &#125;
+&#125;
+</code></pre></div>
+<p>但是，问题来了，到现在为止，我们刷新，视图还是不会变，这是因为我们的数据是直接传进来的,并不是响应式数据。</p>
+<p>我们可以采用 <code>new Vue</code> 创建一个实例来解决，将状态变成响应式的，如果数据更新，则视图刷新。<br>如果想要深入了解响应式原理看这位大佬写的<a target="_blank" rel="noopener" href="https://juejin.im/post/5d4ad8686fb9a06b2766b625">Vue原理解析（六）：全面深入理解响应式原理(上)-对象基础篇</a>。</p>
+<div class="hljs code-wrapper"><pre><code class="hljs"> // /src/store/vuex.js
+class Store &#123;
+  constructor(options) &#123;
+    this.vm = new Vue(&#123;
+      data: &#123; state: options.state &#125;,
+    &#125;);
+    this.state = this.vm.state;
+    this.mutations = options.mutations;
+  &#125;
+
+  commit = (eventName) =&gt; &#123;
+    this.mutations[eventName](this.state);
+  &#125;
+&#125;
+</code></pre></div>
+<p>这样就实现了基本的<code>mutations</code>。</p>
+<h4 id="actions-🎅"><a href="#actions-🎅" class="headerlink" title="actions 🎅"></a>actions 🎅</h4><p>接下来轮到了<code>actions</code>。</p>
+<p>第一步先来增加一下<code>actions</code>里的方法。</p>
+<div class="hljs code-wrapper"><pre><code class="hljs">actions: &#123;
+    setUsername(&#123; commit &#125;) &#123;
+      setTimeout(() =&gt; &#123;
+        commit(&#39;setUsername&#39;);
+      &#125;, 1000);
+    &#125;,
+  &#125;,
+  
+</code></pre></div>
+<p>然后到App.vue里修改一下内容。</p>
+<div class="hljs code-wrapper"><pre><code class="hljs"> mounted() &#123;
+    this.$store.dispatch(&#39;setUsername&#39;);
+  &#125;,
+</code></pre></div>
+<p>最后我们到<code>/src/store/vuex.js</code>，里增加我们的<code>dispatch</code>方法。</p>
+<div class="hljs code-wrapper"><pre><code class="hljs">class Store &#123;
+  constructor(options) &#123;
+    this.vm = new Vue(&#123;
+      data: &#123; state: options.state &#125;,
+    &#125;);
+    this.state = this.vm.state;
+    this.mutations = options.mutations;
+    this.actions = options.actions;
+  &#125;
+
+  commit = (eventName) =&gt; &#123;
+    this.mutations[eventName](this.state);
+  &#125;
+
+  dispatch = (eventName) =&gt; &#123;
+    this.actions[eventName](this); //这里的this是当前的Store
+  &#125;
+&#125;
+</code></pre></div>
+<p>然后我们的<code>actions</code>完成了,刷新后过一秒更新数据。</p>
+<h2 id="结束语-🏐"><a href="#结束语-🏐" class="headerlink" title="结束语 🏐"></a>结束语 🏐</h2><p>花雾萦风缥缈，歌珠滴水清圆。「西江月·别梦已随流水」——苏轼。</p>
+
+            </div>
+            <hr>
+            <div>
+              <div class="post-metas mb-3">
+                
+                
+                  <div class="post-meta">
+                    <i class="iconfont icon-tags"></i>
+                    
+                      <a class="hover-with-bg" href="/tags/VUE/">VUE</a>
+                    
+                  </div>
+                
+              </div>
+              
+                <p class="note note-warning">
+                  
+                    本博客所有文章除特别声明外，均采用 <a target="_blank" href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh" rel="nofollow noopener noopener">CC BY-SA 4.0 协议</a> ，转载请注明出处！
+                  
+                </p>
+              
+              
+                <div class="post-prevnext">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2019/12/26/2019-12-26-VUE-Vue%E4%BC%98%E5%8C%96%E9%A2%84%E6%B8%B2%E6%9F%93-%E9%AA%A8%E6%9E%B6%E5%B1%8F-Nuxt-js%E6%9C%8D%E5%8A%A1%E7%AB%AF%E6%B8%B2%E6%9F%93/">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">Vue优化预渲染,骨架屏,Nuxt.js服务端渲染</span>
+                        <span class="visible-mobile">Vorheriger</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2019/12/01/2019-12-1-PWA-%E7%A6%BB%E7%BA%BF%E4%BC%98%E5%85%88%E4%B8%AD%E7%9A%84%E7%BC%93%E5%AD%98%E6%A8%A1%E5%BC%8F/">
+                        <span class="hidden-mobile">PWA-离线优先中的缓存模式</span>
+                        <span class="visible-mobile">Nächster</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+              <!-- Comments -->
+              <article class="comments" id="comments" lazyload>
+                
+                  
+                
+                
+  <script type="text/javascript">
+    Fluid.utils.loadComments('#comments', function() {
+      var light = 'github-light';
+      var dark = 'github-dark';
+      var schema = document.documentElement.getAttribute('data-user-color-scheme');
+      if (schema === 'dark') {
+        schema = dark;
+      } else {
+        schema = light;
+      }
+      window.UtterancesThemeLight = light;
+      window.UtterancesThemeDark = dark;
+      var s = document.createElement('script');
+      s.setAttribute('src', 'https://utteranc.es/client.js');
+      s.setAttribute('repo', 'waterbang/Comment');
+      s.setAttribute('issue-term', 'pathname');
+      
+      s.setAttribute('label', 'utterances');
+      
+      s.setAttribute('theme', schema);
+      s.setAttribute('crossorigin', 'anonymous');
+      document.getElementById('comments').appendChild(s);
+    })
+  </script>
+  <noscript>Please enable JavaScript to view the comments</noscript>
+
+
+              </article>
+            
+          </article>
+        </div>
+      </div>
+    </div>
+    
+      <div class="d-none d-lg-block col-lg-2 toc-container" id="toc-ctn">
+        <div id="toc">
+  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;TOC</p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+      </div>
+    
+  </div>
+</div>
+
+<!-- Custom -->
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">Suchen</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v"
+                 for="local-search-input">Stichwort</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+
+    
+  </main>
+
+  <footer class="text-center mt-5 py-3">
+  <div class="footer-content">
+     <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a>
+  </div>
+  
+
+  
+  <!-- 备案信息 -->
+  <div class="beian">
+    <span>
+      <a href="http://beian.miit.gov.cn/" target="_blank" rel="nofollow noopener">
+        闽ICP备18009949号-2
+      </a>
+    </span>
+    
+  </div>
+
+
+  
+</footer>
+
+
+  <!-- SCRIPTS -->
+  
+  <script  src="https://cdn.jsdelivr.net/npm/nprogress@0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/nprogress@0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js" ></script>
+<script  src="https://cdn.jsdelivr.net/npm/bootstrap@4/dist/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+<!-- Plugins -->
+
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+  
+
+
+
+  
+    <script  src="https://cdn.jsdelivr.net/npm/tocbot@4/dist/tocbot.min.js" ></script>
+  
+  
+    <script  src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3/dist/jquery.fancybox.min.js" ></script>
+  
+  
+    <script  src="https://cdn.jsdelivr.net/npm/anchor-js@4/anchor.min.js" ></script>
+  
+  
+    <script defer src="https://cdn.jsdelivr.net/npm/clipboard@2/dist/clipboard.min.js" ></script>
+  
+
+
+
+  <script defer src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" ></script>
+
+
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/typed.js@2/lib/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var title = document.getElementById('subtitle').title;
+      
+        typing(title);
+      
+    })(window, document);
+  </script>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+    <!-- Baidu Analytics -->
+    <script defer>
+      var _hmt = _hmt || [];
+      (function () {
+        var hm = document.createElement("script");
+        hm.src = "https://hm.baidu.com/hm.js?58e161bf4b884b2aa577f323f137ac0f";
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(hm, s);
+      })();
+    </script>
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+
+
+
+
+<!-- 主题的启动项 保持在最底部 -->
+<script  src="/js/boot.js" ></script>
+
+
+</body>
+</html>

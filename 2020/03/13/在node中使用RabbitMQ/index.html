@@ -1,0 +1,655 @@
+
+
+<!DOCTYPE html>
+<html lang="ch_CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/apple-touch-icon.png">
+  <link rel="icon" href="/img/favicon.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="waterbang">
+  <meta name="keywords" content="waterbang">
+  
+    <meta name="description" content="前言注意：本篇内容以官方文档为主线加个人理解和采坑 安装RabbitMQ在windows10上安装注意：安装RabbitMQ要先安装Erlang编程语言。需要翻墙下载，不然很慢。  https:&#x2F;&#x2F;www.erlang.org&#x2F;downloads  安装完需要设置系统变量。 可以从github 上下载： https:&#x2F;&#x2F;github.com&#x2F;rabbitmq&#x2F;rabbitmq-server&#x2F;rel">
+<meta property="og:type" content="article">
+<meta property="og:title" content="win10环境在node中使用RabbitMQ">
+<meta property="og:url" content="https://www.waterbang.top/2020/03/13/%E5%9C%A8node%E4%B8%AD%E4%BD%BF%E7%94%A8RabbitMQ/index.html">
+<meta property="og:site_name" content="waterbang">
+<meta property="og:description" content="前言注意：本篇内容以官方文档为主线加个人理解和采坑 安装RabbitMQ在windows10上安装注意：安装RabbitMQ要先安装Erlang编程语言。需要翻墙下载，不然很慢。  https:&#x2F;&#x2F;www.erlang.org&#x2F;downloads  安装完需要设置系统变量。 可以从github 上下载： https:&#x2F;&#x2F;github.com&#x2F;rabbitmq&#x2F;rabbitmq-server&#x2F;rel">
+<meta property="og:locale" content="ch_CN">
+<meta property="og:image" content="https://www.waterbang.top/2020/03/13/%E5%9C%A8node%E4%B8%AD%E4%BD%BF%E7%94%A8RabbitMQ/login.png">
+<meta property="article:published_time" content="2020-03-13T13:39:54.000Z">
+<meta property="article:modified_time" content="2024-12-21T11:43:23.163Z">
+<meta property="article:author" content="waterbang">
+<meta property="article:tag" content="node.js">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://www.waterbang.top/2020/03/13/%E5%9C%A8node%E4%B8%AD%E4%BD%BF%E7%94%A8RabbitMQ/login.png">
+  
+  
+  <title>win10环境在node中使用RabbitMQ 🏮 waterbang</title>
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4/dist/css/bootstrap.min.css" />
+
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/github-markdown-css@4/github-markdown.min.css" />
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hint.css@2/hint.min.css" />
+
+  
+    
+    
+      
+      <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@10/styles/atom-one-dark.min.css" />
+    
+  
+
+  
+    <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3/dist/jquery.fancybox.min.css" />
+  
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_ba1fz6golrf.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+<!-- 自定义样式保持在最底部 -->
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    var CONFIG = {"hostname":"www.waterbang.top","root":"/","version":"1.8.14","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"right","visible":"hover","icon":"🍦"},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"copy_btn":true,"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"baidu":"58e161bf4b884b2aa577f323f137ac0f","google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+
+<body>
+  <header style="height: 70vh;">
+    <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>waterbang</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                Startseite
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                Archiv
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                Etiketten
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                Über mich
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/links/">
+                <i class="iconfont icon-link-fill"></i>
+                Weblinks
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              &nbsp;<i class="iconfont icon-search"></i>&nbsp;
+            </a>
+          </li>
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">&nbsp;<i
+                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+    <div class="banner" id="banner" parallax=true
+         style="background: url('/img/post-banner.jpg') no-repeat center center;
+           background-size: cover;">
+      <div class="full-bg-img">
+        <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+          <div class="page-header text-center fade-in-up">
+            <span class="h2" id="subtitle" title="win10环境在node中使用RabbitMQ">
+              
+            </span>
+
+            
+              <div class="mt-3">
+  
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-author" aria-hidden="true"></i>
+      waterbang
+    </span>
+  
+  
+    <span class="post-meta">
+      <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+      <time datetime="2020-03-13 21:39" pubdate>
+        March 13, 2020 pm
+      </time>
+    </span>
+  
+</div>
+
+<div class="mt-1">
+  
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-chart"></i>
+      11k 字
+    </span>
+  
+
+  
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-clock-fill"></i>
+      
+      
+      96 分钟
+    </span>
+  
+
+  
+  
+    
+      <!-- 不蒜子统计文章PV -->
+      <span id="busuanzi_container_page_pv" style="display: none">
+        <i class="iconfont icon-eye" aria-hidden="true"></i>
+        <span id="busuanzi_value_page_pv"></span> 次
+      </span>
+    
+  
+</div>
+
+            
+          </div>
+
+          
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="d-none d-lg-block col-lg-2"></div>
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div class="py-5" id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">win10环境在node中使用RabbitMQ</h1>
+            
+              <p class="note note-info">
+                
+                  本文最后更新于：5 hours ago
+                
+              </p>
+            
+            <div class="markdown-body">
+              <h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p><strong>注意：本篇内容以官方文档为主线加个人理解和采坑</strong></p>
+<h2 id="安装RabbitMQ"><a href="#安装RabbitMQ" class="headerlink" title="安装RabbitMQ"></a>安装RabbitMQ</h2><h3 id="在windows10上安装"><a href="#在windows10上安装" class="headerlink" title="在windows10上安装"></a>在windows10上安装</h3><p>注意：安装RabbitMQ要先安装<code>Erlang</code>编程语言。需要翻墙下载，不然很慢。</p>
+<blockquote>
+<p><a target="_blank" rel="noopener" href="https://www.erlang.org/downloads">https://www.erlang.org/downloads</a></p>
+</blockquote>
+<p>安装完需要设置系统变量。</p>
+<h4 id="可以从github-上下载："><a href="#可以从github-上下载：" class="headerlink" title="可以从github 上下载："></a>可以从github 上下载：</h4><blockquote>
+<p><a target="_blank" rel="noopener" href="https://github.com/rabbitmq/rabbitmq-server/releases">https://github.com/rabbitmq/rabbitmq-server/releases</a></p>
+</blockquote>
+<h5 id="或者点击直接下载"><a href="#或者点击直接下载" class="headerlink" title="或者点击直接下载"></a>或者点击直接下载</h5><p>注意：这个链接在您到来之后可能不是最新版！<br><a target="_blank" rel="noopener" href="https://github.com/rabbitmq/rabbitmq-server/releases/download/v3.8.3/rabbitmq-server-3.8.3.exe">https://github.com/rabbitmq/rabbitmq-server/releases/download/v3.8.3/rabbitmq-server-3.8.3.exe</a></p>
+<h4 id="使用-chocolatey-Windows下的软件包管理器"><a href="#使用-chocolatey-Windows下的软件包管理器" class="headerlink" title="使用 chocolatey(Windows下的软件包管理器)"></a>使用 <code>chocolatey</code>(Windows下的软件包管理器)</h4><p>要安装RabbitMQ，请在命令行或PowerShell中运行以下命令:</p>
+<figure class="highlight shell"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs shell">choco install rabbitmq<br></code></pre></div></td></tr></table></figure>
+
+<h3 id="在MacOS上下载"><a href="#在MacOS上下载" class="headerlink" title="在MacOS上下载"></a>在MacOS上下载</h3><p>确保 Homebrew 为最新的：</p>
+<figure class="highlight shell"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs shell">brew update<br></code></pre></div></td></tr></table></figure>
+
+<p>然后下载rabbitmq</p>
+<figure class="highlight shell"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs shell">brew install rabbitmq<br></code></pre></div></td></tr></table></figure>
+
+<h4 id="也可以下载通用UNIX的二进制文件"><a href="#也可以下载通用UNIX的二进制文件" class="headerlink" title="也可以下载通用UNIX的二进制文件"></a>也可以下载通用UNIX的二进制文件</h4><blockquote>
+<p><a target="_blank" rel="noopener" href="https://github.com/rabbitmq/rabbitmq-server/releases/download/v3.8.3/rabbitmq-server-generic-unix-3.8.3.tar.xz">https://github.com/rabbitmq/rabbitmq-server/releases/download/v3.8.3/rabbitmq-server-generic-unix-3.8.3.tar.xz</a></p>
+</blockquote>
+<h3 id="使用docker镜像"><a href="#使用docker镜像" class="headerlink" title="使用docker镜像"></a>使用docker镜像</h3><figure class="highlight shell"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs shell">docker pull rabbitmq<br></code></pre></div></td></tr></table></figure>
+<br>
+
+<h3 id="配置RabbitMQ"><a href="#配置RabbitMQ" class="headerlink" title="配置RabbitMQ"></a>配置RabbitMQ</h3><p><strong>注意：接下来以windows10为基本环境</strong><br>如果您的环境为win10,下载完成记得将RabbitMQ的<code>/sbin</code>目录加入系统环境。<br>以便在任何地方控制您的MQ.<br>运行以下命令查看是否安装成功</p>
+<figure class="highlight shell"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs shell">rabbitmqctl status<br></code></pre></div></td></tr></table></figure>
+<h4 id="遇到的问题"><a href="#遇到的问题" class="headerlink" title="遇到的问题"></a>遇到的问题</h4><p>我的RabbitMQ一启动就失败，系统日志显示了以下错误。</p>
+<blockquote>
+<p>RabbitMQ: Erlang machine stopped instantly (distribution name conflict?). The service is not restarted, ignoring OnFail option.</p>
+</blockquote>
+<p>我尝试了多种解决方式。但是都没有用，最后把<code>erlang</code>和<code>RabbitMQ</code>卸载掉，都换成最新版本解决了问题。<br>注意：</p>
+<ol>
+<li>RabbitMQ无法安装到具有ASCII字符的路径,也就是路径不能有中文</li>
+<li>需要用管理员身份安装Erlang环境。</li>
+<li>安装路径不要有空格。（未实践！）<br>官方对错误的解答：<a target="_blank" rel="noopener" href="https://www.rabbitmq.com/windows-quirks.html">Windows怪癖</a></li>
+</ol>
+<h4 id="安装可视化插件"><a href="#安装可视化插件" class="headerlink" title="安装可视化插件"></a>安装可视化插件</h4><p>先查看RabbitMQ的全部插件，运行以下命令：</p>
+<figure class="highlight shell"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs shell">rabbitmq-plugins list<br></code></pre></div></td></tr></table></figure>
+<p>输出内容如下：</p>
+<figure class="highlight shell"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs shell">Listing plugins with pattern &quot;.*&quot; ...<br> Configured: E = explicitly enabled; e = implicitly enabled<br> | Status: [failed to contact rabbit@waterbang - status not shown]<br> |/<br>....<br>[  ] rabbitmq_federation_management    3.8.3<br>[  ] rabbitmq_jms_topic_exchange       3.8.3<br>[  ] rabbitmq_management               3.8.3 // 这个是我们要安装的管理插件<br>[  ] rabbitmq_management_agent         3.8.3<br>[  ] rabbitmq_mqtt                     3.8.3<br>[  ] rabbitmq_peer_discovery_aws       3.8.3<br>[  ] rabbitmq_peer_discovery_common    3.8.3<br>[  ] rabbitmq_peer_discovery_consul    3.8.3<br>[  ] rabbitmq_peer_discovery_etcd      3.8.3<br>[  ] rabbitmq_peer_discovery_k8s       3.8.3<br>...<br></code></pre></div></td></tr></table></figure>
+<p>运行以下命令进行安装：</p>
+<figure class="highlight shell"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs shell">rabbitmq-plugins enable rabbitmq_management<br></code></pre></div></td></tr></table></figure>
+<p>输出以下内容为安装成功</p>
+<figure class="highlight shell"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs shell">Enabling plugins on node rabbit@waterbang:<br>rabbitmq_management<br>The following plugins have been configured:<br>  rabbitmq_management<br>  rabbitmq_management_agent<br>  rabbitmq_web_dispatch<br>Applying plugin configuration to rabbit@waterbang...<br>The following plugins have been enabled:<br>  rabbitmq_management<br>  rabbitmq_management_agent<br>  rabbitmq_web_dispatch<br><br>set 3 plugins.<br>Offline change; changes will take effect at broker restart.<br></code></pre></div></td></tr></table></figure>
+
+
+<h2 id="如何在node中传递消息"><a href="#如何在node中传递消息" class="headerlink" title="如何在node中传递消息"></a>如何在node中传递消息</h2><p>我们来跟着官方的入门例子来进行第一步，将生产者连接到RabbitMQ,发送一条消息后退出。<br>下面是我们要实现的基本模型。中间蓝色的队列是消息缓冲区。<br><img src="/./helloword.png" srcset="/img/loading.gif" lazyload alt="hello world"></p>
+<h3 id="安装amqp-node"><a href="#安装amqp-node" class="headerlink" title="安装amqp.node"></a>安装amqp.node</h3><p><code>amqplib</code>是一个为Node.JS制作<a target="_blank" rel="noopener" href="https://www.rabbitmq.com/amqp-0-9-1-reference.html">AMQP 0-9-1</a>客户端的库，它支持Callback和Promise两种风格。<br>接下来在您的工作目录运行：</p>
+<figure class="highlight shell"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs shell">npm install amqplib<br></code></pre></div></td></tr></table></figure>
+
+<h3 id="生产者"><a href="#生产者" class="headerlink" title="生产者"></a>生产者</h3><p>安装完成后开始写代码。创建生产者send.js。先连接道RabbitMQ服务器，<br>这是RabbitMQ给我们的一个最重要的接口，代码如下：</p>
+<figure class="highlight html"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs html">var amqp = require(&#x27;amqplib&#x27;);<br><br>amqp.connect(&#x27;amqp://localhost:5672&#x27;).then((conn) =&gt; &#123;  // 创建一个通道<br>  console.log(conn);<br>&#125;, (err) =&gt; &#123;<br>  throw Error(&#x27;connection fail:===&gt;&#x27; + err);<br>&#125;)<br></code></pre></div></td></tr></table></figure>
+<p>它返回给我们一个ChannelModel。接下来我们用它来创建一个通道,并且用<code>assertQueue(queue,[options])</code>声明一个队列。<br>它接收两个参数：<br><code>queue</code>是一个字符串；如果您提供一个空字符串或其他虚假值（包括null和undefined），则服务器将为您创建一个随机名称。<br><code>options</code>是一个对象，可以为空或null，如果是最后一个参数，则可以完全省略。<br>选项中的相关字段是：</p>
+<ol>
+<li>exclusive：如果为true，则将队列的作用域限定为连接（默认为false）</li>
+<li>durable：如果为true，则队列将在代理重新启动后幸存下来，并对exclusive和的作用取模autoDelete。如果未提供，则默认为true，这与其他方法不同</li>
+<li>autoDelete：如果为true，则当使用者数量降至零（默认值为false）时，将删除队列。</li>
+<li>arguments：附加参数，通常是某种特定于代理的扩展的参数，例如，高可用性，TTL。<br>*想要了解得更加详细<a target="_blank" rel="noopener" href="https://www.squaremobius.net/amqp.node/channel_api.html#channel_assertQueue">点我</a>*，代码如下：</li>
+</ol>
+<figure class="highlight html"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs html">var amqp = require(&#x27;amqplib&#x27;);<br><br>amqp.connect(&#x27;amqp://localhost:5672&#x27;).then((conn) =&gt; &#123;  // 连接到RabbitMQ服务器<br>  return conn.createChannel().then((ch) =&gt; &#123; // 创建一个通道<br>    console.log(ch);<br>    let q = &#x27;Queue&#x27;; // 队列名称<br>    let msg = &#x27;How are you!&#x27;; // 发送的消息<br>    let ok = ch.assertQueue(q, &#123; durable: false &#125;); // 创建队列<br>  &#125;).finally(() =&gt; &#123;<br>    conn.close();<br>  &#125;);<br>&#125;, (err) =&gt; &#123;<br>  throw Error(&#x27;connection fail:===&gt;&#x27; + err);<br>&#125;)<br></code></pre></div></td></tr></table></figure>
+<p>它返回给我们一个Channel，接下来我们来发送消息到队列.<br>具体代码如下：</p>
+<figure class="highlight html"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs html">var amqp = require(&#x27;amqplib&#x27;);<br><br>amqp.connect(&#x27;amqp://localhost:5672&#x27;).then((conn) =&gt; &#123;  // 连接到RabbitMQ<br>  return conn.createChannel().then((ch) =&gt; &#123; // 创建一个通道<br>    let q = &#x27;Queue&#x27;;<br>    let msg = &#x27;How are you!&#x27;;<br>    let ok = ch.assertQueue(q, &#123; durable: false &#125;); // 声明队列<br><br>    return ok.then((_qok) =&gt; &#123;<br>       for (let i = 0; i &lt; 100; i++) &#123;<br>            ch.sendToQueue(q, Buffer.from(`$&#123;msg&#125; 第$&#123;i&#125;条消息`));<br>        &#125;<br>      console.log(&quot; [x] Sent &#x27;%s&#x27;&quot;, msg);<br>      return ch.close(); // 关闭通道<br>    &#125;)<br>  &#125;).finally(() =&gt; &#123;<br>    conn.close();<br>  &#125;);<br>&#125;, (err) =&gt; &#123;<br>  throw Error(&#x27;connection fail:===&gt;&#x27; + err);<br>&#125;)<br></code></pre></div></td></tr></table></figure>
+<blockquote>
+<p>API详解<a target="_blank" rel="noopener" href="https://www.squaremobius.net/amqp.node/channel_api.html#channel_sendToQueue">sendToQueue</a><br>Buffer.from() :创建一个新缓冲区，其中填充了指定的字符串</p>
+</blockquote>
+<h3 id="消费者"><a href="#消费者" class="headerlink" title="消费者"></a>消费者</h3><p>接下我们来跟着上面一样写出消费者的代码，我们将使消费者保持运行状态以监听消息并打印出来。<br>我们一样要创建一个队列，防止在没有运行生产者的时候运行消费者。<br>具体代码如下：</p>
+<figure class="highlight html"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs html">var amqp = require(&#x27;amqplib&#x27;);<br><br>amqp.connect(&#x27;amqp://localhost:5672&#x27;).then((conn) =&gt; &#123; // 连接到RabbitMQ<br>  process.once(&#x27;SIGINT&#x27;, () =&gt; &#123; conn.close(); &#125;); // （beforeExit）在退出之前,关闭通道。<br><br>  return conn.createChannel().then((ch) =&gt; &#123; // 创建通道<br>    let queue = &#x27;Queue&#x27;;<br>    let ok = ch.assertQueue(queue, &#123;durable: false&#125;);  // 创建队列，（关闭持久化）<br><br>    ok = ok.then(function(_qok) &#123;<br>      return ch.consume(queue, (msg) =&gt; &#123;  // 取出消息（消费）<br>        console.log(&quot; [x] 消费了 &#x27;%s&#x27;&quot;, msg.content.toString());<br>      &#125;, &#123;noAck: true&#125;);<br>    &#125;);<br><br>    return ok.then((_consumeOk) =&gt; &#123;<br>      console.log(&#x27; [*] Waiting for messages. To exit press CTRL+C&#x27;);<br>    &#125;);<br>  &#125;);<br>&#125;).catch(console.warn);<br></code></pre></div></td></tr></table></figure>
+<p><code>noAck: true</code>，如果为true，表示当消费者收到消息不会通知RabbitMQ，消费者收到了消息就会立即从队列中删除。</p>
+<blockquote>
+<p>消费API -&gt; <a target="_blank" rel="noopener" href="https://www.squaremobius.net/amqp.node/channel_api.html#channel_consume">consume</a></p>
+</blockquote>
+<p>这样就实现了基本的消息发送和接收。</p>
+<h2 id="任务队列"><a href="#任务队列" class="headerlink" title="任务队列"></a>任务队列</h2><p>使用任务队列的优点之一是能够轻松并行化工作。如果我们有很多工作，我们可以增加更多的消费者，这样就可以轻松扩展。<br>我们先来修改一下上面send.js的代码，让它能在命令行接收消息。代码如下：</p>
+<figure class="highlight html"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs html">var amqp = require(&#x27;amqplib&#x27;);<br><br>amqp.connect(&#x27;amqp://localhost:5672&#x27;).then((conn) =&gt; &#123;  // 创建一个通道<br>  return conn.createChannel().then((ch) =&gt; &#123;<br>    let q = &#x27;task_queue&#x27;;<br>    let msg = process.argv.slice(2).join(&#x27;&#x27;) || &#x27;helloWord!&#x27;;<br>    let ok = ch.assertQueue(q, &#123; durable: true &#125;);<br><br>    return ok.then((_qok) =&gt; &#123;<br>        ch.sendToQueue(q, Buffer.from(msg), &#123;<br>          persistent: true<br>        &#125;);<br>      console.log(&quot; [x] Sent &#x27;%s&#x27;&quot;, msg);<br>      return ch.close();<br>    &#125;)<br>  &#125;).finally(() =&gt; &#123;<br>    conn.close();<br>  &#125;);<br>&#125;, (err) =&gt; &#123;<br>  throw Error(&#x27;connection fail:===&gt;&#x27; + err);<br>&#125;)<br></code></pre></div></td></tr></table></figure>
+<blockquote>
+<p><code>persistent: true</code>如果是true，则消息将在代理重新启动后继续存在，前提是它在一个队列中，该队列也在重新启动后继续存在.</p>
+</blockquote>
+<p>接下来修改一下上面的receive.js，让它在处理消息的时候伪造一秒钟的停顿。<br>它将从队列中弹出消息并执行任务，我们将其命名为<code>worker.js</code>，具体代码如下：</p>
+<figure class="highlight html"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs html">var amqp = require(&#x27;amqplib&#x27;);<br><br>amqp.connect(&#x27;amqp://localhost:5672&#x27;).then((conn) =&gt; &#123;<br>  process.once(&#x27;SIGINT&#x27;, () =&gt; &#123; conn.close(); &#125;); //beforeExit 执行close。<br>  return conn.createChannel().then((ch) =&gt; &#123;<br>    let queue = &#x27;task_queue&#x27;; // 保证使用该队列的时候先声明该队列<br>    let ok = ch.assertQueue(queue, &#123;durable: true&#125;);<br><br>    ok = ok.then(function(_qok) &#123;<br>      return ch.consume(queue, (msg) =&gt; &#123;<br>        let secs = msg.content.toString().split(&#x27;.&#x27;).length - 1; //几个点就延迟几秒<br>         console.log(&quot; [x] Received %s&quot;, msg.content.toString());<br>         setTimeout(function() &#123;<br>           console.log(&quot; [x] Done&quot;);<br>         &#125;, secs * 1000);<br>      &#125;, &#123;noAck: true&#125;);<br>    &#125;);<br><br>    return ok.then((_consumeOk) =&gt; &#123;<br>      console.log(&#x27; [*] Waiting for messages. To exit press CTRL+C&#x27;);<br>    &#125;);<br>  &#125;);<br>&#125;).catch(console.warn);<br></code></pre></div></td></tr></table></figure>
+
+<h3 id="循环调度"><a href="#循环调度" class="headerlink" title="循环调度"></a>循环调度</h3><p>默认情况下，RabbitMQ将按顺序将每个消息发送给下一个使用者。<br>平均而言，每个消费者都会收到相同数量的消息。这种分发消息的方式称为循环。<br>具体效果如下：<br><img src="/./TaskQueue.png" srcset="/img/loading.gif" lazyload alt="TaskQueue"></p>
+<h3 id="消息确认"><a href="#消息确认" class="headerlink" title="消息确认"></a>消息确认</h3><p>如果其中一个使用者开始一项漫长的任务并仅部分完成而死掉，会发生什么情况。<br>使用我们当前的代码，RabbitMQ一旦向消费者发送了一条消息，便立即将其标记为删除。<br>在这种情况下，如果您杀死一个消费者，我们将丢失正在处理的消息。我们还将丢失所有发送给该特定消费者但尚未处理的消息。<br>但是我们不想丢失任何任务。如果一个消费者死亡，我们希望将任务交付给另一个消费者。<br>接下来我们来修改一下代码，开启<code>&#123;noAck: false&#125;</code>选项，一旦我们完成了一项任务，消费者会发送一个确认消息。<br>修改worker.js,具体如下：</p>
+<figure class="highlight html"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs html">var amqp = require(&#x27;amqplib&#x27;);<br><br>amqp.connect(&#x27;amqp://localhost:5672&#x27;).then((conn) =&gt; &#123;<br>  process.once(&#x27;SIGINT&#x27;, () =&gt; &#123; conn.close(); &#125;); //beforeExit 执行close。<br><br>  return conn.createChannel().then((ch) =&gt; &#123;<br>    let queue = &#x27;task_queue&#x27;; // 保证使用该队列的时候先声明该队列<br>    let ok = ch.assertQueue(queue, &#123;durable: true&#125;);<br>    ok = ok.then(function(_qok) &#123;<br><br>      return ch.consume(queue, (msg) =&gt; &#123;<br>        let secs = msg.content.toString().split(&#x27;.&#x27;).length - 1;<br>         console.log(&quot; [x] Received %s&quot;, msg.content.toString());<br>         setTimeout(function() &#123;<br>           console.log(&quot; [x] Done&quot;);<br>           ch.ack(msg);  // ++  // 确认给定的消息<br>         &#125;, secs * 1000);<br>      &#125;, &#123;noAck: false&#125;); // == <br>    &#125;);<br><br>    return ok.then((_consumeOk) =&gt; &#123;<br>      console.log(&#x27; [*] Waiting for messages. To exit press CTRL+C&#x27;);<br>    &#125;);<br>  &#125;);<br>&#125;).catch(console.warn);<br></code></pre></div></td></tr></table></figure>
+<p>这样就能防止消费者挂掉后，由它处理的任务失败掉，我们来故意挂掉消费者1号，具体效果如下：<br><img src="/./TaskQueue_out.png" srcset="/img/loading.gif" lazyload alt="TaskQueue_out.png"></p>
+<p>消费者挂掉后，未确认的消息被重发了。</p>
+<h3 id="消息持久化"><a href="#消息持久化" class="headerlink" title="消息持久化"></a>消息持久化</h3><p>我们已经实现了如何确保消费者死亡，任务也不会丢失。但是，如果RabbitMQ服务器停止，我们的任务仍然会丢失。<br>如果您要告知RabbitMQ,确保消息不会消失，需要做两件事：我们需要将队列和消息都标记上持久性。<br>首先，我们需要确保RabbitMQ永远不会丢失队列。为此，我们需要将其声明为持久的：</p>
+<figure class="highlight shell"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs shell">channel.assertQueue(&#x27;hello&#x27;, &#123;durable: true&#125;);<br></code></pre></div></td></tr></table></figure>
+<blockquote>
+<p>注意：RabbitMQ不允许您使用不同的参数重新定义现有队列，并且将向尝试执行此操作的任何程序返回错误。</p>
+</blockquote>
+<p>接下来将消息标记为持久消息：</p>
+<figure class="highlight shell"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs shell">channel.sendToQueue(queue，Buffer.from(msg)，&#123; persistent：true &#125;);<br></code></pre></div></td></tr></table></figure>
+
+<p>消息持久化并不会真正的写入磁盘，它只是保存到缓存当中，持久性并不强，但对于简单队列而言，已经绰绰有余了。<br>如果还需要更强的保存能力，可以使用<a target="_blank" rel="noopener" href="https://www.rabbitmq.com/confirms.html">发布者确认</a></p>
+<h3 id="公平分配"><a href="#公平分配" class="headerlink" title="公平分配"></a>公平分配</h3><p>为了不让RabbitMQ盲目的将消息的第n条消息发送给第n个使用者。这样在有的任务重，有的任务轻的时候，<br>可能会出现一位工人将一直忙碌而另一位工人将几乎不做任何工作。<br>发生这种情况是因为RabbitMQ在消息进入队列时才调度消息。它不会查看消费者的未确认消息数。<br>为了解决这个问题我们需要做以下配置：</p>
+<figure class="highlight shell"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs shell">channel.prefetch(1);<br></code></pre></div></td></tr></table></figure>
+<p>在处理并确认上一条消息之前，不要将新消息发送给工作人员。而是将其分派给尚不繁忙的下一个工作人员。</p>
+<h2 id="发布订阅"><a href="#发布订阅" class="headerlink" title="发布订阅"></a>发布订阅</h2><p>上面我们实现了把每个任务恰好交付给一个工人，接下来我们来实现，将消息传递给多个工人。<br>我们来跟着官方的例子，构建一个简单的日志记录系统。就是将已发布的日志广播到所有接收者。<br>它由两个程序组成：第一个程序将发出日志消息，第二个程序将接收并打印它们。</p>
+<h3 id="交换（Exchanges）"><a href="#交换（Exchanges）" class="headerlink" title="交换（Exchanges）"></a>交换（Exchanges）</h3><p>它是Rabbit的消息交换模型。核心思想是生产者从不将任何消息直接发送到队列。<br>一方面，它接收来自生产者的消息，另一方面，将它们推入队列。<br>但是它如何知道应该将消息加入队列，还是丢弃呢？规则由交换类型定义。<br>有四种交换类型可用：<code>direct</code>,<code>topic</code>,<code>headers</code>,<code>fanout</code>。<br><code>fanout</code>交换类型正是我们需要的，它只是将接收到的所有消息广播到它知道的所有队列中。</p>
+<figure class="highlight html"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs html">ch.assertExchange(&#x27;logs&#x27;,&#x27;fanout&#x27;,&#123;durable：false &#125;)<br></code></pre></div></td></tr></table></figure>
+<blockquote>
+<p>Channel的<code>assertExchange</code>用来断言交换的存在，与队列一样。<br>参数类型为：assertExchange(exchange, type, [options])</p>
+</blockquote>
+<p>如果要知道您的服务器上的交换可以运行：</p>
+<figure class="highlight shell"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs shell">rabbitmqctl list_exchanges<br></code></pre></div></td></tr></table></figure>
+
+<h4 id="默认交换"><a href="#默认交换" class="headerlink" title="默认交换"></a>默认交换</h4><p>我们以前使用的都是默认交换</p>
+<figure class="highlight html"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs html">channel.sendToQueue(&#x27;hello&#x27;，Buffer.from(&#x27;Hello World！&#x27;));<br></code></pre></div></td></tr></table></figure>
+<p>在这里，我们使用默认或无名称交换：消息以指定为第一个参数的名称路由到队列（如果存在）。<br>接下来我们指定发布到<code>logs</code>交换中：</p>
+<figure class="highlight html"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs html">channel.publish(&#x27;logs&#x27;, &#x27;&#x27;, Buffer.from(&#x27;Hello World！&#x27;));<br></code></pre></div></td></tr></table></figure>
+<p><code>publish</code>功能和<code>sendToQueue</code>差不多，第二个参数的空字符串表示我们不想将消息发送到任何特定的队列。</p>
+<h3 id="绑定"><a href="#绑定" class="headerlink" title="绑定"></a>绑定</h3><p>我们已经创建了一个<code>fanout</code>交换和一个队列。现在我们需要告诉交换机将消息发送到我们的队列。交换和队列之间的关系称为绑定。</p>
+<figure class="highlight html"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs HTML">channel.bindQueue(queue_name, &#x27;logs&#x27;, &#x27;&#x27;);<br></code></pre></div></td></tr></table></figure>
+<blockquote>
+<p><a target="_blank" rel="noopener" href="https://www.squaremobius.net/amqp.node/channel_api.html#channel_bindQueue">bindQueue</a>:声明从交换机到队列的路由路径</p>
+</blockquote>
+<p>这此我们将消息发送到<code>logs</code>交换器，而不是无名的默认交换器。<br>发送时我们需要提供一个路由密钥，但是对于<code>fanout</code>交换，它的值将被忽略。这是emit_log.js脚本的代码 ：</p>
+<figure class="highlight html"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs html">const amqp = require(&#x27;amqplib&#x27;);<br><br>amqp.connect(&#x27;amqp://localhost&#x27;).then((conn) =&gt; &#123;<br>  return conn.createChannel().then((ch) =&gt; &#123;<br>    const ex = &#x27;logs&#x27;;<br>    let ok = ch.assertExchange(ex, &#x27;fanout&#x27;, &#123;durable: false&#125;) // 声明交换<br><br>    let message = process.argv.slice(2).join(&#x27; &#x27;) ||<br>      &#x27;info: Hello World!&#x27;;<br><br>    return ok.then(() =&gt; &#123;<br>      ch.publish(ex, &#x27;&#x27;, Buffer.from(message));<br>      console.log(&quot; [x] Sent &#x27;%s&#x27;&quot;, message);<br>      return ch.close();<br>    &#125;);<br>  &#125;).finally(() =&gt; &#123; conn.close(); &#125;);<br>&#125;).catch(console.warn);<br></code></pre></div></td></tr></table></figure>
+<p>从上面我们可以看到，建立连接之后，我们声明了交换。<br>如果没有队列绑定到对应的交换那么消息将丢失。receive_log.js代码如下：</p>
+<figure class="highlight html"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs html">const amqp = require(&#x27;amqplib&#x27;);<br><br>amqp.connect(&#x27;amqp://localhost&#x27;).then( (conn) =&gt; &#123;<br>  process.once(&#x27;SIGINT&#x27;, () =&gt; &#123; conn.close(); &#125;);<br>  return conn.createChannel().then((ch) =&gt; &#123;<br>    let ok = ch.assertExchange(&#x27;logs&#x27;, &#x27;fanout&#x27;, &#123; durable: false &#125;);<br>    ok = ok.then(() =&gt; &#123;<br>      return ch.assertQueue(&#x27;&#x27;, &#123; exclusive: true &#125;);<br>    &#125;);<br>    ok = ok.then((qok) =&gt; &#123;<br>      return ch.bindQueue(qok.queue, &#x27;logs&#x27;, &#x27;&#x27;).then(function () &#123;  // 绑定队列<br>        return qok.queue;<br>      &#125;);<br>    &#125;);<br>    ok = ok.then((queue) =&gt; &#123;<br>      return ch.consume(queue, logMessage, &#123; noAck: true &#125;);<br>    &#125;);<br>    return ok.then(() =&gt; &#123;<br>      console.log(&#x27; [*] Waiting for logs. To exit press CTRL+C&#x27;);<br>    &#125;);<br><br>    function logMessage(msg) &#123;<br>      console.log(&quot; [x] &#x27;%s&#x27;&quot;, msg.content.toString());<br>    &#125;<br>  &#125;);<br>&#125;).catch(console.warn);<br></code></pre></div></td></tr></table></figure>
+<p>运行结果如下：<br><img src="/./fady.png" srcset="/img/loading.gif" lazyload alt="fady"></p>
+<h2 id="over"><a href="#over" class="headerlink" title="over"></a>over</h2><p>助秋风雨来何速，惊破秋窗秋梦绿。<br>「代别离·秋窗风雨夕」<br>曹雪芹</p>
+
+            </div>
+            <hr>
+            <div>
+              <div class="post-metas mb-3">
+                
+                
+                  <div class="post-meta">
+                    <i class="iconfont icon-tags"></i>
+                    
+                      <a class="hover-with-bg" href="/tags/node-js/">node.js</a>
+                    
+                  </div>
+                
+              </div>
+              
+                <p class="note note-warning">
+                  
+                    本博客所有文章除特别声明外，均采用 <a target="_blank" href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh" rel="nofollow noopener noopener">CC BY-SA 4.0 协议</a> ，转载请注明出处！
+                  
+                </p>
+              
+              
+                <div class="post-prevnext">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2020/03/29/%E5%9F%BA%E4%BA%8Enode%E7%9A%84fs%E5%AE%9E%E7%8E%B0%E5%8F%AF%E8%AF%BB%E6%B5%81%E5%92%8C%E5%8F%AF%E5%86%99%E6%B5%81/">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">基于node的fs实现可读流和可写流</span>
+                        <span class="visible-mobile">Vorheriger</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2020/03/10/node%E4%B8%AD%E7%9A%84require%E6%96%B9%E6%B3%95/">
+                        <span class="hidden-mobile">node中的require方法</span>
+                        <span class="visible-mobile">Nächster</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+              <!-- Comments -->
+              <article class="comments" id="comments" lazyload>
+                
+                  
+                
+                
+  <script type="text/javascript">
+    Fluid.utils.loadComments('#comments', function() {
+      var light = 'github-light';
+      var dark = 'github-dark';
+      var schema = document.documentElement.getAttribute('data-user-color-scheme');
+      if (schema === 'dark') {
+        schema = dark;
+      } else {
+        schema = light;
+      }
+      window.UtterancesThemeLight = light;
+      window.UtterancesThemeDark = dark;
+      var s = document.createElement('script');
+      s.setAttribute('src', 'https://utteranc.es/client.js');
+      s.setAttribute('repo', 'waterbang/Comment');
+      s.setAttribute('issue-term', 'pathname');
+      
+      s.setAttribute('label', 'utterances');
+      
+      s.setAttribute('theme', schema);
+      s.setAttribute('crossorigin', 'anonymous');
+      document.getElementById('comments').appendChild(s);
+    })
+  </script>
+  <noscript>Please enable JavaScript to view the comments</noscript>
+
+
+              </article>
+            
+          </article>
+        </div>
+      </div>
+    </div>
+    
+      <div class="d-none d-lg-block col-lg-2 toc-container" id="toc-ctn">
+        <div id="toc">
+  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;TOC</p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+      </div>
+    
+  </div>
+</div>
+
+<!-- Custom -->
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">Suchen</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v"
+                 for="local-search-input">Stichwort</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+
+    
+  </main>
+
+  <footer class="text-center mt-5 py-3">
+  <div class="footer-content">
+     <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a>
+  </div>
+  
+
+  
+  <!-- 备案信息 -->
+  <div class="beian">
+    <span>
+      <a href="http://beian.miit.gov.cn/" target="_blank" rel="nofollow noopener">
+        闽ICP备18009949号-2
+      </a>
+    </span>
+    
+  </div>
+
+
+  
+</footer>
+
+
+  <!-- SCRIPTS -->
+  
+  <script  src="https://cdn.jsdelivr.net/npm/nprogress@0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/nprogress@0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js" ></script>
+<script  src="https://cdn.jsdelivr.net/npm/bootstrap@4/dist/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+<!-- Plugins -->
+
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+  
+
+
+
+  
+    <script  src="https://cdn.jsdelivr.net/npm/tocbot@4/dist/tocbot.min.js" ></script>
+  
+  
+    <script  src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3/dist/jquery.fancybox.min.js" ></script>
+  
+  
+    <script  src="https://cdn.jsdelivr.net/npm/anchor-js@4/anchor.min.js" ></script>
+  
+  
+    <script defer src="https://cdn.jsdelivr.net/npm/clipboard@2/dist/clipboard.min.js" ></script>
+  
+
+
+
+  <script defer src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" ></script>
+
+
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/typed.js@2/lib/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var title = document.getElementById('subtitle').title;
+      
+        typing(title);
+      
+    })(window, document);
+  </script>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+    <!-- Baidu Analytics -->
+    <script defer>
+      var _hmt = _hmt || [];
+      (function () {
+        var hm = document.createElement("script");
+        hm.src = "https://hm.baidu.com/hm.js?58e161bf4b884b2aa577f323f137ac0f";
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(hm, s);
+      })();
+    </script>
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+
+
+
+
+<!-- 主题的启动项 保持在最底部 -->
+<script  src="/js/boot.js" ></script>
+
+
+</body>
+</html>

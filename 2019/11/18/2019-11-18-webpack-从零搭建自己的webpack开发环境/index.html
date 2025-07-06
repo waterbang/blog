@@ -1,0 +1,768 @@
+
+
+<!DOCTYPE html>
+<html lang="ch_CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/apple-touch-icon.png">
+  <link rel="icon" href="/img/favicon.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="waterbang">
+  <meta name="keywords" content="waterbang">
+  
+    <meta name="description" content="从0搭建自己的webpack开发环境珠峰架构课webpack课程,里面的姜文老师和张老师是大牛！ 这是珠峰架构课课件，不是本人编写。 1.什么是Webpack？webpack 是一个现代 JavaScript 应用程序的静态模块打包器(module bundler),当 webpack 处理应用程序时，它会递归地构建一个依赖关系图(dependency graph)，其中包含应用程序需要的每个模块">
+<meta property="og:type" content="article">
+<meta property="og:title" content="webpack-从零搭建自己的webpack开发环境">
+<meta property="og:url" content="https://www.waterbang.top/2019/11/18/2019-11-18-webpack-%E4%BB%8E%E9%9B%B6%E6%90%AD%E5%BB%BA%E8%87%AA%E5%B7%B1%E7%9A%84webpack%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83/index.html">
+<meta property="og:site_name" content="waterbang">
+<meta property="og:description" content="从0搭建自己的webpack开发环境珠峰架构课webpack课程,里面的姜文老师和张老师是大牛！ 这是珠峰架构课课件，不是本人编写。 1.什么是Webpack？webpack 是一个现代 JavaScript 应用程序的静态模块打包器(module bundler),当 webpack 处理应用程序时，它会递归地构建一个依赖关系图(dependency graph)，其中包含应用程序需要的每个模块">
+<meta property="og:locale" content="ch_CN">
+<meta property="og:image" content="https://www.waterbang.top/2019/11/17/2019-11-17-%E5%B0%8F%E7%A8%8B%E5%BA%8F-5%E6%AF%9B%E9%92%B1%E5%B0%8F%E7%A8%8B%E5%BA%8F/webpack0.png">
+<meta property="article:published_time" content="2019-11-18T10:18:24.000Z">
+<meta property="article:modified_time" content="2024-12-21T11:43:23.155Z">
+<meta property="article:author" content="waterbang">
+<meta property="article:tag" content="webpack">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://www.waterbang.top/2019/11/17/2019-11-17-%E5%B0%8F%E7%A8%8B%E5%BA%8F-5%E6%AF%9B%E9%92%B1%E5%B0%8F%E7%A8%8B%E5%BA%8F/webpack0.png">
+  
+  
+  <title>webpack-从零搭建自己的webpack开发环境 🏮 waterbang</title>
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4/dist/css/bootstrap.min.css" />
+
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/github-markdown-css@4/github-markdown.min.css" />
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hint.css@2/hint.min.css" />
+
+  
+    
+    
+      
+      <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@10/styles/atom-one-dark.min.css" />
+    
+  
+
+  
+    <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3/dist/jquery.fancybox.min.css" />
+  
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_ba1fz6golrf.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+<!-- 自定义样式保持在最底部 -->
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    var CONFIG = {"hostname":"www.waterbang.top","root":"/","version":"1.8.14","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"right","visible":"hover","icon":"🍦"},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"copy_btn":true,"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"baidu":"58e161bf4b884b2aa577f323f137ac0f","google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+
+<body>
+  <header style="height: 70vh;">
+    <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>waterbang</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                Startseite
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                Archiv
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                Etiketten
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                Über mich
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/links/">
+                <i class="iconfont icon-link-fill"></i>
+                Weblinks
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              &nbsp;<i class="iconfont icon-search"></i>&nbsp;
+            </a>
+          </li>
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">&nbsp;<i
+                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+    <div class="banner" id="banner" parallax=true
+         style="background: url('/img/post-banner.jpg') no-repeat center center;
+           background-size: cover;">
+      <div class="full-bg-img">
+        <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+          <div class="page-header text-center fade-in-up">
+            <span class="h2" id="subtitle" title="webpack-从零搭建自己的webpack开发环境">
+              
+            </span>
+
+            
+              <div class="mt-3">
+  
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-author" aria-hidden="true"></i>
+      waterbang
+    </span>
+  
+  
+    <span class="post-meta">
+      <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+      <time datetime="2019-11-18 18:18" pubdate>
+        November 18, 2019 pm
+      </time>
+    </span>
+  
+</div>
+
+<div class="mt-1">
+  
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-chart"></i>
+      5.5k 字
+    </span>
+  
+
+  
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-clock-fill"></i>
+      
+      
+      46 分钟
+    </span>
+  
+
+  
+  
+    
+      <!-- 不蒜子统计文章PV -->
+      <span id="busuanzi_container_page_pv" style="display: none">
+        <i class="iconfont icon-eye" aria-hidden="true"></i>
+        <span id="busuanzi_value_page_pv"></span> 次
+      </span>
+    
+  
+</div>
+
+            
+          </div>
+
+          
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="d-none d-lg-block col-lg-2"></div>
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div class="py-5" id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">webpack-从零搭建自己的webpack开发环境</h1>
+            
+              <p class="note note-info">
+                
+                  本文最后更新于：5 hours ago
+                
+              </p>
+            
+            <div class="markdown-body">
+              <h1 id="从0搭建自己的webpack开发环境"><a href="#从0搭建自己的webpack开发环境" class="headerlink" title="从0搭建自己的webpack开发环境"></a>从0搭建自己的webpack开发环境</h1><p><a target="_blank" rel="noopener" href="http://www.zhufengpeixun.cn/">珠峰架构课</a>webpack课程,里面的姜文老师和张老师是大牛！</p>
+<p>这是<a target="_blank" rel="noopener" href="http://www.zhufengpeixun.cn/">珠峰架构课</a>课件，不是本人编写。</p>
+<h2 id="1-什么是Webpack？"><a href="#1-什么是Webpack？" class="headerlink" title="1.什么是Webpack？"></a>1.什么是Webpack？</h2><p>webpack 是一个现代 JavaScript 应用程序的静态模块打包器(module bundler),当 webpack 处理应用程序时，它会递归地构建一个依赖关系图(dependency graph)，其中包含应用程序需要的每个模块，然后将所有这些模块打包成一个或多个 bundle<br><img src="http://img.zhufengpeixun.cn/webpack.jpeg" srcset="/img/loading.gif" lazyload></p>
+<p>使用Webpack作为前端构建工具：</p>
+<ul>
+<li>代码转换：TypeScript 编译成 JavaScript、SCSS 编译成 CSS 等。</li>
+<li>文件优化：压缩 JavaScript、CSS、HTML 代码，压缩合并图片等。</li>
+<li>代码分割：提取多个页面的公共代码、提取首屏不需要执行部分的代码让其异步加载。</li>
+<li>模块合并：在采用模块化的项目里会有很多个模块和文件，需要构建功能把模块分类合并成一个文件。</li>
+<li>自动刷新：监听本地源代码的变化，自动重新构建、刷新浏览器。</li>
+<li>代码校验：在代码被提交到仓库前需要校验代码是否符合规范，以及单元测试是否通过。</li>
+<li>自动发布：更新完代码后，自动构建出线上发布代码并传输给发布系统。</li>
+</ul>
+<p><strong>在<code>webpack</code>应用中有两个核心</strong>:</p>
+<ul>
+<li><ol>
+<li>模块转换器，用于把模块原内容按照需求转换成新内容，可以加载非 JS 模块</li>
+</ol>
+</li>
+<li><ol start="2">
+<li>扩展插件，在 Webpack 构建流程中的特定时机注入扩展逻辑来改变构建结果或做你想要的事情。</li>
+</ol>
+</li>
+</ul>
+<h2 id="2-初始化项目"><a href="#2-初始化项目" class="headerlink" title="2.初始化项目"></a>2.初始化项目</h2><div class="hljs code-wrapper"><pre><code class="hljs">├── src   # 源码目录
+│   ├── a-module.js
+│   └── index.js
+</code></pre></div>
+<p>编写 <em>a-module.js</em></p>
+<div class="hljs code-wrapper"><pre><code class="hljs">module.exports = &#39;hello&#39;;
+</code></pre></div>
+<p>编写 <em>index.js</em> </p>
+<div class="hljs code-wrapper"><pre><code class="hljs">let a = require(&#39;./a-module&#39;);
+console.log(a);
+</code></pre></div>
+<blockquote>
+<p>这里我们使用<code>CommonJS</code>模块的方式引入，这种方式默认在浏览器上是无法运行的，我们希望通过 <code>webpack</code> 来进行打包！</p>
+</blockquote>
+<h2 id="3-webpack快速上手"><a href="#3-webpack快速上手" class="headerlink" title="3.webpack快速上手"></a>3.webpack快速上手</h2><h3 id="3-1-安装"><a href="#3-1-安装" class="headerlink" title="3.1 安装"></a>3.1 安装</h3><div class="hljs code-wrapper"><pre><code class="hljs">//bash
+npm init -y
+npm install webpack webpack-cli --save-dev 
+</code></pre></div>
+<p><code>webpack</code>默认支持0配置,配置<code>scripts</code>脚本</p>
+<div class="hljs code-wrapper"><pre><code class="hljs">&quot;scripts&quot;: &#123;
+  &quot;build&quot;: &quot;webpack&quot;
+&#125;
+</code></pre></div>
+<p>执行<code>npm run build</code>,默认会调用 <code>node_modules/.bin</code>下的<code>webpack</code>命令，内部会调用<code>webpack-cli</code>解析用户参数进行打包。默认会以 <code>src/index.js</code> 作为入口文件。</p>
+<blockquote>
+<p>这里也可以使用<code>npx webpack</code>,<code>npx</code> 是 5.2版本之后<code>npm</code>提供的命令可以执行<code>.bin</code>下的可执行文件</p>
+</blockquote>
+<p><img src="http://img.fullstackjavascript.cn/webpack1.png" srcset="/img/loading.gif" lazyload></p>
+<p>我们可以发现已经产生了<code>dist</code>目录，此目录为最终打包出的结果。<code>main.js</code>可以在html中直接引用,这里还提示我们默认<code>mode</code> 为<code>production</code></p>
+<h3 id="3-2-webpack-config-js"><a href="#3-2-webpack-config-js" class="headerlink" title="3.2 webpack.config.js"></a>3.2 webpack.config.js</h3><p>我们打包时一般不会采用0配置，<code>webpack</code>在打包时默认会查找当前目录下的 <code>webpack.config.js or webpackfile.js</code> 文件。</p>
+<p>通过配置文件进行打包</p>
+<div class="hljs code-wrapper"><pre><code class="hljs">const path = require(&#39;path&#39;);
+module.exports = &#123;
+    entry:&#39;./src/index.js&#39;,
+    output:&#123;
+        filename:&#39;bundle.js&#39;, // 打包出的结果文件
+        path:path.resolve(__dirname,&#39;dist&#39;) // 打包到dist目录下
+    &#125;
+&#125;
+</code></pre></div>
+<h3 id="3-3-配置打包的mode"><a href="#3-3-配置打包的mode" class="headerlink" title="3.3 配置打包的mode"></a>3.3 配置打包的mode</h3><p>我们需要在打包时提供<code>mode</code>属性来区分是开发环境还是生产环境,来实现配置文件的拆分</p>
+<div class="hljs code-wrapper"><pre><code class="hljs">├── build
+│   ├── webpack.base.js
+│   ├── webpack.dev.js
+│   └── webpack.prod.js
+</code></pre></div>
+<p><strong>我们可以通过指定不同的文件来进行打包</strong></p>
+<p>配置<code>scripts</code>脚本</p>
+<div class="hljs code-wrapper"><pre><code class="hljs">&quot;scripts&quot;: &#123;
+  &quot;build&quot;: &quot;webpack --config ./build/webpack.prod&quot;,
+  &quot;dev&quot;: &quot;webpack --config ./build/webpack.dev&quot;
+&#125;
+</code></pre></div>
+<p>可以通过 <code>config</code> 参数指定,使用哪个配置文件来进行打包 </p>
+<p><strong>通过env参数区分</strong></p>
+<div class="hljs code-wrapper"><pre><code class="hljs">&quot;scripts&quot;: &#123;
+    &quot;build&quot;: &quot;webpack --env.production --config ./build/webpack.base&quot;,
+    &quot;dev&quot;: &quot;webpack --env.development --config ./build/webpack.base&quot;
+&#125;
+</code></pre></div>
+<p>改造<code>webpack.base</code>文件默认导出函数，会将环境变量传入到函数的参数中</p>
+<div class="hljs code-wrapper"><pre><code class="hljs">module.exports = (env)=&gt;&#123;
+    console.log(env); // &#123; development: true &#125;
+&#125;
+</code></pre></div>
+<p><strong>合并配置文件</strong></p>
+<p>我们可以判断当前环境是否是开发环境来加载不同的配置,这里我们需要做配置合并<br>安装<code>webpack-merge</code>:</p>
+<div class="hljs code-wrapper"><pre><code class="hljs">npm install webpack-merge --save-dev
+</code></pre></div>
+<p><code>webpack.dev</code>配置</p>
+<div class="hljs code-wrapper"><pre><code class="hljs">module.exports = &#123;
+    mode:&#39;development&#39;
+&#125;
+</code></pre></div>
+<p><code>webpack.prod</code>配置</p>
+<div class="hljs code-wrapper"><pre><code class="hljs">module.exports = &#123;
+    mode:&#39;production&#39;
+&#125;
+</code></pre></div>
+<p><code>webpack.base</code>配置</p>
+<div class="hljs code-wrapper"><pre><code class="hljs">const path = require(&#39;path&#39;);
+const merge = require(&#39;webpack-merge&#39;);
+// 开发环境
+const dev = require(&#39;./webpack.dev&#39;);
+// 生产环境
+const prod = require(&#39;./webpack.prod&#39;);
+const base = &#123; // 基础配置
+    entry:&#39;./src/index.js&#39;,
+    output:&#123;
+        filename:&#39;bundle.js&#39;,
+        path:path.resolve(__dirname,&#39;../dist&#39;)
+    &#125;
+&#125;
+module.exports = (env) =&gt;&#123;
+    if(env.development)&#123;
+        return merge(base,dev);
+    &#125;else&#123;
+        return merge(base,prod)
+    &#125;
+&#125;
+</code></pre></div>
+<p>后续的开发中，我们会将公共的逻辑放到<code>base</code>中,开发和生产对的配置也分别进行存放！</p>
+<h2 id="4-webpack-dev-server"><a href="#4-webpack-dev-server" class="headerlink" title="4.webpack-dev-server"></a>4.webpack-dev-server</h2><p>配置开发服务器，可以在实现在内存中打包,并且自动启动服务</p>
+<div class="hljs code-wrapper"><pre><code class="hljs">npm install webpack-dev-server --save-dev
+
+&quot;scripts&quot;: &#123;
+    &quot;build&quot;: &quot;webpack --env.production --config ./build/webpack.base&quot;,
+    &quot;dev&quot;: &quot;webpack-dev-server --env.development --config ./build/webpack.base&quot;
+&#125;
+</code></pre></div>
+<p>通过执行<code>npm run dev</code>来启启动开发环境</p>
+<p><img src="http://img.fullstackjavascript.cn/webpack2.png" srcset="/img/loading.gif" lazyload></p>
+<p>默认会在当前根目录下启动服务</p>
+<p><strong>配置开发服务的配置</strong></p>
+<div class="hljs code-wrapper"><pre><code class="hljs">const path = require(&#39;path&#39;)
+module.exports = &#123;
+    mode:&#39;development&#39;,
+    devServer:&#123;
+        // 更改静态文件目录位置
+        contentBase:path.resolve(__dirname,&#39;../dist&#39;),
+        compress:true, // 开启gzip
+        port:3000, // 更改端口号
+    &#125;
+&#125;
+</code></pre></div>
+<h2 id="5-打包Html插件"><a href="#5-打包Html插件" class="headerlink" title="5.打包Html插件"></a>5.打包Html插件</h2><h3 id="5-1-单入口打包"><a href="#5-1-单入口打包" class="headerlink" title="5.1 单入口打包"></a>5.1 单入口打包</h3><p>自动产生html，并引入打包后的文件</p>
+<p>编辑<code>webpack.base</code>文件</p>
+<div class="hljs code-wrapper"><pre><code class="hljs">const HtmlWebpackPlugin = require(&#39;html-webpack-plugin&#39;);
+plugins:[
+    new HtmlWebpackPlugin(&#123;
+        filename:&#39;index.html&#39;, // 打包出来的文件名
+        template:path.resolve(__dirname,&#39;../public/index.html&#39;),
+        hash:true, // 在引用资源的后面增加hash戳
+        minify:&#123;
+            removeAttributeQuotes:true // 删除属性双引号
+        &#125;
+    &#125;)
+]
+</code></pre></div>
+<h3 id="5-2-多入口打包"><a href="#5-2-多入口打包" class="headerlink" title="5.2 多入口打包"></a>5.2 多入口打包</h3><p>根据不同入口 生成多个js文件，引入到不同html中</p>
+<div class="hljs code-wrapper"><pre><code class="hljs">── src
+    ├── entry-1.js
+    └── entry-2.js
+</code></pre></div>
+<p>多入口需要配置多个entry</p>
+<div class="hljs code-wrapper"><pre><code class="hljs">entry:&#123;
+    jquery:[&#39;jquery&#39;], // 打包jquery
+    entry1:path.resolve(__dirname,&#39;../src/entry-1.js&#39;),
+    entry2:path.resolve(__dirname,&#39;../src/entry-2.js&#39;)
+&#125;,
+output:&#123;
+    filename:&#39;[name].js&#39;,
+    path:path.resolve(__dirname,&#39;../dist&#39;)
+&#125;,
+</code></pre></div>
+<p>产生多个Html文件</p>
+<div class="hljs code-wrapper"><pre><code class="hljs">new HtmlWebpackPlugin(&#123;
+    filename:&#39;index.html&#39;, 
+    template:path.resolve(__dirname,&#39;../public/template.html&#39;),
+    hash:true, 
+    minify:&#123;
+        removeAttributeQuotes:true
+    &#125;,
+    chunks:[&#39;jquery&#39;,&#39;entry1&#39;], // 引入的chunk 有jquery,entry
+&#125;),
+new HtmlWebpackPlugin(&#123;
+    filename:&#39;login.html&#39;,
+    template:path.resolve(__dirname,&#39;../public/template.html&#39;),
+    hash:true,
+    minify:&#123;
+        removeAttributeQuotes:true
+    &#125;,
+    inject:false, // inject 为false表示不注入js文件
+    chunksSortMode:&#39;manual&#39;, // 手动配置代码块顺序
+    chunks:[&#39;entry2&#39;,&#39;jquery&#39;]
+&#125;)
+</code></pre></div>
+<p>以上的方式不是很优雅，每次都需要手动添加<code>HtmlPlugin</code>应该动态产生<code>html</code>文件，像这样:</p>
+<div class="hljs code-wrapper"><pre><code class="hljs">let htmlPlugins = [
+  &#123;
+    entry: &quot;entry1&quot;,
+    html: &quot;index.html&quot;
+  &#125;,
+  &#123;
+    entry: &quot;entry2&quot;,
+    html: &quot;login.html&quot;
+  &#125;
+].map(
+  item =&gt;
+    new HtmlWebpackPlugin(&#123;
+      filename: item.html,
+      template: path.resolve(__dirname, &quot;../public/template.html&quot;),
+      hash: true,
+      minify: &#123;
+        removeAttributeQuotes: true
+      &#125;,
+      chunks: [&quot;jquery&quot;, item.entry]
+    &#125;)
+);
+plugins: [...htmlPlugins]
+</code></pre></div>
+<h2 id="6-清空打包结果"><a href="#6-清空打包结果" class="headerlink" title="6.清空打包结果"></a>6.清空打包结果</h2><p>可以使用<code>clean-webpack-plugin</code>手动清除某个文件夹内容:</p>
+<p><strong>安装</strong></p>
+<div class="hljs code-wrapper"><pre><code class="hljs">npm install --save-dev clean-webpack-plugin
+
+const &#123; CleanWebpackPlugin &#125; = require(&#39;clean-webpack-plugin&#39;);
+new CleanWebpackPlugin(&#123;
+    // 清空匹配的路径
+    cleanOnceBeforeBuildPatterns: [path.resolve(&#39;xxxx/*&#39;),&#39;**/*&#39;],
+&#125;)
+</code></pre></div>
+<p>这样就可以清空指定的目录了,我们可以看到<code>webpack</code>插件的基本用法就是 <code>new Plugin</code>并且放到<code>plugins</code>中</p>
+
+            </div>
+            <hr>
+            <div>
+              <div class="post-metas mb-3">
+                
+                
+                  <div class="post-meta">
+                    <i class="iconfont icon-tags"></i>
+                    
+                      <a class="hover-with-bg" href="/tags/webpack/">webpack</a>
+                    
+                  </div>
+                
+              </div>
+              
+                <p class="note note-warning">
+                  
+                    本博客所有文章除特别声明外，均采用 <a target="_blank" href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh" rel="nofollow noopener noopener">CC BY-SA 4.0 协议</a> ，转载请注明出处！
+                  
+                </p>
+              
+              
+                <div class="post-prevnext">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2019/11/21/2019-11-21-PWA-%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F/">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">PWA-生命周期</span>
+                        <span class="visible-mobile">Vorheriger</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2019/11/17/2019-11-17-%E5%B0%8F%E7%A8%8B%E5%BA%8F-5%E6%AF%9B%E9%92%B1%E5%B0%8F%E7%A8%8B%E5%BA%8F/">
+                        <span class="hidden-mobile">小程序-5毛钱信条</span>
+                        <span class="visible-mobile">Nächster</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+              <!-- Comments -->
+              <article class="comments" id="comments" lazyload>
+                
+                  
+                
+                
+  <script type="text/javascript">
+    Fluid.utils.loadComments('#comments', function() {
+      var light = 'github-light';
+      var dark = 'github-dark';
+      var schema = document.documentElement.getAttribute('data-user-color-scheme');
+      if (schema === 'dark') {
+        schema = dark;
+      } else {
+        schema = light;
+      }
+      window.UtterancesThemeLight = light;
+      window.UtterancesThemeDark = dark;
+      var s = document.createElement('script');
+      s.setAttribute('src', 'https://utteranc.es/client.js');
+      s.setAttribute('repo', 'waterbang/Comment');
+      s.setAttribute('issue-term', 'pathname');
+      
+      s.setAttribute('label', 'utterances');
+      
+      s.setAttribute('theme', schema);
+      s.setAttribute('crossorigin', 'anonymous');
+      document.getElementById('comments').appendChild(s);
+    })
+  </script>
+  <noscript>Please enable JavaScript to view the comments</noscript>
+
+
+              </article>
+            
+          </article>
+        </div>
+      </div>
+    </div>
+    
+      <div class="d-none d-lg-block col-lg-2 toc-container" id="toc-ctn">
+        <div id="toc">
+  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;TOC</p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+      </div>
+    
+  </div>
+</div>
+
+<!-- Custom -->
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">Suchen</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v"
+                 for="local-search-input">Stichwort</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+
+    
+  </main>
+
+  <footer class="text-center mt-5 py-3">
+  <div class="footer-content">
+     <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a>
+  </div>
+  
+
+  
+  <!-- 备案信息 -->
+  <div class="beian">
+    <span>
+      <a href="http://beian.miit.gov.cn/" target="_blank" rel="nofollow noopener">
+        闽ICP备18009949号-2
+      </a>
+    </span>
+    
+  </div>
+
+
+  
+</footer>
+
+
+  <!-- SCRIPTS -->
+  
+  <script  src="https://cdn.jsdelivr.net/npm/nprogress@0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/nprogress@0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js" ></script>
+<script  src="https://cdn.jsdelivr.net/npm/bootstrap@4/dist/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+<!-- Plugins -->
+
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+  
+
+
+
+  
+    <script  src="https://cdn.jsdelivr.net/npm/tocbot@4/dist/tocbot.min.js" ></script>
+  
+  
+    <script  src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3/dist/jquery.fancybox.min.js" ></script>
+  
+  
+    <script  src="https://cdn.jsdelivr.net/npm/anchor-js@4/anchor.min.js" ></script>
+  
+  
+    <script defer src="https://cdn.jsdelivr.net/npm/clipboard@2/dist/clipboard.min.js" ></script>
+  
+
+
+
+  <script defer src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" ></script>
+
+
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/typed.js@2/lib/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var title = document.getElementById('subtitle').title;
+      
+        typing(title);
+      
+    })(window, document);
+  </script>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+    <!-- Baidu Analytics -->
+    <script defer>
+      var _hmt = _hmt || [];
+      (function () {
+        var hm = document.createElement("script");
+        hm.src = "https://hm.baidu.com/hm.js?58e161bf4b884b2aa577f323f137ac0f";
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(hm, s);
+      })();
+    </script>
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+
+
+
+
+<!-- 主题的启动项 保持在最底部 -->
+<script  src="/js/boot.js" ></script>
+
+
+</body>
+</html>

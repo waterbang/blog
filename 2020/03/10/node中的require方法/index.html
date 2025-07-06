@@ -1,0 +1,591 @@
+
+
+<!DOCTYPE html>
+<html lang="ch_CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/apple-touch-icon.png">
+  <link rel="icon" href="/img/favicon.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="waterbang">
+  <meta name="keywords" content="waterbang">
+  
+    <meta name="description" content="模块的概念node中js文件就是一个模块。 为什么出现模块的概念防止命名冲突，可以把相同的功能封装到一起。 简单版的require我们来实现一下自己的简易版require，源码里的实现还是挺复杂的。在工作目录中创建文件 Module.js,内容如下： 123456function Modules() &#123;&#125;function req()&#123;&#125;req(&#x27;.">
+<meta property="og:type" content="article">
+<meta property="og:title" content="node中的require方法">
+<meta property="og:url" content="https://www.waterbang.top/2020/03/10/node%E4%B8%AD%E7%9A%84require%E6%96%B9%E6%B3%95/index.html">
+<meta property="og:site_name" content="waterbang">
+<meta property="og:description" content="模块的概念node中js文件就是一个模块。 为什么出现模块的概念防止命名冲突，可以把相同的功能封装到一起。 简单版的require我们来实现一下自己的简易版require，源码里的实现还是挺复杂的。在工作目录中创建文件 Module.js,内容如下： 123456function Modules() &#123;&#125;function req()&#123;&#125;req(&#x27;.">
+<meta property="og:locale" content="ch_CN">
+<meta property="og:image" content="https://www.waterbang.top/2020/03/10/node%E4%B8%AD%E7%9A%84require%E6%96%B9%E6%B3%95/logo.jpg">
+<meta property="article:published_time" content="2020-03-10T09:31:11.000Z">
+<meta property="article:modified_time" content="2024-12-21T11:43:23.163Z">
+<meta property="article:author" content="waterbang">
+<meta property="article:tag" content="node.js">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://www.waterbang.top/2020/03/10/node%E4%B8%AD%E7%9A%84require%E6%96%B9%E6%B3%95/logo.jpg">
+  
+  
+  <title>node中的require方法 🏮 waterbang</title>
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4/dist/css/bootstrap.min.css" />
+
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/github-markdown-css@4/github-markdown.min.css" />
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hint.css@2/hint.min.css" />
+
+  
+    
+    
+      
+      <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@10/styles/atom-one-dark.min.css" />
+    
+  
+
+  
+    <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3/dist/jquery.fancybox.min.css" />
+  
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_ba1fz6golrf.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+<!-- 自定义样式保持在最底部 -->
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    var CONFIG = {"hostname":"www.waterbang.top","root":"/","version":"1.8.14","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"right","visible":"hover","icon":"🍦"},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"copy_btn":true,"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"baidu":"58e161bf4b884b2aa577f323f137ac0f","google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+
+<body>
+  <header style="height: 70vh;">
+    <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>waterbang</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                Startseite
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                Archiv
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                Etiketten
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                Über mich
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/links/">
+                <i class="iconfont icon-link-fill"></i>
+                Weblinks
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              &nbsp;<i class="iconfont icon-search"></i>&nbsp;
+            </a>
+          </li>
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">&nbsp;<i
+                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+    <div class="banner" id="banner" parallax=true
+         style="background: url('/img/post-banner.jpg') no-repeat center center;
+           background-size: cover;">
+      <div class="full-bg-img">
+        <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+          <div class="page-header text-center fade-in-up">
+            <span class="h2" id="subtitle" title="node中的require方法">
+              
+            </span>
+
+            
+              <div class="mt-3">
+  
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-author" aria-hidden="true"></i>
+      waterbang
+    </span>
+  
+  
+    <span class="post-meta">
+      <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+      <time datetime="2020-03-10 17:31" pubdate>
+        March 10, 2020 pm
+      </time>
+    </span>
+  
+</div>
+
+<div class="mt-1">
+  
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-chart"></i>
+      6.3k 字
+    </span>
+  
+
+  
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-clock-fill"></i>
+      
+      
+      53 分钟
+    </span>
+  
+
+  
+  
+    
+      <!-- 不蒜子统计文章PV -->
+      <span id="busuanzi_container_page_pv" style="display: none">
+        <i class="iconfont icon-eye" aria-hidden="true"></i>
+        <span id="busuanzi_value_page_pv"></span> 次
+      </span>
+    
+  
+</div>
+
+            
+          </div>
+
+          
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="d-none d-lg-block col-lg-2"></div>
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div class="py-5" id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">node中的require方法</h1>
+            
+              <p class="note note-info">
+                
+                  本文最后更新于：5 hours ago
+                
+              </p>
+            
+            <div class="markdown-body">
+              <h3 id="模块的概念"><a href="#模块的概念" class="headerlink" title="模块的概念"></a>模块的概念</h3><p>node中js文件就是一个模块。</p>
+<h4 id="为什么出现模块的概念"><a href="#为什么出现模块的概念" class="headerlink" title="为什么出现模块的概念"></a>为什么出现模块的概念</h4><p>防止命名冲突，可以把相同的功能封装到一起。</p>
+<h3 id="简单版的require"><a href="#简单版的require" class="headerlink" title="简单版的require"></a>简单版的require</h3><p>我们来实现一下自己的简易版require，源码里的实现还是挺复杂的。<br>在工作目录中创建文件 Module.js,内容如下：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs javascript"><span class="hljs-keyword">function</span> <span class="hljs-title function_">Modules</span>(<span class="hljs-params"></span>) &#123;<br>&#125;<br><br><span class="hljs-keyword">function</span> <span class="hljs-title function_">req</span>(<span class="hljs-params"></span>)&#123;<br>&#125;<br><span class="hljs-title function_">req</span>(<span class="hljs-string">&#x27;./a&#x27;</span>);<br></code></pre></div></td></tr></table></figure>
+
+<p>再创建一个 a.json,内容如下：</p>
+<figure class="highlight json"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs json"><span class="hljs-punctuation">&#123;</span><br>    <span class="hljs-attr">&quot;a&quot;</span><span class="hljs-punctuation">:</span><span class="hljs-string">&quot;xxx&quot;</span><br><span class="hljs-punctuation">&#125;</span><br></code></pre></div></td></tr></table></figure>
+<p>node模块是按照后缀名查找的，先<code>.js</code> 然后 <code>.json</code>文件。<br>所以我们在module.js中写入：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs javascript"><span class="hljs-title class_">Module</span>.<span class="hljs-property">extensions</span> = &#123;<br>    <span class="hljs-string">&#x27;.js&#x27;</span>() &#123;&#125;,<br>    <span class="hljs-string">&#x27;.json&#x27;</span>()&#123;&#125;<br>&#125;<br></code></pre></div></td></tr></table></figure>
+
+<h4 id="第一步：把相对路径转换成绝对路径"><a href="#第一步：把相对路径转换成绝对路径" class="headerlink" title="第一步：把相对路径转换成绝对路径"></a>第一步：把相对路径转换成绝对路径</h4><p>要把用户传进来的相对路径转换成绝对路径。<br>先假设文件名有带后缀，然后判断是否存在该文件，<br>如果不存在，则从制定的文件后缀去拿出每一个后缀，让文件名和后缀拼接。<br>继续循环去查找文件是否存在。<br>接下来，给Module创建一个<code>resolveFileName</code>方法，来实现我们的逻辑：</p>
+<blockquote>
+<p>需要引入path,和fs 模块</p>
+</blockquote>
+<figure class="highlight javascript"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs javascript"><span class="hljs-comment">// 给我一个相对路径，我给你解析成绝对路径</span><br><span class="hljs-title class_">Module</span>.<span class="hljs-property">resolveFileName</span> = <span class="hljs-keyword">function</span> (<span class="hljs-params">filename</span>) &#123;<br>  <span class="hljs-keyword">let</span> absPath = path.<span class="hljs-title function_">resolve</span>(__dirname, filename); <span class="hljs-comment">// 1. 把相对路径转换为绝对路径</span><br>  <span class="hljs-keyword">let</span> flag = fs.<span class="hljs-title function_">existsSync</span>(absPath); <span class="hljs-comment">// 判断文件是否存在</span><br>  <span class="hljs-keyword">let</span> current;<br>  <span class="hljs-keyword">if</span> (!flag) &#123;<br>    <span class="hljs-keyword">let</span> keys = <span class="hljs-title class_">Object</span>.<span class="hljs-title function_">keys</span>(<span class="hljs-title class_">Module</span>.<span class="hljs-property">extensions</span>); <span class="hljs-comment">// 取后缀</span><br>    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">let</span> i = <span class="hljs-number">0</span>; i &lt; keys.<span class="hljs-property">length</span>; i++) &#123; <br>      current = absPath + keys[i]; <span class="hljs-comment">// 拼接每一个有可能的文件</span><br>      <span class="hljs-keyword">let</span> flag = fs.<span class="hljs-title function_">existsSync</span>(current);  <span class="hljs-comment">// 判断是否存在</span><br>      <span class="hljs-keyword">if</span> (flag) &#123; <br>        <span class="hljs-keyword">break</span>;<br>      &#125; <span class="hljs-keyword">else</span> &#123;<br>        current = <span class="hljs-literal">null</span>;<br>      &#125;<br>    &#125;<br>  &#125;<br>  <span class="hljs-keyword">if</span> (!current) &#123; <span class="hljs-comment">// 如果加了后缀还是不存在，则抛出错误</span><br>    <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Error</span>(<span class="hljs-string">&#x27;文件不存在&#x27;</span>);<br>  &#125;<br>  <span class="hljs-keyword">return</span> current; <span class="hljs-comment">// 返回路径</span><br>&#125;<br></code></pre></div></td></tr></table></figure>
+
+<h4 id="第二步：根据绝对路径创建一个模块"><a href="#第二步：根据绝对路径创建一个模块" class="headerlink" title="第二步：根据绝对路径创建一个模块"></a>第二步：根据绝对路径创建一个模块</h4><p>模块里有id,和exports。所以我们在Module里写入：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs javascript"><span class="hljs-keyword">function</span> <span class="hljs-title function_">Module</span>(<span class="hljs-params">id</span>) &#123;<br>  <span class="hljs-variable language_">this</span>.<span class="hljs-property">id</span> = id;<br>  <span class="hljs-variable language_">this</span>.<span class="hljs-property">exports</span> = &#123;&#125;; <span class="hljs-comment">// 模块的结果</span><br>&#125;<br></code></pre></div></td></tr></table></figure>
+<p>创建一个module, 并且要加载这个模块, 所以，在req函数内写入：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs javascript"><span class="hljs-keyword">function</span> <span class="hljs-title function_">req</span>(<span class="hljs-params">filename</span>) &#123;<br>  <span class="hljs-keyword">let</span> current = <span class="hljs-title class_">Module</span>.<span class="hljs-title function_">resolveFileName</span>(filename);<br>  <span class="hljs-keyword">let</span> <span class="hljs-variable language_">module</span> = <span class="hljs-keyword">new</span> <span class="hljs-title class_">Module</span>(current); <span class="hljs-comment">// 产生一个module</span><br>   <span class="hljs-variable language_">module</span>.<span class="hljs-title function_">load</span>(); <span class="hljs-comment">// 加载</span><br><br>  <span class="hljs-keyword">return</span> <span class="hljs-variable language_">module</span>.<span class="hljs-property">exports</span>; <span class="hljs-comment">// 默认导出module.exports对象。</span><br>&#125;<br></code></pre></div></td></tr></table></figure>
+
+<h4 id="第三步：模块的加载"><a href="#第三步：模块的加载" class="headerlink" title="第三步：模块的加载"></a>第三步：模块的加载</h4><p>模块的加载就是读取文件的内容,由于我们不知道传过来的是js还是json,<br>因此我们要根据不同的后缀，调用不同的处理方法：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs javascript"><span class="hljs-comment">// 模块的加载就是读取文件的内容</span><br><span class="hljs-title class_">Module</span>.<span class="hljs-property"><span class="hljs-keyword">prototype</span></span>.<span class="hljs-property">load</span> = <span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) &#123;<br>  <span class="hljs-keyword">let</span> ext = path.<span class="hljs-title function_">extname</span>(<span class="hljs-variable language_">this</span>.<span class="hljs-property">id</span>);<br>  <span class="hljs-title class_">Module</span>.<span class="hljs-property">extensions</span>[ext](<span class="hljs-variable language_">this</span>); <span class="hljs-comment">// 根据不同的后缀调用不同的处理方法。</span><br>&#125;<br></code></pre></div></td></tr></table></figure>
+<p>这样处理方法就会接收到一个module,如果是json,那直接返回一个json就行。</p>
+<figure class="highlight html"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs html">Module.extensions = &#123;<br>  &quot;.js&quot;() &#123;<br>  &#125;,<br>  &quot;.json&quot;(module) &#123;<br>    let script = fs.readFileSync(module.id, &#x27;utf8&#x27;);<br>    module.exports = JSON.parse(script);<br>  &#125;<br>&#125;<br></code></pre></div></td></tr></table></figure>
+
+<p>到这里我们就能读取json文件的内容：</p>
+<figure class="highlight html"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs html">let json = req(&#x27;./a&#x27;);<br>console.log(json);  //  &#123;a:&#x27;xxx&#x27;&#125;<br></code></pre></div></td></tr></table></figure>
+<h4 id="第四步：读取js"><a href="#第四步：读取js" class="headerlink" title="第四步：读取js"></a>第四步：读取js</h4><p>还有一种可能是js, js需要将exports,传给用户，让用户自己赋值。<br>先创建一个a.js,内容如下:</p>
+<figure class="highlight html"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs html">module.exports = &#x27;hello&#x27;;<br></code></pre></div></td></tr></table></figure>
+<p>然后需要创建一个函数将用户传递的内容包裹起来：</p>
+<figure class="highlight html"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs html">Module.wrapper = [<br>  &#x27;(function(module, exports, require, __filename, __dirname)&#123;&#x27;,<br><br>  &#x27;&#125;)&#x27;<br>]<br>Module.extensions = &#123;<br>  &quot;.js&quot;(module) &#123;<br>    let script = fs.readFileSync(module.id, &#x27;utf8&#x27;); // module.exports = &#x27;hello&#x27;;<br>    let fnStr = Module.wrapper[0] + script + Module.wrapper[1];<br>  &#125;,<br>  &quot;.json&quot;(module) &#123;<br>    let script = fs.readFileSync(module.id, &#x27;utf8&#x27;);<br>    module.exports = JSON.parse(script);<br>  &#125;<br>&#125;<br></code></pre></div></td></tr></table></figure>
+<p>接下来要用到一个vm模块，它的<code>runInThisContext</code>方法能将字符串变成js代码。</p>
+<blockquote>
+<p>记得const vm &#x3D; require(‘vm’)；<br>转换完就像下面这样：<br>(function(module, exports, require, <code>__filename</code>, <code>__dirname</code>){module.exports &#x3D; ‘hello’;})</p>
+</blockquote>
+<p>代码如下：</p>
+<figure class="highlight html"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs html">Module.extensions = &#123;<br>  &quot;.js&quot;(module) &#123;<br>    let script = fs.readFileSync(module.id, &#x27;utf8&#x27;); // module.exports = &#x27;hello&#x27;;<br>    let fnStr = Module.wrapper[0] + script + Module.wrapper[1];<br>    let fn = vm.runInThisContext(fnStr); // 让字符串变成js代码<br>    fn.call(module.exports, module, module.exports, req, module.id, path.dirname(module.id));// 给用户更改对象<br>  &#125;,<br>  &quot;.json&quot;(module) &#123;<br>    let script = fs.readFileSync(module.id, &#x27;utf8&#x27;);<br>    module.exports = JSON.parse(script);<br>  &#125;<br>&#125;<br></code></pre></div></td></tr></table></figure>
+<blockquote>
+<p>第一个参数是改变this的指向，第二个是module,第三个是module.exports,第四个是文件名，第五个是父路径。</p>
+</blockquote>
+<h4 id="第五步：缓存module"><a href="#第五步：缓存module" class="headerlink" title="第五步：缓存module"></a>第五步：缓存module</h4><p>这样就能打印出js的内容，但是这样会有多次引用的问题，每次<code>req</code>同一文件的时候都会创建一个module.<br>所以我们用一个缓存，来实现多次加载，只有一次，代码如下：</p>
+<figure class="highlight html"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs html">Module._cache = &#123;&#125;;<br>function req(filename) &#123;<br>  let current = Module.resolveFileName(filename);<br>  if(Module._cache[current])&#123;<br>    return Module._cache[current].exports; // 如果加载过了，直接返回exports<br>  &#125;<br>  let module = new Module(current);<br>  Module._cache[current] = module;<br>  module.load();<br>  return module.exports; // 默认导出module.exports对象。<br>&#125;<br>let json = req(&#x27;./a&#x27;);<br>console.log(json);<br></code></pre></div></td></tr></table></figure>
+<p>这样我们的req就完成了。</p>
+<h3 id="module-exports和exports"><a href="#module-exports和exports" class="headerlink" title="module.exports和exports"></a>module.exports和exports</h3><p>module.exports和exports是相等的。</p>
+<figure class="highlight html"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs html">// a.js<br>console.log(module.exports === exports); // true<br>module.exports = &#x27;hello&#x27;;<br></code></pre></div></td></tr></table></figure>
+<p>但是为什么我们使用module.exports导出可以，直接用exports导出不行呢？</p>
+<figure class="highlight html"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs html">module.exports = &#x27;hello&#x27;; // =&gt; hello<br>exports = &#x27;hello&#x27; // &#123;&#125;<br></code></pre></div></td></tr></table></figure>
+<p>这是因为，他们的关系是：</p>
+<div class="hljs code-wrapper"><pre><code class="hljs">let exports = module.exports = &#123;&#125;;
+</code></pre></div>
+<p>所以我们开发时应该采用<code>export.a</code> 或者 <code>module.exports</code>;<br>不要使用global,会导致全局污染。</p>
+<h3 id="模块的查找路径"><a href="#模块的查找路径" class="headerlink" title="模块的查找路径"></a>模块的查找路径</h3><p>一般情况下会先查找文件，找不到的话，找文件夹，再找不到会报错。</p>
+<h4 id="第三方文件夹查找"><a href="#第三方文件夹查找" class="headerlink" title="第三方文件夹查找"></a>第三方文件夹查找</h4><p>它会找node_modules下的同名文件下的index.js,如果找不到，会向上级查找。直到根目录。<br>如果文件夹下的入口文件不叫index.js，需要建一个package.json，声明入口文件，内容如下：</p>
+<figure class="highlight json"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs json"><span class="hljs-punctuation">&#123;</span><br>  <span class="hljs-attr">&quot;main&quot;</span><span class="hljs-punctuation">:</span><span class="hljs-string">&quot;a.js&quot;</span><br><span class="hljs-punctuation">&#125;</span><br></code></pre></div></td></tr></table></figure>
+<p>这样就能查找到。如果没有main 会找index.js -&gt; index.json</p>
+<h3 id="完整代码如下："><a href="#完整代码如下：" class="headerlink" title="完整代码如下："></a>完整代码如下：</h3><figure class="highlight html"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs html">const path = require(&#x27;path&#x27;);<br>const fs = require(&#x27;fs&#x27;);<br>const vm = require(&#x27;vm&#x27;);<br><br>function Module(id) &#123;<br>  this.id = id;<br>  this.exports = &#123;&#125;; // 模块的结果<br>&#125;<br><br>Module.wrapper = [<br>  &#x27;(function(module, exports, require, __filename, __dirname)&#123;&#x27;,<br><br>  &#x27;&#125;)&#x27;<br>]<br>Module.extensions = &#123;<br>  &quot;.js&quot;(module) &#123;<br>    let script = fs.readFileSync(module.id, &#x27;utf8&#x27;); // module.exports = &#x27;hello&#x27;;<br>    let fnStr = Module.wrapper[0] + &#x27; &#x27; + script + Module.wrapper[1];<br>    let fn = vm.runInThisContext(fnStr); // 让字符串变成js代码<br>    fn.call(module.exports, module, module.exports, req, module.id, path.dirname(module.id));<br>  &#125;,<br>  &quot;.json&quot;(module) &#123;<br>    let script = fs.readFileSync(module.id, &#x27;utf8&#x27;);<br>    module.exports = JSON.parse(script);<br>  &#125;<br>&#125;<br>// 给我一个相对路径，我给你解析成绝对路径<br>Module.resolveFileName = function (filename) &#123;<br>  let absPath = path.resolve(__dirname, filename); // 1. 把相对路径转换为绝对路径<br>  let flag = fs.existsSync(absPath); // 判断文件是否存在<br>  let current;<br>  if (!flag) &#123;<br>    let keys = Object.keys(Module.extensions);<br>    for (let i = 0; i &lt; keys.length; i++) &#123;<br>      current = absPath + keys[i];<br>      let flag = fs.existsSync(current);<br>      if (flag) &#123;<br>        break;<br>      &#125; else &#123;<br>        current = null;<br>      &#125;<br>    &#125;<br>  &#125;<br>  if (!current) &#123; // 如果加了后缀还是不存在，则抛出错误<br>    throw new Error(&#x27;文件不存在&#x27;);<br>  &#125;<br>  return current;<br>&#125;<br><br>// 模块的加载就是读取文件的内容<br>Module.prototype.load = function () &#123;<br>  let ext = path.extname(this.id);<br>  Module.extensions[ext](this); // 根据不同的后缀调用不同的处理方法。<br>&#125;<br>Module._cache = &#123;&#125;;<br>function req(filename) &#123;<br>  let current = Module.resolveFileName(filename);<br>  if (Module._cache[current]) &#123;<br>    return Module._cache[current].exports; // 如果加载过了，直接返回exports<br>  &#125;<br>  let module = new Module(current);<br>  Module._cache[current] = module;<br>  module.load();<br>  return module.exports; // 默认导出module.exports对象。<br>&#125;<br>let json = req(&#x27;./a&#x27;);<br>console.log(json);<br></code></pre></div></td></tr></table></figure>
+
+<h3 id="over"><a href="#over" class="headerlink" title="over"></a>over</h3><p>西塞山前白鹭飞，桃花流水鳜鱼肥。<br>「渔父歌」<br>张志和</p>
+
+            </div>
+            <hr>
+            <div>
+              <div class="post-metas mb-3">
+                
+                
+                  <div class="post-meta">
+                    <i class="iconfont icon-tags"></i>
+                    
+                      <a class="hover-with-bg" href="/tags/node-js/">node.js</a>
+                    
+                  </div>
+                
+              </div>
+              
+                <p class="note note-warning">
+                  
+                    本博客所有文章除特别声明外，均采用 <a target="_blank" href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh" rel="nofollow noopener noopener">CC BY-SA 4.0 协议</a> ，转载请注明出处！
+                  
+                </p>
+              
+              
+                <div class="post-prevnext">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2020/03/13/%E5%9C%A8node%E4%B8%AD%E4%BD%BF%E7%94%A8RabbitMQ/">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">win10环境在node中使用RabbitMQ</span>
+                        <span class="visible-mobile">Vorheriger</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2020/01/26/CentOS7%E8%99%9A%E6%8B%9F%E6%9C%BA%E4%B8%8AMinikube%E5%AE%89%E8%A3%85Kubernetes/">
+                        <span class="hidden-mobile">CentOS7虚拟机上`Minikube`安装Kubernetes</span>
+                        <span class="visible-mobile">Nächster</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+              <!-- Comments -->
+              <article class="comments" id="comments" lazyload>
+                
+                  
+                
+                
+  <script type="text/javascript">
+    Fluid.utils.loadComments('#comments', function() {
+      var light = 'github-light';
+      var dark = 'github-dark';
+      var schema = document.documentElement.getAttribute('data-user-color-scheme');
+      if (schema === 'dark') {
+        schema = dark;
+      } else {
+        schema = light;
+      }
+      window.UtterancesThemeLight = light;
+      window.UtterancesThemeDark = dark;
+      var s = document.createElement('script');
+      s.setAttribute('src', 'https://utteranc.es/client.js');
+      s.setAttribute('repo', 'waterbang/Comment');
+      s.setAttribute('issue-term', 'pathname');
+      
+      s.setAttribute('label', 'utterances');
+      
+      s.setAttribute('theme', schema);
+      s.setAttribute('crossorigin', 'anonymous');
+      document.getElementById('comments').appendChild(s);
+    })
+  </script>
+  <noscript>Please enable JavaScript to view the comments</noscript>
+
+
+              </article>
+            
+          </article>
+        </div>
+      </div>
+    </div>
+    
+      <div class="d-none d-lg-block col-lg-2 toc-container" id="toc-ctn">
+        <div id="toc">
+  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;TOC</p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+      </div>
+    
+  </div>
+</div>
+
+<!-- Custom -->
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">Suchen</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v"
+                 for="local-search-input">Stichwort</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+
+    
+  </main>
+
+  <footer class="text-center mt-5 py-3">
+  <div class="footer-content">
+     <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a>
+  </div>
+  
+
+  
+  <!-- 备案信息 -->
+  <div class="beian">
+    <span>
+      <a href="http://beian.miit.gov.cn/" target="_blank" rel="nofollow noopener">
+        闽ICP备18009949号-2
+      </a>
+    </span>
+    
+  </div>
+
+
+  
+</footer>
+
+
+  <!-- SCRIPTS -->
+  
+  <script  src="https://cdn.jsdelivr.net/npm/nprogress@0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/nprogress@0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js" ></script>
+<script  src="https://cdn.jsdelivr.net/npm/bootstrap@4/dist/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+<!-- Plugins -->
+
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+  
+
+
+
+  
+    <script  src="https://cdn.jsdelivr.net/npm/tocbot@4/dist/tocbot.min.js" ></script>
+  
+  
+    <script  src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3/dist/jquery.fancybox.min.js" ></script>
+  
+  
+    <script  src="https://cdn.jsdelivr.net/npm/anchor-js@4/anchor.min.js" ></script>
+  
+  
+    <script defer src="https://cdn.jsdelivr.net/npm/clipboard@2/dist/clipboard.min.js" ></script>
+  
+
+
+
+  <script defer src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" ></script>
+
+
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/typed.js@2/lib/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var title = document.getElementById('subtitle').title;
+      
+        typing(title);
+      
+    })(window, document);
+  </script>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+    <!-- Baidu Analytics -->
+    <script defer>
+      var _hmt = _hmt || [];
+      (function () {
+        var hm = document.createElement("script");
+        hm.src = "https://hm.baidu.com/hm.js?58e161bf4b884b2aa577f323f137ac0f";
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(hm, s);
+      })();
+    </script>
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+
+
+
+
+<!-- 主题的启动项 保持在最底部 -->
+<script  src="/js/boot.js" ></script>
+
+
+</body>
+</html>

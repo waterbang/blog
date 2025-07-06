@@ -1,0 +1,707 @@
+
+
+<!DOCTYPE html>
+<html lang="ch_CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/apple-touch-icon.png">
+  <link rel="icon" href="/img/favicon.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="waterbang">
+  <meta name="keywords" content="waterbang">
+  
+    <meta name="description" content="ThinkPHP5.1实现sign校验API本文适合有ThinkPHP经验的同学。 但是这个设计是根据用户登录产生的token加静态key作为解密的密钥，token过期时间为7200秒，增加了解密难度。 我直接写流程，加密是aes，具体往下翻，有错误请联系我😁 如果您刚从5.0升级到5.1 官方的文档写得很详细，ThinkPHP.5.1升级指导 。   1.建立sign的配置文件进入config">
+<meta property="og:type" content="article">
+<meta property="og:title" content="PHP-ThinkPHP5.1实现sign校验API">
+<meta property="og:url" content="https://www.waterbang.top/2019/09/01/2019-9-1-PHP-ThinkPHP5.1%E5%AE%9E%E7%8E%B0sign%E6%A0%A1%E9%AA%8CAPI/index.html">
+<meta property="og:site_name" content="waterbang">
+<meta property="og:description" content="ThinkPHP5.1实现sign校验API本文适合有ThinkPHP经验的同学。 但是这个设计是根据用户登录产生的token加静态key作为解密的密钥，token过期时间为7200秒，增加了解密难度。 我直接写流程，加密是aes，具体往下翻，有错误请联系我😁 如果您刚从5.0升级到5.1 官方的文档写得很详细，ThinkPHP.5.1升级指导 。   1.建立sign的配置文件进入config">
+<meta property="og:locale" content="ch_CN">
+<meta property="og:image" content="https://www.waterbang.top/2019/09/01/2019-9-1-PHP-ThinkPHP5.1%E5%AE%9E%E7%8E%B0sign%E6%A0%A1%E9%AA%8CAPI/API.jpg">
+<meta property="article:published_time" content="2019-09-01T01:37:21.000Z">
+<meta property="article:modified_time" content="2024-12-21T11:43:23.158Z">
+<meta property="article:author" content="waterbang">
+<meta property="article:tag" content="ThinkPHP">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://www.waterbang.top/2019/09/01/2019-9-1-PHP-ThinkPHP5.1%E5%AE%9E%E7%8E%B0sign%E6%A0%A1%E9%AA%8CAPI/API.jpg">
+  
+  
+  <title>PHP-ThinkPHP5.1实现sign校验API 🏮 waterbang</title>
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4/dist/css/bootstrap.min.css" />
+
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/github-markdown-css@4/github-markdown.min.css" />
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hint.css@2/hint.min.css" />
+
+  
+    
+    
+      
+      <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@10/styles/atom-one-dark.min.css" />
+    
+  
+
+  
+    <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3/dist/jquery.fancybox.min.css" />
+  
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_ba1fz6golrf.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+<!-- 自定义样式保持在最底部 -->
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    var CONFIG = {"hostname":"www.waterbang.top","root":"/","version":"1.8.14","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"right","visible":"hover","icon":"🍦"},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"copy_btn":true,"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"baidu":"58e161bf4b884b2aa577f323f137ac0f","google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+
+<body>
+  <header style="height: 70vh;">
+    <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>waterbang</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                Startseite
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                Archiv
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                Etiketten
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                Über mich
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/links/">
+                <i class="iconfont icon-link-fill"></i>
+                Weblinks
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              &nbsp;<i class="iconfont icon-search"></i>&nbsp;
+            </a>
+          </li>
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">&nbsp;<i
+                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+    <div class="banner" id="banner" parallax=true
+         style="background: url('/img/post-banner.jpg') no-repeat center center;
+           background-size: cover;">
+      <div class="full-bg-img">
+        <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+          <div class="page-header text-center fade-in-up">
+            <span class="h2" id="subtitle" title="PHP-ThinkPHP5.1实现sign校验API">
+              
+            </span>
+
+            
+              <div class="mt-3">
+  
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-author" aria-hidden="true"></i>
+      waterbang
+    </span>
+  
+  
+    <span class="post-meta">
+      <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+      <time datetime="2019-09-01 09:37" pubdate>
+        September 1, 2019 am
+      </time>
+    </span>
+  
+</div>
+
+<div class="mt-1">
+  
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-chart"></i>
+      3.1k 字
+    </span>
+  
+
+  
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-clock-fill"></i>
+      
+      
+      26 分钟
+    </span>
+  
+
+  
+  
+    
+      <!-- 不蒜子统计文章PV -->
+      <span id="busuanzi_container_page_pv" style="display: none">
+        <i class="iconfont icon-eye" aria-hidden="true"></i>
+        <span id="busuanzi_value_page_pv"></span> 次
+      </span>
+    
+  
+</div>
+
+            
+          </div>
+
+          
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="d-none d-lg-block col-lg-2"></div>
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div class="py-5" id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">PHP-ThinkPHP5.1实现sign校验API</h1>
+            
+              <p class="note note-info">
+                
+                  本文最后更新于：5 hours ago
+                
+              </p>
+            
+            <div class="markdown-body">
+              <h2 id="ThinkPHP5-1实现sign校验API"><a href="#ThinkPHP5-1实现sign校验API" class="headerlink" title="ThinkPHP5.1实现sign校验API"></a>ThinkPHP5.1实现sign校验API</h2><p>本文适合有ThinkPHP经验的同学。</p>
+<p>但是这个设计是根据用户登录产生的token加静态key作为解密的密钥，token过期时间为7200秒，增加了解密难度。</p>
+<p>我直接写流程，加密是aes，具体往下翻，有错误请联系我😁</p>
+<p>如果您刚从5.0升级到5.1</p>
+<p>官方的文档写得很详细，<a target="_blank" rel="noopener" href="https://www.kancloud.cn/manual/thinkphp5_1/354155#5051_218">ThinkPHP.5.1升级指导</a> 。</p>
+<br>
+
+<h3 id="1-建立sign的配置文件"><a href="#1-建立sign的配置文件" class="headerlink" title="1.建立sign的配置文件"></a>1.建立sign的配置文件</h3><p>进入config目录，创建aes.php,如下。(ps：在5.1版本需要在config目录配置)</p>
+<div class="hljs code-wrapper"><pre><code class="hljs">    return [
+    &#39;aeskey&#39;=&gt;&#39;这是你的key&#39;,//aes加密的密钥  客户端和服务端一致
+    &#39;app_sign_time&#39;=&gt;7200,//sign失效时间，微信也是这时间
+    &#39;app_sign_cache_time&#39;=&gt;20,//sign缓存的有效时间
+    ];  
+</code></pre></div>
+<p>当你需要使用的时候这样用</p>
+<div class="hljs code-wrapper"><pre><code class="hljs">    config(&#39;aes.app_sign_cache_time&#39;);
+    
+</code></pre></div>
+<br>
+
+<h3 id="2-建立BaseController-php，这个是所有控制器的父类，继承Controller类"><a href="#2-建立BaseController-php，这个是所有控制器的父类，继承Controller类" class="headerlink" title="2.建立BaseController.php，这个是所有控制器的父类，继承Controller类"></a>2.建立BaseController.php，这个是所有控制器的父类，继承Controller类</h3><br>
+
+<p>BaseController代码如下</p>
+<div class="hljs code-wrapper"><pre><code class="hljs">      /**
+         * @var string
+         */
+        private $headers = &#39;&#39;;
+    
+        /**--初始化的方法  其他接口类只需要继承这个BaseController类 不需要再继承Controller
+         * @throws Exception
+         */
+        public function initialize() &#123;
+              $this-&gt;checkRequest();
+    
+          /*  &#125; catch (Exception $e) &#123;
+                return [
+                    &#39;code&#39;=&gt;1,
+                    &#39;message&#39;=&gt;$e
+                ];
+            &#125;*/
+    
+        &#125;
+    
+        /** --验证数据是否合法 检查每次请求
+         * @throws Exception
+         */
+        public  function  checkRequest()&#123;
+            //首先获取header所有参数
+            $headers = request()-&gt;header();
+    
+            //进行参数校验
+            if(empty($headers[&#39;sign&#39;]))&#123;
+                throw new Exception(&#39;sign不存在！&#39;,1);
+            &#125;
+    
+            //如果sign校验不能通过
+            if(!IAuth::checkSignPass($headers))&#123;
+                throw new Exception(&#39;sign校验失败失败！&#39;,1);
+            &#125;
+            //sign做唯一性处理  写入Cache缓存
+            Cache::set($headers[&#39;sign&#39;],1,config(&#39;aes.app_sign_cache_time&#39;));
+            //赋值给类的属性
+            $this-&gt;headers = $headers;
+    
+        &#125;
+</code></pre></div>
+<br>
+
+<h3 id="3-创建Aes-php"><a href="#3-创建Aes-php" class="headerlink" title="3.创建Aes.php"></a>3.创建Aes.php</h3><p>在application&#x2F;api&#x2F;common&#x2F;lib&#x2F;Aes.php 创建文件，实际位置看您的情况。</p>
+<p>代码如下</p>
+<div class="hljs code-wrapper"><pre><code class="hljs">    class Aes
+    &#123;
+    
+        private $key = null;
+        private $iv = null;
+        /**
+         *
+         * @param $key 		--密钥
+         * @return String
+         */
+        public function __construct() &#123;
+            $this-&gt;key =Cache::get(&#39;token&#39;).config(&#39;aes.aeskey&#39;);两者拼接
+            $this-&gt;key = hash(&#39;sha256&#39;, $this-&gt;key, true);
+            $this-&gt;iv = substr($this-&gt;key, 0, 16);
+        &#125;
+    
+    
+        public function encrypt($input)
+        &#123;
+            $data = openssl_encrypt($input, &#39;AES-256-CBC&#39;, $this-&gt;key, OPENSSL_RAW_DATA, $this-&gt;iv);
+            $data = base64_encode($data);
+            return $data;
+        &#125;
+    
+        public function decrypt($input)
+        &#123;
+            $decrypted = openssl_decrypt(base64_decode($input), &#39;AES-256-CBC&#39;, $this-&gt;key, OPENSSL_RAW_DATA, $this-&gt;iv);
+            return $decrypted;
+        &#125;
+    
+        //增加当前时间
+        private function dataFiller($input)&#123;
+            return $input.&#39;&amp;time=&#39;.time();
+        &#125;
+    
+    &#125;
+            
+</code></pre></div>
+<br>
+
+<h3 id="4-创建验证授权验证规则方法"><a href="#4-创建验证授权验证规则方法" class="headerlink" title="4.创建验证授权验证规则方法"></a>4.创建验证授权验证规则方法</h3><p>我是创建在application&#x2F;api&#x2F;common&#x2F;lib&#x2F;IAuth.php。<br>您可以创建在应用公共文件common下比较方便。</p>
+<p>代码如下</p>
+<div class="hljs code-wrapper"><pre><code class="hljs">    /**
+         * @param array --检验sign是否能通过，具体规则可以自己与前端商量
+         * @return boolean
+         */
+        public static  function  checkSignPass($data)&#123;
+            //解密
+            $str = (new Aes())-&gt;decrypt($data[&#39;sign&#39;]);
+            //如果解密之后为空
+            if(empty($str))&#123;
+                return false;
+            &#125;
+            //将$str解析成多个变量
+            parse_str($str,$arr);
+    
+            //判断是否在有效时间内
+            if(time()-ceil($arr[&#39;time&#39;] ) &gt; config(&#39;aes.app_sign_time&#39;))&#123;
+                return false;
+            &#125;
+            //唯一性判定 如果存在 返回false
+            $echo = Cache::get($data[&#39;sign&#39;]);
+            if($echo)&#123;
+                return false;
+            &#125;
+            return true;
+        &#125;
+        
+</code></pre></div>
+<p>这样就欧啦！<br>前端可以在拦截器里写加密参数的方法，所有发送的参数加上时间搓，加密后再发送。<br>记得前后端的密钥是一样的哦。<br>经过api的参数都会和时间一起被校验。</p>
+<br>
+
+<h3 id="自我测试"><a href="#自我测试" class="headerlink" title="自我测试"></a>自我测试</h3><br>
+
+<h4 id="1-BaseController的以下代码注释掉，因为我们要自我加密"><a href="#1-BaseController的以下代码注释掉，因为我们要自我加密" class="headerlink" title="1. BaseController的以下代码注释掉，因为我们要自我加密"></a>1. BaseController的以下代码注释掉，因为我们要自我加密</h4><div class="hljs code-wrapper"><pre><code class="hljs">     $this-&gt;checkRequest();
+</code></pre></div>
+<br>
+
+<h4 id="2-先登录一下让服务端记录token"><a href="#2-先登录一下让服务端记录token" class="headerlink" title="2. 先登录一下让服务端记录token"></a>2. 先登录一下让服务端记录token</h4><img src="./login.png" srcset="/img/loading.gif" lazyload width="700" height="300">
+
+<br>
+
+
+<h4 id="3-这是测试控制器里的方法，模拟前端加密"><a href="#3-这是测试控制器里的方法，模拟前端加密" class="headerlink" title="3. 这是测试控制器里的方法，模拟前端加密"></a>3. 这是测试控制器里的方法，模拟前端加密</h4><div class="hljs code-wrapper"><pre><code class="hljs">    public function test($data,$time)&#123;
+            return (new Aes())-&gt;encrypt(&#39;data=&#39;.$data.&#39;&amp;time=&#39;.$time);
+        &#125;
+</code></pre></div>
+<br>
+
+<h5 id="进行加密"><a href="#进行加密" class="headerlink" title="进行加密"></a>进行加密</h5><img src="./jiami.png" srcset="/img/loading.gif" lazyload width="700" height="300">
+
+
+<br>
+
+<h4 id="4-将加密获得的sign拿到header中"><a href="#4-将加密获得的sign拿到header中" class="headerlink" title="4. 将加密获得的sign拿到header中"></a>4. 将加密获得的sign拿到header中</h4><img src="./headers.png" srcset="/img/loading.gif" lazyload width="700" height="300">
+
+<br>
+
+<h4 id="5-放开BaseController注释的代码"><a href="#5-放开BaseController注释的代码" class="headerlink" title="5.放开BaseController注释的代码"></a>5.放开BaseController注释的代码</h4><p>这样就能测试sign的有效性，和唯一性，api只能请求一次，第二次会抛出错误。</p>
+<br>
+
+
+<h3 id="结束🐟"><a href="#结束🐟" class="headerlink" title="结束🐟"></a>结束🐟</h3><blockquote>
+<p>江南柳，叶小未成阴。 ——「望江南·江南柳」欧阳修</p>
+</blockquote>
+
+            </div>
+            <hr>
+            <div>
+              <div class="post-metas mb-3">
+                
+                
+                  <div class="post-meta">
+                    <i class="iconfont icon-tags"></i>
+                    
+                      <a class="hover-with-bg" href="/tags/ThinkPHP/">ThinkPHP</a>
+                    
+                  </div>
+                
+              </div>
+              
+                <p class="note note-warning">
+                  
+                    本博客所有文章除特别声明外，均采用 <a target="_blank" href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh" rel="nofollow noopener noopener">CC BY-SA 4.0 协议</a> ，转载请注明出处！
+                  
+                </p>
+              
+              
+                <div class="post-prevnext">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2019/11/17/2019-11-17-%E5%B0%8F%E7%A8%8B%E5%BA%8F-5%E6%AF%9B%E9%92%B1%E5%B0%8F%E7%A8%8B%E5%BA%8F/">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">小程序-5毛钱信条</span>
+                        <span class="visible-mobile">Vorheriger</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2019/07/05/Hello/">
+                        <span class="hidden-mobile">Hello</span>
+                        <span class="visible-mobile">Nächster</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+              <!-- Comments -->
+              <article class="comments" id="comments" lazyload>
+                
+                  
+                
+                
+  <script type="text/javascript">
+    Fluid.utils.loadComments('#comments', function() {
+      var light = 'github-light';
+      var dark = 'github-dark';
+      var schema = document.documentElement.getAttribute('data-user-color-scheme');
+      if (schema === 'dark') {
+        schema = dark;
+      } else {
+        schema = light;
+      }
+      window.UtterancesThemeLight = light;
+      window.UtterancesThemeDark = dark;
+      var s = document.createElement('script');
+      s.setAttribute('src', 'https://utteranc.es/client.js');
+      s.setAttribute('repo', 'waterbang/Comment');
+      s.setAttribute('issue-term', 'pathname');
+      
+      s.setAttribute('label', 'utterances');
+      
+      s.setAttribute('theme', schema);
+      s.setAttribute('crossorigin', 'anonymous');
+      document.getElementById('comments').appendChild(s);
+    })
+  </script>
+  <noscript>Please enable JavaScript to view the comments</noscript>
+
+
+              </article>
+            
+          </article>
+        </div>
+      </div>
+    </div>
+    
+      <div class="d-none d-lg-block col-lg-2 toc-container" id="toc-ctn">
+        <div id="toc">
+  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;TOC</p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+      </div>
+    
+  </div>
+</div>
+
+<!-- Custom -->
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">Suchen</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v"
+                 for="local-search-input">Stichwort</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+
+    
+  </main>
+
+  <footer class="text-center mt-5 py-3">
+  <div class="footer-content">
+     <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a>
+  </div>
+  
+
+  
+  <!-- 备案信息 -->
+  <div class="beian">
+    <span>
+      <a href="http://beian.miit.gov.cn/" target="_blank" rel="nofollow noopener">
+        闽ICP备18009949号-2
+      </a>
+    </span>
+    
+  </div>
+
+
+  
+</footer>
+
+
+  <!-- SCRIPTS -->
+  
+  <script  src="https://cdn.jsdelivr.net/npm/nprogress@0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/nprogress@0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js" ></script>
+<script  src="https://cdn.jsdelivr.net/npm/bootstrap@4/dist/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+<!-- Plugins -->
+
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+  
+
+
+
+  
+    <script  src="https://cdn.jsdelivr.net/npm/tocbot@4/dist/tocbot.min.js" ></script>
+  
+  
+    <script  src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3/dist/jquery.fancybox.min.js" ></script>
+  
+  
+    <script  src="https://cdn.jsdelivr.net/npm/anchor-js@4/anchor.min.js" ></script>
+  
+  
+    <script defer src="https://cdn.jsdelivr.net/npm/clipboard@2/dist/clipboard.min.js" ></script>
+  
+
+
+
+  <script defer src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" ></script>
+
+
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/typed.js@2/lib/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var title = document.getElementById('subtitle').title;
+      
+        typing(title);
+      
+    })(window, document);
+  </script>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+    <!-- Baidu Analytics -->
+    <script defer>
+      var _hmt = _hmt || [];
+      (function () {
+        var hm = document.createElement("script");
+        hm.src = "https://hm.baidu.com/hm.js?58e161bf4b884b2aa577f323f137ac0f";
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(hm, s);
+      })();
+    </script>
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+
+
+
+
+<!-- 主题的启动项 保持在最底部 -->
+<script  src="/js/boot.js" ></script>
+
+
+</body>
+</html>

@@ -1,0 +1,802 @@
+
+
+<!DOCTYPE html>
+<html lang="ch_CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/apple-touch-icon.png">
+  <link rel="icon" href="/img/favicon.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="waterbang">
+  <meta name="keywords" content="waterbang">
+  
+    <meta name="description" content="这是waterbang的博客">
+<meta property="og:type" content="website">
+<meta property="og:title" content="waterbang">
+<meta property="og:url" content="https://www.waterbang.top/index.html">
+<meta property="og:site_name" content="waterbang">
+<meta property="og:description" content="这是waterbang的博客">
+<meta property="og:locale" content="ch_CN">
+<meta property="article:author" content="waterbang">
+<meta property="article:tag" content="waterbang">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+  <title>waterbang</title>
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4/dist/css/bootstrap.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_ba1fz6golrf.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+<!-- 自定义样式保持在最底部 -->
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    var CONFIG = {"hostname":"www.waterbang.top","root":"/","version":"1.8.14","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"right","visible":"hover","icon":"🍦"},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"copy_btn":true,"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"baidu":"58e161bf4b884b2aa577f323f137ac0f","google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+
+<body>
+  <header style="height: 70vh;">
+    <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>waterbang</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                Startseite
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                Archiv
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                Etiketten
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                Über mich
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/links/">
+                <i class="iconfont icon-link-fill"></i>
+                Weblinks
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              &nbsp;<i class="iconfont icon-search"></i>&nbsp;
+            </a>
+          </li>
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">&nbsp;<i
+                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+    <div class="banner" id="banner" parallax=true
+         style="background: url('/img/index-banner.jpg') no-repeat center center;
+           background-size: cover;">
+      <div class="full-bg-img">
+        <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+          <div class="page-header text-center fade-in-up">
+            <span class="h2" id="subtitle" title="国学为体，西学为用。">
+              
+            </span>
+
+            
+          </div>
+
+          
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    
+      <div class="container nopadding-x-md">
+        <div class="py-5" id="board"
+          >
+          
+          <div class="container">
+            <div class="row">
+              <div class="col-12 col-md-10 m-auto">
+                
+
+
+  <div class="row mx-auto index-card">
+    
+    
+      <div class="col-12 col-md-4 m-auto index-img">
+        <a href="/2024/12/21/2024%E5%B9%B4%E7%BB%88%E6%80%BB%E7%BB%93/" target="_self">
+          <img src="/2024/12/21/2024%E5%B9%B4%E7%BB%88%E6%80%BB%E7%BB%93/title.jpg" srcset="/img/loading.gif" lazyload alt="2024年终总结">
+        </a>
+      </div>
+    
+    <article class="col-12 col-md-8 mx-auto index-info">
+      <h1 class="index-header">
+        
+        <a href="/2024/12/21/2024%E5%B9%B4%E7%BB%88%E6%80%BB%E7%BB%93/" target="_self">
+          2024年终总结
+        </a>
+      </h1>
+
+      <p class="index-excerpt">
+        <a href="/2024/12/21/2024%E5%B9%B4%E7%BB%88%E6%80%BB%E7%BB%93/" target="_self">
+          
+          前言这是我的自拍照，小黄       写于2024年的圣诞节前夕，今年的主题是 “”” 打破舒适区 “”” 今年总共产出了4篇文章，鸽了一个 奇门遁甲系列只写了两篇，有空的时候再继续写，但是代码游戏视频一直在勾引我。  2024 发生了什么。  今年的的物理学基本规律还没有产生实质性的突破，AI 依然是最火热的主题。当前 AI 编程已经颠覆传统的开发方式，AI 淘汰的不会是所有程序员，但一定会淘汰
+        </a>
+      </p>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2024-12-21 19:46" pubdate>
+              2024-12-21
+            </time>
+          </div>
+        
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/%E5%B9%B4%E5%BA%A6%E6%80%BB%E7%BB%93/">年度总结</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+      <div class="col-12 col-md-4 m-auto index-img">
+        <a href="/2024/12/07/FEDAY/" target="_self">
+          <img src="/2024/12/07/FEDAY/title.jpg" srcset="/img/loading.gif" lazyload alt="第七届-FEDAY">
+        </a>
+      </div>
+    
+    <article class="col-12 col-md-8 mx-auto index-info">
+      <h1 class="index-header">
+        
+        <a href="/2024/12/07/FEDAY/" target="_self">
+          第七届-FEDAY
+        </a>
+      </h1>
+
+      <p class="index-excerpt">
+        <a href="/2024/12/07/FEDAY/" target="_self">
+          
+          前言 以下内容为个人回忆记录，可能会有疏漏，可在评论区补充。  今年的前端圈基本都是关于 AI 的分享，10场只有3场是关于，前端框架或者工具的。本来个人是有点抵触的，但是后来就想通了，既然 编码的目的是解放生产力 为什么不能 ai for all 呢？ 大家都是一群爱折腾、有好奇心的人,前端技术日新月异，好玩的东西层出不穷，这次的主题就是编码想要有AI的加持，应该怎么玩？  ai 想要落地，前端
+        </a>
+      </p>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2024-12-07 21:23" pubdate>
+              2024-12-07
+            </time>
+          </div>
+        
+        
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+      <div class="col-12 col-md-4 m-auto index-img">
+        <a href="/2024/05/16/rust%E7%9A%84%E7%89%B9%E6%80%A7%E5%A4%87%E5%BF%98/" target="_self">
+          <img src="/2024/05/16/rust%E7%9A%84%E7%89%B9%E6%80%A7%E5%A4%87%E5%BF%98/title.jpeg" srcset="/img/loading.gif" lazyload alt="rust的特性备忘">
+        </a>
+      </div>
+    
+    <article class="col-12 col-md-8 mx-auto index-info">
+      <h1 class="index-header">
+        
+        <a href="/2024/05/16/rust%E7%9A%84%E7%89%B9%E6%80%A7%E5%A4%87%E5%BF%98/" target="_self">
+          rust的特性备忘
+        </a>
+      </h1>
+
+      <p class="index-excerpt">
+        <a href="/2024/05/16/rust%E7%9A%84%E7%89%B9%E6%80%A7%E5%A4%87%E5%BF%98/" target="_self">
+          
+          前言由于个人学习的知识学一门忘一门，因此在这里总结一些比较容易忘记的细节内容，以备复习。  参考 ：杨旭&lt;&lt;Rust 编程语言中级教程&gt;&gt; ,《Rust for Rustaceans》  引用rust 提供的引用是指针的一种高级抽象。引用就是指针。  引用始终引用的是有效数据 引用与 usize 的倍数对齐 引用可以动态大小的类型提供上述保障  引用会保证在内存中对齐，没有
+        </a>
+      </p>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2024-05-16 21:54" pubdate>
+              2024-05-16
+            </time>
+          </div>
+        
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/rust/">rust</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+      <div class="col-12 col-md-4 m-auto index-img">
+        <a href="/2024/01/03/%E5%A5%87%E9%97%A8%E9%81%81%E7%94%B2-%E6%8E%92%E7%9B%98/" target="_self">
+          <img src="/2024/01/03/%E5%A5%87%E9%97%A8%E9%81%81%E7%94%B2-%E6%8E%92%E7%9B%98/paipan.jpeg" srcset="/img/loading.gif" lazyload alt="奇门遁甲-排盘">
+        </a>
+      </div>
+    
+    <article class="col-12 col-md-8 mx-auto index-info">
+      <h1 class="index-header">
+        
+        <a href="/2024/01/03/%E5%A5%87%E9%97%A8%E9%81%81%E7%94%B2-%E6%8E%92%E7%9B%98/" target="_self">
+          奇门遁甲-排盘
+        </a>
+      </h1>
+
+      <p class="index-excerpt">
+        <a href="/2024/01/03/%E5%A5%87%E9%97%A8%E9%81%81%E7%94%B2-%E6%8E%92%E7%9B%98/" target="_self">
+          
+          前言奇门遁甲是以历史上的九宫八卦阵演变而来。九宫八卦是以空间为主要特征的全息符号，六十甲子（十天干 与十二地支的组合）是以时间为主要特征的全息符号。奇门遁甲就 是将这二者巧妙地组合在一起，构成一个融时空为一体，包括天、地、人、神（自然界基种神秘力量）在内，多维立体的动态宇宙思维 模型，并以提取时间信息为主，进行系统思维、辨识，从而达到预测 万事万物、选择有利时空进行趋吉避内的古典数术学、预测学，或
+        </a>
+      </p>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2024-01-03 21:19" pubdate>
+              2024-01-03
+            </time>
+          </div>
+        
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/%E5%A5%87%E9%97%A8%E9%81%81%E7%94%B2/">奇门遁甲</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+      <div class="col-12 col-md-4 m-auto index-img">
+        <a href="/2023/12/31/%E5%A5%87%E9%97%A8%E9%81%81%E7%94%B2-%E6%9C%AF%E6%95%B0%E5%9F%BA%E7%A1%80/" target="_self">
+          <img src="/2023/12/31/%E5%A5%87%E9%97%A8%E9%81%81%E7%94%B2-%E6%9C%AF%E6%95%B0%E5%9F%BA%E7%A1%80/%E5%90%8E%E5%A4%A9%E5%85%AB%E5%8D%A6.png" srcset="/img/loading.gif" lazyload alt="奇门遁甲-术数基础">
+        </a>
+      </div>
+    
+    <article class="col-12 col-md-8 mx-auto index-info">
+      <h1 class="index-header">
+        
+        <a href="/2023/12/31/%E5%A5%87%E9%97%A8%E9%81%81%E7%94%B2-%E6%9C%AF%E6%95%B0%E5%9F%BA%E7%A1%80/" target="_self">
+          奇门遁甲-术数基础
+        </a>
+      </h1>
+
+      <p class="index-excerpt">
+        <a href="/2023/12/31/%E5%A5%87%E9%97%A8%E9%81%81%E7%94%B2-%E6%9C%AF%E6%95%B0%E5%9F%BA%E7%A1%80/" target="_self">
+          
+          前言奇门遁甲个人认为是一门集自然，天文，人文，记法的推测密码学，本章节为基础所记内容。 五行五行为金，木，水，火，土。指物质的五种性质，而不是单单的字面意思。 金：杀伐，木：曲直，火：升腾，土：承载 举例：我们喝的水，当承载船的时候，性质属土，当加压变成水刀的时候，性质属金。 相生木生火: 木头点燃生火 火生土: 火熄灭化为灰烬变为土状态 土生金: 金产于山脉 金生水: 金融化后变为液体 水生木:
+        </a>
+      </p>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2023-12-31 11:30" pubdate>
+              2023-12-31
+            </time>
+          </div>
+        
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/%E5%A5%87%E9%97%A8%E9%81%81%E7%94%B2/">奇门遁甲</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+      <div class="col-12 col-md-4 m-auto index-img">
+        <a href="/2023/12/25/2023%E5%B9%B4%E7%BB%88%E6%80%BB%E7%BB%93/" target="_self">
+          <img src="/2023/12/25/2023%E5%B9%B4%E7%BB%88%E6%80%BB%E7%BB%93/header.jpg" srcset="/img/loading.gif" lazyload alt="2023年终总结">
+        </a>
+      </div>
+    
+    <article class="col-12 col-md-8 mx-auto index-info">
+      <h1 class="index-header">
+        
+        <a href="/2023/12/25/2023%E5%B9%B4%E7%BB%88%E6%80%BB%E7%BB%93/" target="_self">
+          2023年终总结
+        </a>
+      </h1>
+
+      <p class="index-excerpt">
+        <a href="/2023/12/25/2023%E5%B9%B4%E7%BB%88%E6%80%BB%E7%BB%93/" target="_self">
+          
+          前言写于 2023 年的圣诞节，冷飕飕。今年的主题是！ “生活一分钟，快乐 60 秒！”  2023 发生了什么。  2023 🎄 🧧2023 世界大事频发。  巴以冲突继续激化，以色列进攻加沙地带，哈马斯奋起反抗，巴勒斯坦人民的一生浓缩成了 出生-成为哈马斯-战死。 小日本排放核废水。 俄乌冲突第二年。 重大电信诈骗。 GPT 诞生，生成式 AI(AIGC)大规模爆发，个人生产力大幅提高。（
+        </a>
+      </p>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2023-12-25 19:42" pubdate>
+              2023-12-25
+            </time>
+          </div>
+        
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/%E5%B9%B4%E5%BA%A6%E6%80%BB%E7%BB%93/">年度总结</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+      <div class="col-12 col-md-4 m-auto index-img">
+        <a href="/2023/07/12/%E5%A6%82%E4%BD%95%E7%BC%96%E5%86%99%E7%AC%A6%E5%90%88%E7%94%A8%E6%88%B7%E7%9B%B4%E8%A7%89%E7%9A%84rust%E4%BB%A3%E7%A0%81/" target="_self">
+          <img src="/2023/07/12/%E5%A6%82%E4%BD%95%E7%BC%96%E5%86%99%E7%AC%A6%E5%90%88%E7%94%A8%E6%88%B7%E7%9B%B4%E8%A7%89%E7%9A%84rust%E4%BB%A3%E7%A0%81/images.png" srcset="/img/loading.gif" lazyload alt="如何编写符合用户直觉的rust代码">
+        </a>
+      </div>
+    
+    <article class="col-12 col-md-8 mx-auto index-info">
+      <h1 class="index-header">
+        
+        <a href="/2023/07/12/%E5%A6%82%E4%BD%95%E7%BC%96%E5%86%99%E7%AC%A6%E5%90%88%E7%94%A8%E6%88%B7%E7%9B%B4%E8%A7%89%E7%9A%84rust%E4%BB%A3%E7%A0%81/" target="_self">
+          如何编写符合用户直觉的rust代码
+        </a>
+      </h1>
+
+      <p class="index-excerpt">
+        <a href="/2023/07/12/%E5%A6%82%E4%BD%95%E7%BC%96%E5%86%99%E7%AC%A6%E5%90%88%E7%94%A8%E6%88%B7%E7%9B%B4%E8%A7%89%E7%9A%84rust%E4%BB%A3%E7%A0%81/" target="_self">
+          
+          前言在我们编写一些 rust 代码的时候，应该遵循一些原则，来保证开发者调用的时候，符合他的直觉，用起来不会感到意外。 以下文章主要讨论实现一些常用的 Trait,来保证用户的代码进行正常工作，以及如何让我们的代码能符合用户正常的预期。 rust 官方的 api 指南主要声明的四点原则。  可预测性 灵活性 可预见，显而易见。 受约束  积极实现大部分标准的 Trait我们在编写接口的时候，我们应
+        </a>
+      </p>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2023-07-12 20:26" pubdate>
+              2023-07-12
+            </time>
+          </div>
+        
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/rust/">rust</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+      <div class="col-12 col-md-4 m-auto index-img">
+        <a href="/2023/04/13/%E5%87%8F%E5%B0%91%E5%86%85%E8%80%97%EF%BC%8C%E6%8F%90%E5%8D%87%E7%BB%B4%E5%BA%A6%E3%80%82/" target="_self">
+          <img src="/2023/04/13/%E5%87%8F%E5%B0%91%E5%86%85%E8%80%97%EF%BC%8C%E6%8F%90%E5%8D%87%E7%BB%B4%E5%BA%A6%E3%80%82/huangshan1.jpeg" srcset="/img/loading.gif" lazyload alt="减少内耗，提升维度。">
+        </a>
+      </div>
+    
+    <article class="col-12 col-md-8 mx-auto index-info">
+      <h1 class="index-header">
+        
+        <a href="/2023/04/13/%E5%87%8F%E5%B0%91%E5%86%85%E8%80%97%EF%BC%8C%E6%8F%90%E5%8D%87%E7%BB%B4%E5%BA%A6%E3%80%82/" target="_self">
+          减少内耗，提升维度。
+        </a>
+      </h1>
+
+      <p class="index-excerpt">
+        <a href="/2023/04/13/%E5%87%8F%E5%B0%91%E5%86%85%E8%80%97%EF%BC%8C%E6%8F%90%E5%8D%87%E7%BB%B4%E5%BA%A6%E3%80%82/" target="_self">
+          
+          前言本篇为黄山培训总结，在3天的培训当中向大家学习了很多思想哲学性的东西。学习到大家的处世技巧和精神内涵，吸收到了大家的能量。怕忘了，写篇文章记录一下。以下仅为个人理解和对小伙伴思想的分析，如有疑问请讨论区讨论。 当一个技术团队，在讨论精神层面的问题，那么这个团队就像掌握了光速航行的技术。 先来几张好看的风景照哈哈。    放松，放下放松和放下的核心讲究的是一个超脱于自身的观物处世行为特征，想庄子
+        </a>
+      </p>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2023-04-13 16:22" pubdate>
+              2023-04-13
+            </time>
+          </div>
+        
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/%E4%BF%AE%E8%A1%8C/">修行</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+      <div class="col-12 col-md-4 m-auto index-img">
+        <a href="/2023/02/12/deno%E5%AE%9E%E7%8E%B0%E4%B8%80%E4%B8%AAjs%E8%AF%AD%E6%B3%95%E8%A7%A3%E6%9E%90%E5%99%A8/" target="_self">
+          <img src="/2023/02/12/deno%E5%AE%9E%E7%8E%B0%E4%B8%80%E4%B8%AAjs%E8%AF%AD%E6%B3%95%E8%A7%A3%E6%9E%90%E5%99%A8/tokenizer.png" srcset="/img/loading.gif" lazyload alt="deno实现一个js语法解析器">
+        </a>
+      </div>
+    
+    <article class="col-12 col-md-8 mx-auto index-info">
+      <h1 class="index-header">
+        
+        <a href="/2023/02/12/deno%E5%AE%9E%E7%8E%B0%E4%B8%80%E4%B8%AAjs%E8%AF%AD%E6%B3%95%E8%A7%A3%E6%9E%90%E5%99%A8/" target="_self">
+          deno实现一个js语法解析器
+        </a>
+      </h1>
+
+      <p class="index-excerpt">
+        <a href="/2023/02/12/deno%E5%AE%9E%E7%8E%B0%E4%B8%80%E4%B8%AAjs%E8%AF%AD%E6%B3%95%E8%A7%A3%E6%9E%90%E5%99%A8/" target="_self">
+          
+          前言javascript是解释型语言，在v8中，源代码需要经过词法和语法分析，转化为AST, 再进行语义分析，最后转化成字节码执行。 语法分析成AST可以在这里体验：https:&#x2F;&#x2F;esprima.org&#x2F;demo&#x2F;parse.html。 本次deno 实现的源码在这里获取：deno-ast,开源学习随意复制。 Parser(解析器)Parser分为Tokenizer(分词器),和parser（解
+        </a>
+      </p>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2023-02-12 22:39" pubdate>
+              2023-02-12
+            </time>
+          </div>
+        
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/deno-javascript/">deno javascript</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+      <div class="col-12 col-md-4 m-auto index-img">
+        <a href="/2023/01/24/%E5%A6%82%E4%BD%95%E5%9C%A8v8%E4%B8%AD%E7%BB%99js%E5%86%85%E7%BD%AE%E5%87%BD%E6%95%B0/" target="_self">
+          <img src="/2023/01/24/%E5%A6%82%E4%BD%95%E5%9C%A8v8%E4%B8%AD%E7%BB%99js%E5%86%85%E7%BD%AE%E5%87%BD%E6%95%B0/header.png" srcset="/img/loading.gif" lazyload alt="如何在v8中给js内置函数">
+        </a>
+      </div>
+    
+    <article class="col-12 col-md-8 mx-auto index-info">
+      <h1 class="index-header">
+        
+        <a href="/2023/01/24/%E5%A6%82%E4%BD%95%E5%9C%A8v8%E4%B8%AD%E7%BB%99js%E5%86%85%E7%BD%AE%E5%87%BD%E6%95%B0/" target="_self">
+          如何在v8中给js内置函数
+        </a>
+      </h1>
+
+      <p class="index-excerpt">
+        <a href="/2023/01/24/%E5%A6%82%E4%BD%95%E5%9C%A8v8%E4%B8%AD%E7%BB%99js%E5%86%85%E7%BD%AE%E5%87%BD%E6%95%B0/" target="_self">
+          
+          前言在v8中，内置的函数可以理解为在VM运行的一些内置的代码块，他们处在相同的作用域下。如果您有ios(android)的javascriptCore(interface&#x2F;eventjavascript&#x2F;more)注入经验，或者其他的一些比较干净的js运行时的操作经验，您可以认为它们两者的共性是相同的。那么建议您阅读英文的官方文档，本片文档仅用作个人入门使用。 v8内置选择V8 的内置函数可以使用
+        </a>
+      </p>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2023-01-24 12:56" pubdate>
+              2023-01-24
+            </time>
+          </div>
+        
+        
+        
+      </div>
+    </article>
+  </div>
+
+
+
+  <nav aria-label="navigation">
+    <span class="pagination" id="pagination">
+      <span class="page-number current">1</span><a class="page-number" href="/page/2/#board">2</a><a class="page-number" href="/page/3/#board">3</a><a class="page-number" href="/page/4/#board">4</a><a class="extend next" rel="next" href="/page/2/#board"><i class="iconfont icon-arrowright"></i></a>
+    </span>
+  </nav>
+
+
+
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">Suchen</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v"
+                 for="local-search-input">Stichwort</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+
+    
+  </main>
+
+  <footer class="text-center mt-5 py-3">
+  <div class="footer-content">
+     <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a>
+  </div>
+  
+
+  
+  <!-- 备案信息 -->
+  <div class="beian">
+    <span>
+      <a href="http://beian.miit.gov.cn/" target="_blank" rel="nofollow noopener">
+        闽ICP备18009949号-2
+      </a>
+    </span>
+    
+  </div>
+
+
+  
+</footer>
+
+
+  <!-- SCRIPTS -->
+  
+  <script  src="https://cdn.jsdelivr.net/npm/nprogress@0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/nprogress@0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js" ></script>
+<script  src="https://cdn.jsdelivr.net/npm/bootstrap@4/dist/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+<!-- Plugins -->
+
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+  
+
+
+
+
+
+  <script defer src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" ></script>
+
+
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/typed.js@2/lib/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var title = document.getElementById('subtitle').title;
+      
+        typing(title);
+      
+    })(window, document);
+  </script>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+    <!-- Baidu Analytics -->
+    <script defer>
+      var _hmt = _hmt || [];
+      (function () {
+        var hm = document.createElement("script");
+        hm.src = "https://hm.baidu.com/hm.js?58e161bf4b884b2aa577f323f137ac0f";
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(hm, s);
+      })();
+    </script>
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+
+
+
+
+<!-- 主题的启动项 保持在最底部 -->
+<script  src="/js/boot.js" ></script>
+
+
+</body>
+</html>

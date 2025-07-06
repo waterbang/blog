@@ -1,0 +1,610 @@
+
+
+<!DOCTYPE html>
+<html lang="ch_CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/apple-touch-icon.png">
+  <link rel="icon" href="/img/favicon.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="waterbang">
+  <meta name="keywords" content="waterbang">
+  
+    <meta name="description" content="前言写这篇文章的原因是因为部署的时候遇到很多坑，而且我一个接着一个的跳进去，这篇文章为了防止再跳进去，希望这篇文章能帮到你。  注意：本文只是建议，查阅时请带有主观意见和独立思考。  确保有安装环境你需要有docker，kubectl，minikube环境。具体推荐阿里云的这篇文章Minikube - Kubernetes 本地实验环境。或者直接进入官方文档。 这一定难不倒你。 入坑我一开始看官方">
+<meta property="og:type" content="article">
+<meta property="og:title" content="CentOS7虚拟机上&#96;Minikube&#96;安装Kubernetes">
+<meta property="og:url" content="https://www.waterbang.top/2020/01/26/CentOS7%E8%99%9A%E6%8B%9F%E6%9C%BA%E4%B8%8AMinikube%E5%AE%89%E8%A3%85Kubernetes/index.html">
+<meta property="og:site_name" content="waterbang">
+<meta property="og:description" content="前言写这篇文章的原因是因为部署的时候遇到很多坑，而且我一个接着一个的跳进去，这篇文章为了防止再跳进去，希望这篇文章能帮到你。  注意：本文只是建议，查阅时请带有主观意见和独立思考。  确保有安装环境你需要有docker，kubectl，minikube环境。具体推荐阿里云的这篇文章Minikube - Kubernetes 本地实验环境。或者直接进入官方文档。 这一定难不倒你。 入坑我一开始看官方">
+<meta property="og:locale" content="ch_CN">
+<meta property="og:image" content="https://www.waterbang.top/2020/01/26/CentOS7%E8%99%9A%E6%8B%9F%E6%9C%BA%E4%B8%8AMinikube%E5%AE%89%E8%A3%85Kubernetes/kubernetes.png">
+<meta property="article:published_time" content="2020-01-26T15:37:17.000Z">
+<meta property="article:modified_time" content="2024-12-21T11:43:23.162Z">
+<meta property="article:author" content="waterbang">
+<meta property="article:tag" content="Docker Kubernetes">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://www.waterbang.top/2020/01/26/CentOS7%E8%99%9A%E6%8B%9F%E6%9C%BA%E4%B8%8AMinikube%E5%AE%89%E8%A3%85Kubernetes/kubernetes.png">
+  
+  
+  <title>CentOS7虚拟机上`Minikube`安装Kubernetes 🏮 waterbang</title>
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4/dist/css/bootstrap.min.css" />
+
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/github-markdown-css@4/github-markdown.min.css" />
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hint.css@2/hint.min.css" />
+
+  
+    
+    
+      
+      <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@10/styles/atom-one-dark.min.css" />
+    
+  
+
+  
+    <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3/dist/jquery.fancybox.min.css" />
+  
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_ba1fz6golrf.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+<!-- 自定义样式保持在最底部 -->
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    var CONFIG = {"hostname":"www.waterbang.top","root":"/","version":"1.8.14","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"right","visible":"hover","icon":"🍦"},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"copy_btn":true,"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"baidu":"58e161bf4b884b2aa577f323f137ac0f","google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+
+<body>
+  <header style="height: 70vh;">
+    <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>waterbang</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                Startseite
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                Archiv
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                Etiketten
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                Über mich
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/links/">
+                <i class="iconfont icon-link-fill"></i>
+                Weblinks
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              &nbsp;<i class="iconfont icon-search"></i>&nbsp;
+            </a>
+          </li>
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">&nbsp;<i
+                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+    <div class="banner" id="banner" parallax=true
+         style="background: url('/img/post-banner.jpg') no-repeat center center;
+           background-size: cover;">
+      <div class="full-bg-img">
+        <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+          <div class="page-header text-center fade-in-up">
+            <span class="h2" id="subtitle" title="CentOS7虚拟机上`Minikube`安装Kubernetes">
+              
+            </span>
+
+            
+              <div class="mt-3">
+  
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-author" aria-hidden="true"></i>
+      waterbang
+    </span>
+  
+  
+    <span class="post-meta">
+      <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+      <time datetime="2020-01-26 23:37" pubdate>
+        January 26, 2020 pm
+      </time>
+    </span>
+  
+</div>
+
+<div class="mt-1">
+  
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-chart"></i>
+      4.7k 字
+    </span>
+  
+
+  
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-clock-fill"></i>
+      
+      
+      40 分钟
+    </span>
+  
+
+  
+  
+    
+      <!-- 不蒜子统计文章PV -->
+      <span id="busuanzi_container_page_pv" style="display: none">
+        <i class="iconfont icon-eye" aria-hidden="true"></i>
+        <span id="busuanzi_value_page_pv"></span> 次
+      </span>
+    
+  
+</div>
+
+            
+          </div>
+
+          
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="d-none d-lg-block col-lg-2"></div>
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div class="py-5" id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">CentOS7虚拟机上`Minikube`安装Kubernetes</h1>
+            
+              <p class="note note-info">
+                
+                  本文最后更新于：5 hours ago
+                
+              </p>
+            
+            <div class="markdown-body">
+              <h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>写这篇文章的原因是因为部署的时候遇到很多坑，而且我一个接着一个的跳进去，这篇文章为了防止再跳进去，希望这篇文章能帮到你。</p>
+<blockquote>
+<p>注意：本文只是建议，查阅时请带有主观意见和独立思考。</p>
+</blockquote>
+<h3 id="确保有安装环境"><a href="#确保有安装环境" class="headerlink" title="确保有安装环境"></a>确保有安装环境</h3><p>你需要有<code>docker</code>，<code>kubectl</code>，<code>minikube</code>环境。<br>具体推荐阿里云的这篇文章<a target="_blank" rel="noopener" href="https://yq.aliyun.com/articles/221687">Minikube - Kubernetes 本地实验环境</a>。<br>或者直接进入<a target="_blank" rel="noopener" href="https://kubernetes.io/zh/docs/tasks/tools/">官方文档</a>。</p>
+<p>这一定难不倒你。</p>
+<h3 id="入坑"><a href="#入坑" class="headerlink" title="入坑"></a>入坑</h3><p>我一开始看<a target="_blank" rel="noopener" href="https://minikube.sigs.k8s.io/docs/start/linux/">官方文档</a>，里的安装教程，由于我是在 VM 虚拟机中运行的<br>所以就要使用 sudo minikube start –vm-driver&#x3D;none<br>于是开始报错：无法拉取镜像，开启 cluster 时出错。<br>记得每一次构建失败都要执行<code>minikube delete</code></p>
+<h4 id="拉取镜像应该采用镜像储存库"><a href="#拉取镜像应该采用镜像储存库" class="headerlink" title="拉取镜像应该采用镜像储存库"></a>拉取镜像应该采用镜像储存库</h4><div class="hljs code-wrapper"><pre><code class="hljs">minikube start --image-repository=registry.cn-hangzhou.aliyuncs.com/google_containers
+</code></pre></div>
+<p>如果这样可以那么恭喜你，可以关闭本文章继续学习了。<br>如果执行失败可以换成阿里云给出的解决方案。<br>下面代码中的<code>https://xxxxxx.mirror.aliyuncs.com</code>，你需要去阿里云<a target="_blank" rel="noopener" href="https://cr.console.aliyun.com/cn-beijing/instances/mirrors">容器镜像服务&gt;镜像加速地址</a>,来获取您的加速器。<br>你还可以顺便给 docker 配置个镜像加速器</p>
+<p><img src="/./aliyun.png" srcset="/img/loading.gif" lazyload alt="阿里云图片"></p>
+<figure class="highlight shell"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs shell">minikube start --image-mirror-country cn \<br>--iso-url=https://kubernetes.oss-cn-hangzhou.aliyuncs.com/minikube/iso/minikube-v1.6.0.iso \<br>--registry-mirror=https://xxxxxx.mirror.aliyuncs.com<br></code></pre></div></td></tr></table></figure>
+
+<blockquote>
+<p>我到这一步还是不行</p>
+</blockquote>
+<h3 id="如果出现无法拉取镜像"><a href="#如果出现无法拉取镜像" class="headerlink" title="如果出现无法拉取镜像"></a>如果出现无法拉取镜像</h3><figure class="highlight shell"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs shell">🚜  拉取镜像 ...<br>❌  无法拉取映像，有可能是正常状况：running cmd: &quot;/bin/bash -c \&quot;<br>sudo env PATH=/var/lib/minikube/binaries/v1.17.0:$PATH<br>kubeadm config images pull --config /var/tmp/minikube/kubeadm.yaml\&quot;&quot;: /bin/bash -c &quot;<br>sudo env PATH=/var/lib/minikube/binaries/v1.17.0:$PATH<br>kubeadm config images pull --config /var/tmp/minikube/kubeadm.yaml&quot;: exit status 1<br></code></pre></div></td></tr></table></figure>
+
+<h4 id="可以选择翻墙"><a href="#可以选择翻墙" class="headerlink" title="可以选择翻墙"></a>可以选择翻墙</h4><p>可以把物理机的翻墙工具设置成全局，相信对你来说不是难事。</p>
+<h5 id="如果您在-CentOS-虚拟机上安装了-shadowsocks"><a href="#如果您在-CentOS-虚拟机上安装了-shadowsocks" class="headerlink" title="如果您在 CentOS 虚拟机上安装了 shadowsocks"></a>如果您在 CentOS 虚拟机上安装了 shadowsocks</h5><p>关闭代理，用您的物理机来代理</p>
+<div class="hljs code-wrapper"><pre><code class="hljs">while read var; do unset $var; done &lt; &lt;(env | grep -i proxy | awk -F= &#39;&#123;print $1&#125;&#39;)
+</code></pre></div>
+<blockquote>
+<p>到此我解决了无法拉取镜像问题</p>
+</blockquote>
+<h3 id="遇到了开启-cluster-时出错"><a href="#遇到了开启-cluster-时出错" class="headerlink" title="遇到了开启 cluster 时出错"></a>遇到了开启 cluster 时出错</h3><div class="hljs code-wrapper"><pre><code class="hljs">💣  开启 cluster 时出错: init failed. cmd: &quot;/bin/bash -c \&quot;sudo env PATH=/var/lib/minikube/binaries/v1.17.0:$PATH kubeadm init --config /var/tmp/minikube/kubeadm.yaml  --ignore-preflight-errors=DirAvailable--etc-kubernetes-manifests,DirAvailable--var-lib-minikube,DirAvailable--var-lib-minikube-etcd,FileAvailable--etc-kubernetes-manifests-kube-scheduler.yaml,FileAvailable--etc-kubernetes-manifests-kube-apiserver.yaml,FileAvailable--etc-kubernetes-manifests-kube-controller-manager.yaml,FileAvailable--etc-kubernetes-manifests-etcd.yaml,Port-10250,Swap\&quot;&quot;: /bin/bash -c &quot;sudo env PATH=/var/lib/minikube/binaries/v1.17.0:$PATH kubeadm init --config /var/tmp/minikube/kubeadm.yaml  --ignore-preflight-errors=DirAvailable--etc-kubernetes-manifests,DirAvailable--var-lib-minikube,DirAvailable--var-lib-minikube-etcd,FileAvailable--etc-kubernetes-manifests-kube-scheduler.yaml,FileAvailable--etc-kubernetes-manifests-kube-apiserver.yaml,FileAvailable--etc-kubernetes-manifests-kube-controller-manager.yaml,FileAvailable--etc-kubernetes-manifests-etcd.yaml,Port-10250,Swap&quot;: exit status 1
+stdout:
+[init] Using Kubernetes version: v1.17.0
+[preflight] Running pre-flight checks
+
+stderr:
+W0127 01:14:50.575416    7722 common.go:77] your configuration file uses a deprecated API spec: &quot;kubeadm.k8s.io/v1beta1&quot;. Please use &#39;kubeadm config migrate --old-config old.yaml --new-config new.yaml&#39;, which will write the new, similar spec using a newer API version.
+W0127 01:14:50.576165    7722 common.go:77] your configuration file uses a deprecated API spec: &quot;kubeadm.k8s.io/v1beta1&quot;. Please use &#39;kubeadm config migrate --old-config old.yaml --new-config new.yaml&#39;, which will write the new, similar spec using a newer API version.
+W0127 01:14:50.578306    7722 validation.go:28] Cannot validate kube-proxy config - no validator is available
+W0127 01:14:50.578334    7722 validation.go:28] Cannot validate kubelet config - no validator is available
+    [WARNING IsDockerSystemdCheck]: detected &quot;cgroupfs&quot; as the Docker cgroup driver. The recommended driver is &quot;systemd&quot;. Please follow the guide at https://kubernetes.io/docs/setup/cri/
+    [WARNING Hostname]: hostname &quot;minikube&quot; could not be reached
+    [WARNING Hostname]: hostname &quot;minikube&quot;: lookup minikube on 192.168.180.2:53: no such host
+error execution phase preflight: [preflight] Some fatal errors occurred:
+    [ERROR FileContent--proc-sys-net-bridge-bridge-nf-call-iptables]: /proc/sys/net/bridge/bridge-nf-call-iptables contents are not set to 1
+[preflight] If you know what you are doing, you can make a check non-fatal with `--ignore-preflight-errors=...`
+To see the stack trace of this error execute with --v=5 or higher
+</code></pre></div>
+<h4 id="解决问题"><a href="#解决问题" class="headerlink" title="解决问题"></a>解决问题</h4><p>它提示我们</p>
+<div class="hljs code-wrapper"><pre><code class="hljs">[ERROR FileContent--proc-sys-net-bridge-bridge-nf-call-iptables]:
+/proc/sys/net/bridge/bridge-nf-call-iptables contents are not set to 1
+</code></pre></div>
+<h5 id="输入命令"><a href="#输入命令" class="headerlink" title="输入命令"></a>输入命令</h5><div class="hljs code-wrapper"><pre><code class="hljs">echo &quot;1&quot; &gt;/proc/sys/net/bridge/bridge-nf-call-iptables
+swaoiff-a
+</code></pre></div>
+<p>然后 vim &#x2F;etc&#x2F;fstab，注释掉下面这一行：</p>
+<figure class="highlight shell"><figcaption><span>script</span></figcaption><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs shell"><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_">#</span><span class="language-bash">/dev/mapper/rhel-swap   swap                    swap    defaults        0 0</span><br><br></code></pre></div></td></tr></table></figure>
+
+<p>查看是否成功<br>free -m<br>free 那边是 0 就是成功。</p>
+<h5 id="重新构建"><a href="#重新构建" class="headerlink" title="重新构建"></a>重新构建</h5><div class="hljs code-wrapper"><pre><code class="hljs">minikube delete
+minikube start --image-repository=registry.cn-hangzhou.aliyuncs.com/google_containers
+</code></pre></div>
+<blockquote>
+<p>到此我解决了所有问题。如果有人带我觉得这就是几分钟的事情。</p>
+</blockquote>
+<h3 id="成功图"><a href="#成功图" class="headerlink" title="成功图"></a>成功图</h3><p><img src="/./success.png" srcset="/img/loading.gif" lazyload></p>
+<h4 id="如果执行-minikube-dashboard-出现-503"><a href="#如果执行-minikube-dashboard-出现-503" class="headerlink" title="如果执行 minikube dashboard 出现 503"></a>如果执行 minikube dashboard 出现 503</h4><p>请将您的虚拟机升到 8G 的运行内存</p>
+<h3 id="如果-kubectl-出现连接超时或不可达"><a href="#如果-kubectl-出现连接超时或不可达" class="headerlink" title="如果 kubectl 出现连接超时或不可达"></a>如果 kubectl 出现连接超时或不可达</h3><p>像这样</p>
+<div class="hljs code-wrapper"><pre><code class="hljs">The connection to the server &lt;server-name:port&gt; was refused - did you specify the right host or port?
+</code></pre></div>
+<p>而且使用 curl 的时候像这样</p>
+<div class="hljs code-wrapper"><pre><code class="hljs">Could not resolve proxy: http//127.0.0.1; 未知的错误
+</code></pre></div>
+<p>请检查您的代理，可以注释掉，运行 vi &#x2F;etc&#x2F;profile</p>
+<blockquote>
+<p>http_proxy&#x3D;http:&#x2F;&#x2F;代理地址:端口<br>ssl_proxy&#x3D;http:&#x2F;&#x2F;代理地址:端口</p>
+</blockquote>
+<p>如果看到这样的地址请注释掉</p>
+<h3 id="结束语-😋"><a href="#结束语-😋" class="headerlink" title="结束语 😋"></a>结束语 😋</h3><blockquote>
+<p>注意：以上问题是具体问题，请根据具体问题具体分析，仅供参考。</p>
+</blockquote>
+<p>如果有问题请留言，第一时间回复。<br>现在凌晨 1：33，饿了。</p>
+<p>长歌吟松风，曲尽河星稀。<br>「下终南山过斛斯山人宿置酒」<br>李白</p>
+
+            </div>
+            <hr>
+            <div>
+              <div class="post-metas mb-3">
+                
+                
+                  <div class="post-meta">
+                    <i class="iconfont icon-tags"></i>
+                    
+                      <a class="hover-with-bg" href="/tags/Docker-Kubernetes/">Docker Kubernetes</a>
+                    
+                  </div>
+                
+              </div>
+              
+                <p class="note note-warning">
+                  
+                    本博客所有文章除特别声明外，均采用 <a target="_blank" href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh" rel="nofollow noopener noopener">CC BY-SA 4.0 协议</a> ，转载请注明出处！
+                  
+                </p>
+              
+              
+                <div class="post-prevnext">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2020/03/10/node%E4%B8%AD%E7%9A%84require%E6%96%B9%E6%B3%95/">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">node中的require方法</span>
+                        <span class="visible-mobile">Vorheriger</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2019/12/28/2019%E5%B9%B4%E5%BA%A6%E6%80%BB%E7%BB%93/">
+                        <span class="hidden-mobile">2019年度总结</span>
+                        <span class="visible-mobile">Nächster</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+              <!-- Comments -->
+              <article class="comments" id="comments" lazyload>
+                
+                  
+                
+                
+  <script type="text/javascript">
+    Fluid.utils.loadComments('#comments', function() {
+      var light = 'github-light';
+      var dark = 'github-dark';
+      var schema = document.documentElement.getAttribute('data-user-color-scheme');
+      if (schema === 'dark') {
+        schema = dark;
+      } else {
+        schema = light;
+      }
+      window.UtterancesThemeLight = light;
+      window.UtterancesThemeDark = dark;
+      var s = document.createElement('script');
+      s.setAttribute('src', 'https://utteranc.es/client.js');
+      s.setAttribute('repo', 'waterbang/Comment');
+      s.setAttribute('issue-term', 'pathname');
+      
+      s.setAttribute('label', 'utterances');
+      
+      s.setAttribute('theme', schema);
+      s.setAttribute('crossorigin', 'anonymous');
+      document.getElementById('comments').appendChild(s);
+    })
+  </script>
+  <noscript>Please enable JavaScript to view the comments</noscript>
+
+
+              </article>
+            
+          </article>
+        </div>
+      </div>
+    </div>
+    
+      <div class="d-none d-lg-block col-lg-2 toc-container" id="toc-ctn">
+        <div id="toc">
+  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;TOC</p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+      </div>
+    
+  </div>
+</div>
+
+<!-- Custom -->
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">Suchen</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v"
+                 for="local-search-input">Stichwort</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+
+    
+  </main>
+
+  <footer class="text-center mt-5 py-3">
+  <div class="footer-content">
+     <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a>
+  </div>
+  
+
+  
+  <!-- 备案信息 -->
+  <div class="beian">
+    <span>
+      <a href="http://beian.miit.gov.cn/" target="_blank" rel="nofollow noopener">
+        闽ICP备18009949号-2
+      </a>
+    </span>
+    
+  </div>
+
+
+  
+</footer>
+
+
+  <!-- SCRIPTS -->
+  
+  <script  src="https://cdn.jsdelivr.net/npm/nprogress@0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/nprogress@0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js" ></script>
+<script  src="https://cdn.jsdelivr.net/npm/bootstrap@4/dist/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+<!-- Plugins -->
+
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+  
+
+
+
+  
+    <script  src="https://cdn.jsdelivr.net/npm/tocbot@4/dist/tocbot.min.js" ></script>
+  
+  
+    <script  src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3/dist/jquery.fancybox.min.js" ></script>
+  
+  
+    <script  src="https://cdn.jsdelivr.net/npm/anchor-js@4/anchor.min.js" ></script>
+  
+  
+    <script defer src="https://cdn.jsdelivr.net/npm/clipboard@2/dist/clipboard.min.js" ></script>
+  
+
+
+
+  <script defer src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" ></script>
+
+
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/typed.js@2/lib/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var title = document.getElementById('subtitle').title;
+      
+        typing(title);
+      
+    })(window, document);
+  </script>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+    <!-- Baidu Analytics -->
+    <script defer>
+      var _hmt = _hmt || [];
+      (function () {
+        var hm = document.createElement("script");
+        hm.src = "https://hm.baidu.com/hm.js?58e161bf4b884b2aa577f323f137ac0f";
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(hm, s);
+      })();
+    </script>
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+
+
+
+
+<!-- 主题的启动项 保持在最底部 -->
+<script  src="/js/boot.js" ></script>
+
+
+</body>
+</html>

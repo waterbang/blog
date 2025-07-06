@@ -1,0 +1,562 @@
+
+
+<!DOCTYPE html>
+<html lang="ch_CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/apple-touch-icon.png">
+  <link rel="icon" href="/img/favicon.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="waterbang">
+  <meta name="keywords" content="waterbang">
+  
+    <meta name="description" content="前言网上这方面比较缺少或者不完整，因此记录一下整个流程。增加一下关键字防止搜索不到，这篇教程能让有需要的人少几天的琢磨时间。 使用rust写安卓库rust调用androidrust通过ffi调用kotlin主要的流程主要流程是通过全局缓存保存了android的环境变量。以此来实现在rust调用android方法。 尝试过的方法 直接通过rust闭包保存android环境，出现了方法不安全。✖️ 通">
+<meta property="og:type" content="article">
+<meta property="og:title" content="2022-6-6-rust如何通过jni调用kotlin方法">
+<meta property="og:url" content="https://www.waterbang.top/2022/06/06/2022-6-6-rust%E5%A6%82%E4%BD%95%E9%80%9A%E8%BF%87jni%E8%B0%83%E7%94%A8kotlin%E6%96%B9%E6%B3%95/index.html">
+<meta property="og:site_name" content="waterbang">
+<meta property="og:description" content="前言网上这方面比较缺少或者不完整，因此记录一下整个流程。增加一下关键字防止搜索不到，这篇教程能让有需要的人少几天的琢磨时间。 使用rust写安卓库rust调用androidrust通过ffi调用kotlin主要的流程主要流程是通过全局缓存保存了android的环境变量。以此来实现在rust调用android方法。 尝试过的方法 直接通过rust闭包保存android环境，出现了方法不安全。✖️ 通">
+<meta property="og:locale" content="ch_CN">
+<meta property="og:image" content="https://www.waterbang.top/2022/06/06/2022-6-6-rust%E5%A6%82%E4%BD%95%E9%80%9A%E8%BF%87jni%E8%B0%83%E7%94%A8kotlin%E6%96%B9%E6%B3%95/banner.jpeg">
+<meta property="article:published_time" content="2022-06-06T13:45:50.000Z">
+<meta property="article:modified_time" content="2024-12-21T11:43:23.179Z">
+<meta property="article:author" content="waterbang">
+<meta property="article:tag" content="rust">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://www.waterbang.top/2022/06/06/2022-6-6-rust%E5%A6%82%E4%BD%95%E9%80%9A%E8%BF%87jni%E8%B0%83%E7%94%A8kotlin%E6%96%B9%E6%B3%95/banner.jpeg">
+  
+  
+  <title>2022-6-6-rust如何通过jni调用kotlin方法 🏮 waterbang</title>
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4/dist/css/bootstrap.min.css" />
+
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/github-markdown-css@4/github-markdown.min.css" />
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hint.css@2/hint.min.css" />
+
+  
+    
+    
+      
+      <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@10/styles/atom-one-dark.min.css" />
+    
+  
+
+  
+    <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3/dist/jquery.fancybox.min.css" />
+  
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_ba1fz6golrf.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+<!-- 自定义样式保持在最底部 -->
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    var CONFIG = {"hostname":"www.waterbang.top","root":"/","version":"1.8.14","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"right","visible":"hover","icon":"🍦"},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"copy_btn":true,"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"baidu":"58e161bf4b884b2aa577f323f137ac0f","google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+
+<body>
+  <header style="height: 70vh;">
+    <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>waterbang</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                Startseite
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                Archiv
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                Etiketten
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                Über mich
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/links/">
+                <i class="iconfont icon-link-fill"></i>
+                Weblinks
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              &nbsp;<i class="iconfont icon-search"></i>&nbsp;
+            </a>
+          </li>
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">&nbsp;<i
+                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+    <div class="banner" id="banner" parallax=true
+         style="background: url('/img/post-banner.jpg') no-repeat center center;
+           background-size: cover;">
+      <div class="full-bg-img">
+        <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+          <div class="page-header text-center fade-in-up">
+            <span class="h2" id="subtitle" title="2022-6-6-rust如何通过jni调用kotlin方法">
+              
+            </span>
+
+            
+              <div class="mt-3">
+  
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-author" aria-hidden="true"></i>
+      waterbang
+    </span>
+  
+  
+    <span class="post-meta">
+      <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+      <time datetime="2022-06-06 21:45" pubdate>
+        June 6, 2022 pm
+      </time>
+    </span>
+  
+</div>
+
+<div class="mt-1">
+  
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-chart"></i>
+      6.4k 字
+    </span>
+  
+
+  
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-clock-fill"></i>
+      
+      
+      54 分钟
+    </span>
+  
+
+  
+  
+    
+      <!-- 不蒜子统计文章PV -->
+      <span id="busuanzi_container_page_pv" style="display: none">
+        <i class="iconfont icon-eye" aria-hidden="true"></i>
+        <span id="busuanzi_value_page_pv"></span> 次
+      </span>
+    
+  
+</div>
+
+            
+          </div>
+
+          
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="d-none d-lg-block col-lg-2"></div>
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div class="py-5" id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">2022-6-6-rust如何通过jni调用kotlin方法</h1>
+            
+              <p class="note note-info">
+                
+                  本文最后更新于：5 hours ago
+                
+              </p>
+            
+            <div class="markdown-body">
+              <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>网上这方面比较缺少或者不完整，因此记录一下整个流程。<br>增加一下关键字防止搜索不到，这篇教程能让有需要的人少几天的琢磨时间。</p>
+<h3 id="使用rust写安卓库"><a href="#使用rust写安卓库" class="headerlink" title="使用rust写安卓库"></a>使用rust写安卓库</h3><h3 id="rust调用android"><a href="#rust调用android" class="headerlink" title="rust调用android"></a>rust调用android</h3><h3 id="rust通过ffi调用kotlin"><a href="#rust通过ffi调用kotlin" class="headerlink" title="rust通过ffi调用kotlin"></a>rust通过ffi调用kotlin</h3><h3 id="主要的流程"><a href="#主要的流程" class="headerlink" title="主要的流程"></a>主要的流程</h3><p>主要流程是通过全局缓存保存了android的环境变量。以此来实现在rust调用android方法。</p>
+<h3 id="尝试过的方法"><a href="#尝试过的方法" class="headerlink" title="尝试过的方法"></a>尝试过的方法</h3><ol>
+<li>直接通过rust闭包保存android环境，出现了方法不安全。✖️</li>
+<li>通过线程通信，结合闭包传递信息给fni方法。出现了线程通信不安全。✖️</li>
+<li>通过全局变量。也就是接下来的方法。 ✅</li>
+</ol>
+<h3 id="首先先看android部分如何进行加载"><a href="#首先先看android部分如何进行加载" class="headerlink" title="首先先看android部分如何进行加载"></a>首先先看android部分如何进行加载</h3><p>下面是android部分代码。主要是是加载库，然后注册函数。</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs kotlin"><span class="hljs-keyword">package</span> org.bfchain.rust.example<br><br><span class="hljs-keyword">import</span> android.app.IntentService<br><span class="hljs-keyword">import</span> android.content.Intent<br><span class="hljs-keyword">import</span> android.util.Log<br><span class="hljs-keyword">private</span> <span class="hljs-keyword">const</span> <span class="hljs-keyword">val</span> TAG = <span class="hljs-string">&quot;SERVICE&quot;</span><br><span class="hljs-keyword">class</span> <span class="hljs-title class_">DenoService</span> : <span class="hljs-type">IntentService</span>(<span class="hljs-string">&quot;DenoService&quot;</span>) &#123;<br>    <span class="hljs-keyword">companion</span> <span class="hljs-keyword">object</span> &#123;<br>        <span class="hljs-comment">// 加载rust编译的so</span><br>        <span class="hljs-keyword">init</span> &#123;<br>            System.loadLibrary(<span class="hljs-string">&quot;rust_lib&quot;</span>)<br>        &#125;<br>    &#125;<br>    <span class="hljs-keyword">interface</span> <span class="hljs-title class_">IHandleCallback</span> &#123;<br>        <span class="hljs-function"><span class="hljs-keyword">fun</span> <span class="hljs-title">handleCallback</span><span class="hljs-params">(string: <span class="hljs-type">String</span>)</span></span><br>    &#125;<br>    <span class="hljs-keyword">external</span> <span class="hljs-function"><span class="hljs-keyword">fun</span> <span class="hljs-title">nativeSetCallback</span><span class="hljs-params">(callback: <span class="hljs-type">IHandleCallback</span>)</span></span><br>    <span class="hljs-keyword">override</span> <span class="hljs-function"><span class="hljs-keyword">fun</span> <span class="hljs-title">onHandleIntent</span><span class="hljs-params">(p0: <span class="hljs-type">Intent</span>?)</span></span> &#123;<br>        <span class="hljs-comment">// val appContext = applicationContext</span><br><span class="hljs-comment">//        makeStatusNotification(&quot;有医保的先rush&quot;, appContext)</span><br>        nativeSetCallback(<span class="hljs-keyword">object</span> : IHandleCallback &#123;<br>            <span class="hljs-keyword">override</span> <span class="hljs-function"><span class="hljs-keyword">fun</span> <span class="hljs-title">handleCallback</span><span class="hljs-params">(string: <span class="hljs-type">String</span>)</span></span> &#123;<br>                Log.d(<span class="hljs-string">&quot;handleCallback&quot;</span>, <span class="hljs-string">&quot;now rust says:&quot;</span> + string)<br>                <span class="hljs-comment">// callable_map[string]?.let &#123; it() &#125;  // todo 执行你android的方法</span><br>            &#125;<br>        &#125;)<br>    &#125;<br>&#125;<br><br></code></pre></div></td></tr></table></figure>
+<p><code>nativeSetCallback</code>函数就是我们通过jni可以调用的方法，我们需要在rust通过全局缓存，把<code>android</code>的状态都缓存下来，<br>以此来实现我们在rust可以直接调用android方法。</p>
+<h3 id="接下来编写rust部分的内容"><a href="#接下来编写rust部分的内容" class="headerlink" title="接下来编写rust部分的内容"></a>接下来编写rust部分的内容</h3><p>先上代码，后面再解释。</p>
+<figure class="highlight rust"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs rust"><span class="hljs-keyword">use</span> crate::js_bridge::call_android_js;<br><span class="hljs-keyword">use</span> android_logger::Config;<br><span class="hljs-keyword">use</span> lazy_static::*;<br><span class="hljs-keyword">use</span> log::&#123;debug, error, info, Level&#125;;<br><span class="hljs-keyword">use</span> tokio;<br><span class="hljs-comment">// 引用标准库的一些内容</span><br><span class="hljs-keyword">use</span> std::&#123;<br>    ffi::&#123;c_void, CStr, CString&#125;,<br>    sync::&#123;mpsc, Mutex&#125;,<br>    thread,<br>&#125;;<br><span class="hljs-comment">// 引用 jni 库的一些内容，就是上面添加的 jni 依赖</span><br><span class="hljs-keyword">use</span> jni::&#123;<br>    objects::&#123;GlobalRef, JObject, JString, JValue&#125;,<br>    sys::&#123;jint, jstring, JNI_ERR,JNI_VERSION_1_4&#125;,<br>    JNIEnv, JavaVM, NativeMethod,<br>&#125;;<br><br><span class="hljs-comment">// 添加一个全局变量来缓存回调对象</span><br>lazy_static! &#123;<br>    <span class="hljs-comment">// jvm</span><br>    <span class="hljs-keyword">static</span> <span class="hljs-keyword">ref</span> JVM_GLOBAL: Mutex&lt;<span class="hljs-type">Option</span>&lt;JavaVM&gt;&gt; = Mutex::<span class="hljs-title function_ invoke__">new</span>(<span class="hljs-literal">None</span>);<br>    <span class="hljs-comment">//callback</span><br>    <span class="hljs-keyword">static</span> <span class="hljs-keyword">ref</span> JNI_CALLBACK: Mutex&lt;<span class="hljs-type">Option</span>&lt;GlobalRef&gt;&gt; = Mutex::<span class="hljs-title function_ invoke__">new</span>(<span class="hljs-literal">None</span>);<br>&#125;<br><span class="hljs-comment">/// 使用宏简化声明 NativeMethod 对象</span><br><span class="hljs-comment">/// ## Examples</span><br><span class="hljs-comment">/// ```</span><br><span class="hljs-comment">/// let method:NativeMethod = jni_method!(native_method, &quot;(Ljava/lang/String;)V&quot;);</span><br><span class="hljs-comment">/// ```</span><br><span class="hljs-built_in">macro_rules!</span> jni_method &#123;<br>    ( $method:tt, $signature:expr ) =&gt; &#123;&#123;<br>        jni::NativeMethod &#123;<br>            name: jni::strings::JNIString::<span class="hljs-title function_ invoke__">from</span>(<span class="hljs-built_in">stringify!</span>($method)),<br>            sig: jni::strings::JNIString::<span class="hljs-title function_ invoke__">from</span>($signature),<br>            fn_ptr: $method <span class="hljs-keyword">as</span> *<span class="hljs-keyword">mut</span> c_void,<br>        &#125;<br>    &#125;&#125;;<br>&#125;<br><span class="hljs-comment">/// 动态库被 java 加载时 会出发此函数, 在此动态注册本地方法</span><br><span class="hljs-meta">#[no_mangle]</span><br><span class="hljs-meta">#[allow(non_snake_case)]</span><br><span class="hljs-keyword">unsafe</span> <span class="hljs-keyword">fn</span> <span class="hljs-title function_">JNI_OnLoad</span>(jvm: JavaVM, _reserved: *<span class="hljs-keyword">mut</span> c_void) <span class="hljs-punctuation">-&gt;</span> jint &#123;<br>    <span class="hljs-keyword">let</span> <span class="hljs-variable">class_name</span>: &amp;<span class="hljs-type">str</span> = <span class="hljs-string">&quot;org/bfchain/rust/example/DenoService&quot;</span>;<br>    <span class="hljs-keyword">let</span> <span class="hljs-variable">jni_methods</span> = [<br>        <span class="hljs-comment">// # 添加注册一个可以传递java回调对象的本地方法</span><br>        jni_method!(nativeSetCallback, <span class="hljs-string">&quot;(Lorg/bfchain/rust/example/DenoService$IHandleCallback;)V&quot;</span>),<br>    ];<br><br>    <span class="hljs-keyword">let</span> <span class="hljs-variable">ok</span> = <span class="hljs-title function_ invoke__">register_natives</span>(&amp;jvm, class_name, jni_methods.<span class="hljs-title function_ invoke__">as_ref</span>());<br><br>    <span class="hljs-comment">// 在动态库被java加载时, 缓存一个jvm到全局变量, 调用回调时使用</span><br>    <span class="hljs-keyword">let</span> <span class="hljs-keyword">mut </span><span class="hljs-variable">ptr_jvm</span> = JVM_GLOBAL.<span class="hljs-title function_ invoke__">lock</span>().<span class="hljs-title function_ invoke__">unwrap</span>();<br>    *ptr_jvm = <span class="hljs-title function_ invoke__">Some</span>(jvm);<br>    JNI_VERSION_1_4<br>&#125;<br><br><span class="hljs-comment">/// 方法实现</span><br><span class="hljs-meta">#[no_mangle]</span><br><span class="hljs-keyword">pub</span> <span class="hljs-keyword">fn</span> <span class="hljs-title function_">nativeSetCallback</span>(env: JNIEnv, _obj: JObject, callback: JObject) &#123;<br>    <span class="hljs-comment">// 创建一个全局引用,</span><br>    <span class="hljs-keyword">let</span> <span class="hljs-variable">callback</span> = env.<span class="hljs-title function_ invoke__">new_global_ref</span>(JObject::<span class="hljs-title function_ invoke__">from</span>(callback)).<span class="hljs-title function_ invoke__">unwrap</span>();<br><br>    <span class="hljs-comment">// 添加到全局缓存</span><br>    <span class="hljs-keyword">let</span> <span class="hljs-keyword">mut </span><span class="hljs-variable">ptr_fn</span> = JNI_CALLBACK.<span class="hljs-title function_ invoke__">lock</span>().<span class="hljs-title function_ invoke__">unwrap</span>();<br>    *ptr_fn = <span class="hljs-title function_ invoke__">Some</span>(callback);<br>&#125;<br><br><span class="hljs-keyword">unsafe</span> <span class="hljs-keyword">fn</span> <span class="hljs-title function_">register_natives</span>(jvm: &amp;JavaVM, class_name: &amp;<span class="hljs-type">str</span>, methods: &amp;[NativeMethod]) <span class="hljs-punctuation">-&gt;</span> jint &#123;<br>    <span class="hljs-keyword">let</span> <span class="hljs-variable">env</span>: JNIEnv = jvm.<span class="hljs-title function_ invoke__">get_env</span>().<span class="hljs-title function_ invoke__">unwrap</span>();<br>    <span class="hljs-keyword">let</span> <span class="hljs-variable">jni_version</span> = env.<span class="hljs-title function_ invoke__">get_version</span>().<span class="hljs-title function_ invoke__">unwrap</span>();<br>    <span class="hljs-keyword">let</span> <span class="hljs-variable">version</span>: jint = jni_version.<span class="hljs-title function_ invoke__">into</span>();<br><br>    <span class="hljs-keyword">let</span> <span class="hljs-variable">clazz</span> = <span class="hljs-keyword">match</span> env.<span class="hljs-title function_ invoke__">find_class</span>(class_name) &#123;<br>        <span class="hljs-title function_ invoke__">Ok</span>(clazz) =&gt; clazz,<br>        <span class="hljs-title function_ invoke__">Err</span>(e) =&gt; &#123;<br>            error!(<span class="hljs-string">&quot;java class not found : &#123;:?&#125;&quot;</span>, e);<br>            <span class="hljs-keyword">return</span> JNI_ERR;<br>        &#125;<br>    &#125;;<br>    <span class="hljs-keyword">let</span> <span class="hljs-variable">result</span> = env.<span class="hljs-title function_ invoke__">register_native_methods</span>(clazz, &amp;methods);<br><br>    <span class="hljs-keyword">if</span> result.<span class="hljs-title function_ invoke__">is_ok</span>() &#123;<br>        info!(<span class="hljs-string">&quot;register_natives : succeed&quot;</span>);<br>        version<br>    &#125; <span class="hljs-keyword">else</span> &#123;<br>        error!(<span class="hljs-string">&quot;register_natives : failed &quot;</span>);<br>        JNI_ERR<br>    &#125;<br>&#125;<br></code></pre></div></td></tr></table></figure>
+
+<h4 id="JNI-OnLoad"><a href="#JNI-OnLoad" class="headerlink" title="JNI_OnLoad"></a>JNI_OnLoad</h4><p>这个函数在你加载so库的时候会自动调用，并不用在android里声明。他返回的是JNI版本，你需要选择你支持的版本。</p>
+<blockquote>
+<p>jni_method 的第二个参数是函数签名，如果你在android注册的函数不一样，需要自己修改函数签名。<br>如何查找函数的签名，直接google。</p>
+</blockquote>
+<h4 id="nativeSetCallback"><a href="#nativeSetCallback" class="headerlink" title="nativeSetCallback"></a>nativeSetCallback</h4><p><code> env.new_global_ref</code>是必须的，他可以帮助我们创建全局引用，我们的方法就可以跨方法跨线程调用，这里面的callback就是我们需要传递的闭包函数。</p>
+<h3 id="回调函数入口"><a href="#回调函数入口" class="headerlink" title="回调函数入口"></a>回调函数入口</h3><p>下面的函数是利用闭包去执行上面缓存的<code>android</code>环境。<code>call_method</code>里的<code>handleCallback</code>函数，<br>我传递的参数是字符串，因此函数签名为<code>(Ljava/lang/String;)V</code>。</p>
+<figure class="highlight rust"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs rust"><span class="hljs-comment">/// 回调 Callback 对象的 &#123; void handleCallback(string: String) &#125; 函数</span><br><span class="hljs-keyword">pub</span> <span class="hljs-keyword">fn</span> <span class="hljs-title function_">call_java_callback</span>(fun_type: &amp;<span class="hljs-symbol">&#x27;static</span> <span class="hljs-type">str</span>) &#123;<br>        android_logger::<span class="hljs-title function_ invoke__">init_once</span>(<br>        Config::<span class="hljs-title function_ invoke__">default</span>()<br>            .<span class="hljs-title function_ invoke__">with_min_level</span>(Level::<span class="hljs-built_in">Debug</span>)<br>            .<span class="hljs-title function_ invoke__">with_tag</span>(<span class="hljs-string">&quot;myrust::handleCallback&quot;</span>),<br>    );<br>    log::info!(<span class="hljs-string">&quot;i am call_java_callback xxxxxxx1&#123;:?&#125;&quot;</span>,fun_type);<br>    <span class="hljs-title function_ invoke__">call_jvm</span>(&amp;JNI_CALLBACK, <span class="hljs-keyword">move</span> |obj: JObject, env: &amp;JNIEnv| &#123;<br>        <span class="hljs-keyword">let</span> <span class="hljs-variable">s</span> = <span class="hljs-type">String</span>::<span class="hljs-title function_ invoke__">from</span>(fun_type);<br>        <span class="hljs-keyword">let</span> <span class="hljs-variable">response</span>: JString = env<br>            .<span class="hljs-title function_ invoke__">new_string</span>(fun_type)<br>            .<span class="hljs-title function_ invoke__">expect</span>(<span class="hljs-string">&quot;Couldn&#x27;t create java string!&quot;</span>);<br>        <span class="hljs-keyword">match</span> env.<span class="hljs-title function_ invoke__">call_method</span>(<br>            obj,<br>            <span class="hljs-string">&quot;handleCallback&quot;</span>,<br>            <span class="hljs-string">&quot;(Ljava/lang/String;)V&quot;</span>,<br>            &amp;[JValue::<span class="hljs-title function_ invoke__">from</span>(JObject::<span class="hljs-title function_ invoke__">from</span>(response))],<br>        ) &#123;<br>            <span class="hljs-title function_ invoke__">Ok</span>(jvalue) =&gt; &#123;<br>                debug!(<span class="hljs-string">&quot;callback succeed: &#123;:?&#125;&quot;</span>, jvalue);<br>            &#125;<br>            <span class="hljs-title function_ invoke__">Err</span>(e) =&gt; &#123;<br>                error!(<span class="hljs-string">&quot;callback failed : &#123;:?&#125;&quot;</span>, e);<br>            &#125;<br>        &#125;<br>    &#125;);<br>&#125;<br><span class="hljs-comment">/// # 封装jvm调用</span><br><span class="hljs-keyword">fn</span> <span class="hljs-title function_">call_jvm</span>&lt;F&gt;(callback: &amp;Mutex&lt;<span class="hljs-type">Option</span>&lt;GlobalRef&gt;&gt;, run: F)<br><span class="hljs-keyword">where</span><br>    F: <span class="hljs-title function_ invoke__">Fn</span>(JObject, &amp;JNIEnv) + <span class="hljs-built_in">Send</span> + <span class="hljs-symbol">&#x27;static</span>,<br>&#123;<br>    <span class="hljs-keyword">let</span> <span class="hljs-variable">ptr_jvm</span> = JVM_GLOBAL.<span class="hljs-title function_ invoke__">lock</span>().<span class="hljs-title function_ invoke__">unwrap</span>();<br>    <span class="hljs-keyword">if</span> (*ptr_jvm).<span class="hljs-title function_ invoke__">is_none</span>() &#123;<br>        <span class="hljs-keyword">return</span>;<br>    &#125;<br>    <span class="hljs-keyword">let</span> <span class="hljs-variable">ptr_fn</span> = callback.<span class="hljs-title function_ invoke__">lock</span>().<span class="hljs-title function_ invoke__">unwrap</span>();<br>    <span class="hljs-keyword">if</span> (*ptr_fn).<span class="hljs-title function_ invoke__">is_none</span>() &#123;<br>        <span class="hljs-keyword">return</span>;<br>    &#125;<br>    <span class="hljs-keyword">let</span> <span class="hljs-variable">jvm</span>: &amp;JavaVM = (*ptr_jvm).<span class="hljs-title function_ invoke__">as_ref</span>().<span class="hljs-title function_ invoke__">unwrap</span>();<br>    <span class="hljs-keyword">match</span> jvm.<span class="hljs-title function_ invoke__">attach_current_thread_permanently</span>() &#123;<br>        <span class="hljs-title function_ invoke__">Ok</span>(env) =&gt; &#123;<br>            <span class="hljs-keyword">let</span> <span class="hljs-variable">obj</span> = (*ptr_fn).<span class="hljs-title function_ invoke__">as_ref</span>().<span class="hljs-title function_ invoke__">unwrap</span>().<span class="hljs-title function_ invoke__">as_obj</span>();<br>            <span class="hljs-title function_ invoke__">run</span>(obj, &amp;env);<br>            <span class="hljs-comment">// 检查回调是否发生异常, 如果有异常发生,则打印并清空</span><br>            <span class="hljs-keyword">if</span> <span class="hljs-keyword">let</span> <span class="hljs-variable">Ok</span>(<span class="hljs-literal">true</span>) = env.<span class="hljs-title function_ invoke__">exception_check</span>() &#123;<br>                <span class="hljs-keyword">let</span> <span class="hljs-variable">_</span> = env.<span class="hljs-title function_ invoke__">exception_describe</span>();<br>                <span class="hljs-keyword">let</span> <span class="hljs-variable">_</span> = env.<span class="hljs-title function_ invoke__">exception_clear</span>();<br>            &#125;<br>        &#125;<br>        <span class="hljs-title function_ invoke__">Err</span>(e) =&gt; &#123;<br>            debug!(<span class="hljs-string">&quot;jvm attach_current_thread failed: &#123;:?&#125;&quot;</span>, e);<br>        &#125;<br>    &#125;<br>&#125;<br></code></pre></div></td></tr></table></figure>
+
+<p>jni部分的函数已经写完了，接下来直接去调用<code>call_java_callback</code>函数就可以了。</p>
+<h3 id="调用call-java-callback"><a href="#调用call-java-callback" class="headerlink" title="调用call_java_callback"></a>调用call_java_callback</h3><p><code>use crate::android::android_inter;</code>就是上面文件的位置。具体根据您项目位置导入。<br>下面的<code>fun_type</code>参数就是要传递给android的，以此来调用android函数。</p>
+<figure class="highlight rust"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs rust"><span class="hljs-meta">#[cfg(target_os = <span class="hljs-string">&quot;android&quot;</span>)]</span><br><span class="hljs-keyword">use</span> crate::android::android_inter;<br><span class="hljs-keyword">pub</span> <span class="hljs-keyword">fn</span> <span class="hljs-title function_">call_android</span>(fun_type: &amp;<span class="hljs-type">str</span>) &#123;<br>    <span class="hljs-keyword">let</span> <span class="hljs-variable">callback</span> = <span class="hljs-type">Box</span>::<span class="hljs-title function_ invoke__">leak</span>(<span class="hljs-type">String</span>::<span class="hljs-title function_ invoke__">from</span>(fun_type).<span class="hljs-title function_ invoke__">into_boxed_str</span>());<br>    <span class="hljs-meta">#[cfg(target_os = <span class="hljs-string">&quot;android&quot;</span>)]</span><br>    android_inter::<span class="hljs-title function_ invoke__">call_java_callback</span>(callback);<br>&#125;<br></code></pre></div></td></tr></table></figure>
+
+<blockquote>
+<p> Box::leak(String::from(fun_type).into_boxed_str()); 可以把&amp;str变量转化成静态&amp;’static str</p>
+</blockquote>
+<h3 id="结束🐟"><a href="#结束🐟" class="headerlink" title="结束🐟"></a>结束🐟</h3><p>如果此文章对您有帮助请发个表情告诉我，如果有其他建议或者勘误请直接留言。</p>
+<p>垂杨拂绿水，摇艳东风年。<br>「折杨柳」<br>李白</p>
+
+            </div>
+            <hr>
+            <div>
+              <div class="post-metas mb-3">
+                
+                
+                  <div class="post-meta">
+                    <i class="iconfont icon-tags"></i>
+                    
+                      <a class="hover-with-bg" href="/tags/rust/">rust</a>
+                    
+                  </div>
+                
+              </div>
+              
+                <p class="note note-warning">
+                  
+                    本博客所有文章除特别声明外，均采用 <a target="_blank" href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh" rel="nofollow noopener noopener">CC BY-SA 4.0 协议</a> ，转载请注明出处！
+                  
+                </p>
+              
+              
+                <div class="post-prevnext">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2022/08/08/BFS%E5%BC%80%E5%8F%91%E9%97%AE%E9%A2%98%E6%B1%87%E6%80%BB/">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">BFS开发问题汇总</span>
+                        <span class="visible-mobile">Vorheriger</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2022/03/21/2022-3-21-%E5%8C%BA%E5%9D%97%E9%93%BE%E5%A6%82%E4%BD%95%E8%B5%8B%E8%83%BD%E5%AE%9E%E4%BD%93%E7%BB%8F%E6%B5%8E/">
+                        <span class="hidden-mobile">2022-3-21-区块链如何赋能实体经济</span>
+                        <span class="visible-mobile">Nächster</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+              <!-- Comments -->
+              <article class="comments" id="comments" lazyload>
+                
+                  
+                
+                
+  <script type="text/javascript">
+    Fluid.utils.loadComments('#comments', function() {
+      var light = 'github-light';
+      var dark = 'github-dark';
+      var schema = document.documentElement.getAttribute('data-user-color-scheme');
+      if (schema === 'dark') {
+        schema = dark;
+      } else {
+        schema = light;
+      }
+      window.UtterancesThemeLight = light;
+      window.UtterancesThemeDark = dark;
+      var s = document.createElement('script');
+      s.setAttribute('src', 'https://utteranc.es/client.js');
+      s.setAttribute('repo', 'waterbang/Comment');
+      s.setAttribute('issue-term', 'pathname');
+      
+      s.setAttribute('label', 'utterances');
+      
+      s.setAttribute('theme', schema);
+      s.setAttribute('crossorigin', 'anonymous');
+      document.getElementById('comments').appendChild(s);
+    })
+  </script>
+  <noscript>Please enable JavaScript to view the comments</noscript>
+
+
+              </article>
+            
+          </article>
+        </div>
+      </div>
+    </div>
+    
+      <div class="d-none d-lg-block col-lg-2 toc-container" id="toc-ctn">
+        <div id="toc">
+  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;TOC</p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+      </div>
+    
+  </div>
+</div>
+
+<!-- Custom -->
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">Suchen</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v"
+                 for="local-search-input">Stichwort</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+
+    
+  </main>
+
+  <footer class="text-center mt-5 py-3">
+  <div class="footer-content">
+     <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a>
+  </div>
+  
+
+  
+  <!-- 备案信息 -->
+  <div class="beian">
+    <span>
+      <a href="http://beian.miit.gov.cn/" target="_blank" rel="nofollow noopener">
+        闽ICP备18009949号-2
+      </a>
+    </span>
+    
+  </div>
+
+
+  
+</footer>
+
+
+  <!-- SCRIPTS -->
+  
+  <script  src="https://cdn.jsdelivr.net/npm/nprogress@0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/nprogress@0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js" ></script>
+<script  src="https://cdn.jsdelivr.net/npm/bootstrap@4/dist/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+<!-- Plugins -->
+
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+  
+
+
+
+  
+    <script  src="https://cdn.jsdelivr.net/npm/tocbot@4/dist/tocbot.min.js" ></script>
+  
+  
+    <script  src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3/dist/jquery.fancybox.min.js" ></script>
+  
+  
+    <script  src="https://cdn.jsdelivr.net/npm/anchor-js@4/anchor.min.js" ></script>
+  
+  
+    <script defer src="https://cdn.jsdelivr.net/npm/clipboard@2/dist/clipboard.min.js" ></script>
+  
+
+
+
+  <script defer src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" ></script>
+
+
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/typed.js@2/lib/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var title = document.getElementById('subtitle').title;
+      
+        typing(title);
+      
+    })(window, document);
+  </script>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+    <!-- Baidu Analytics -->
+    <script defer>
+      var _hmt = _hmt || [];
+      (function () {
+        var hm = document.createElement("script");
+        hm.src = "https://hm.baidu.com/hm.js?58e161bf4b884b2aa577f323f137ac0f";
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(hm, s);
+      })();
+    </script>
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+
+
+
+
+<!-- 主题的启动项 保持在最底部 -->
+<script  src="/js/boot.js" ></script>
+
+
+</body>
+</html>

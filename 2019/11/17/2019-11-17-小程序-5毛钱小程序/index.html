@@ -1,0 +1,664 @@
+
+
+<!DOCTYPE html>
+<html lang="ch_CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/apple-touch-icon.png">
+  <link rel="icon" href="/img/favicon.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="waterbang">
+  <meta name="keywords" content="waterbang">
+  
+    <meta name="description" content="五毛钱信条首先用大白话概括一下小程序功能：将你的承诺变成信条，发送给别人，在别人需要的时候来找你兑现。（假如我要请你吃冰淇淋，但是你现在不想吃，我给你发个信条，在你想吃的时候找我兑现🚲）   扫描小程序体验    这次写小程序刚好赶上了小程序开放了云开发，真的是个人开发者的福音。但是我觉得云开发还是辅助就好，一个好的小程序必须得后端加云开发，这样会显得更加成熟一点。 github地址   界面�">
+<meta property="og:type" content="article">
+<meta property="og:title" content="小程序-5毛钱信条">
+<meta property="og:url" content="https://www.waterbang.top/2019/11/17/2019-11-17-%E5%B0%8F%E7%A8%8B%E5%BA%8F-5%E6%AF%9B%E9%92%B1%E5%B0%8F%E7%A8%8B%E5%BA%8F/index.html">
+<meta property="og:site_name" content="waterbang">
+<meta property="og:description" content="五毛钱信条首先用大白话概括一下小程序功能：将你的承诺变成信条，发送给别人，在别人需要的时候来找你兑现。（假如我要请你吃冰淇淋，但是你现在不想吃，我给你发个信条，在你想吃的时候找我兑现🚲）   扫描小程序体验    这次写小程序刚好赶上了小程序开放了云开发，真的是个人开发者的福音。但是我觉得云开发还是辅助就好，一个好的小程序必须得后端加云开发，这样会显得更加成熟一点。 github地址   界面�">
+<meta property="og:locale" content="ch_CN">
+<meta property="og:image" content="https://www.waterbang.top/2019/11/17/2019-11-17-%E5%B0%8F%E7%A8%8B%E5%BA%8F-5%E6%AF%9B%E9%92%B1%E5%B0%8F%E7%A8%8B%E5%BA%8F/home.png">
+<meta property="article:published_time" content="2019-11-17T12:11:31.000Z">
+<meta property="article:modified_time" content="2024-12-21T11:43:23.154Z">
+<meta property="article:author" content="waterbang">
+<meta property="article:tag" content="小程序">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://www.waterbang.top/2019/11/17/2019-11-17-%E5%B0%8F%E7%A8%8B%E5%BA%8F-5%E6%AF%9B%E9%92%B1%E5%B0%8F%E7%A8%8B%E5%BA%8F/home.png">
+  
+  
+  <title>小程序-5毛钱信条 🏮 waterbang</title>
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4/dist/css/bootstrap.min.css" />
+
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/github-markdown-css@4/github-markdown.min.css" />
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hint.css@2/hint.min.css" />
+
+  
+    
+    
+      
+      <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@10/styles/atom-one-dark.min.css" />
+    
+  
+
+  
+    <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3/dist/jquery.fancybox.min.css" />
+  
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_ba1fz6golrf.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+<!-- 自定义样式保持在最底部 -->
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    var CONFIG = {"hostname":"www.waterbang.top","root":"/","version":"1.8.14","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"right","visible":"hover","icon":"🍦"},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"copy_btn":true,"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"baidu":"58e161bf4b884b2aa577f323f137ac0f","google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+
+<body>
+  <header style="height: 70vh;">
+    <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>waterbang</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                Startseite
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                Archiv
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                Etiketten
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                Über mich
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/links/">
+                <i class="iconfont icon-link-fill"></i>
+                Weblinks
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              &nbsp;<i class="iconfont icon-search"></i>&nbsp;
+            </a>
+          </li>
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">&nbsp;<i
+                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+    <div class="banner" id="banner" parallax=true
+         style="background: url('/img/post-banner.jpg') no-repeat center center;
+           background-size: cover;">
+      <div class="full-bg-img">
+        <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+          <div class="page-header text-center fade-in-up">
+            <span class="h2" id="subtitle" title="小程序-5毛钱信条">
+              
+            </span>
+
+            
+              <div class="mt-3">
+  
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-author" aria-hidden="true"></i>
+      waterbang
+    </span>
+  
+  
+    <span class="post-meta">
+      <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+      <time datetime="2019-11-17 20:11" pubdate>
+        November 17, 2019 pm
+      </time>
+    </span>
+  
+</div>
+
+<div class="mt-1">
+  
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-chart"></i>
+      1.8k 字
+    </span>
+  
+
+  
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-clock-fill"></i>
+      
+      
+      16 分钟
+    </span>
+  
+
+  
+  
+    
+      <!-- 不蒜子统计文章PV -->
+      <span id="busuanzi_container_page_pv" style="display: none">
+        <i class="iconfont icon-eye" aria-hidden="true"></i>
+        <span id="busuanzi_value_page_pv"></span> 次
+      </span>
+    
+  
+</div>
+
+            
+          </div>
+
+          
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="d-none d-lg-block col-lg-2"></div>
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div class="py-5" id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">小程序-5毛钱信条</h1>
+            
+              <p class="note note-info">
+                
+                  本文最后更新于：5 hours ago
+                
+              </p>
+            
+            <div class="markdown-body">
+              <h3 id="五毛钱信条"><a href="#五毛钱信条" class="headerlink" title="五毛钱信条"></a>五毛钱信条</h3><p>首先用大白话概括一下小程序功能：将你的承诺变成信条，发送给别人，在别人需要的时候来找你兑现。<br>（假如我要请你吃冰淇淋，但是你现在不想吃，我给你发个信条，在你想吃的时候找我兑现🚲）</p>
+<div align=center>
+<img src="./miniProgram.jpg" srcset="/img/loading.gif" lazyload width="150" height="100">
+<p >扫描小程序体验</p>
+</div>
+
+
+<p>这次写小程序刚好赶上了小程序开放了云开发，真的是个人开发者的福音。<br>但是我觉得云开发还是辅助就好，一个好的小程序必须得后端加云开发，这样会显得更加成熟一点。</p>
+<p><a target="_blank" rel="noopener" href="https://github.com/watebang/creed">github地址</a></p>
+<br>
+
+<h4 id="界面🌈"><a href="#界面🌈" class="headerlink" title="界面🌈"></a>界面🌈</h4><ol>
+<li>页面内容采用了<a target="_blank" rel="noopener" href="http://doc.mini.7yue.pro/">Lin-ui</a> 林间有风团队出品👍（七月老师真的大牛，🏃去买课）。</li>
+<li>自定义tarBar采用的是<a target="_blank" rel="noopener" href="https://github.com/SuRuiGit/wxapp-customTabbar">wxapp-customTabbar</a> SuRuiGit大佬 出品👍。</li>
+</ol>
+<br>
+
+<p><img src="./item.png" srcset="/img/loading.gif" lazyload width="150" height="100"> <img src="./home-1.png" srcset="/img/loading.gif" lazyload width="150" height="100"></p>
+<br>  
+
+<h4 id="遇到的问题🈶"><a href="#遇到的问题🈶" class="headerlink" title="遇到的问题🈶"></a>遇到的问题🈶</h4><ol>
+<li><p>在云开发中<strong>所有</strong>更改别人数据的操作需要通过云函数来完成。（直接贴个码)</p>
+<div class="hljs code-wrapper"><pre><code class="hljs">  // 云函数入口文件
+    const cloud = require(&#39;wx-server-sdk&#39;)
+    cloud.init()
+    const db = cloud.database();
+    // 云函数入口函数
+    exports.main = async (event, context) =&gt; &#123;
+      try &#123;
+        return db.collection(&#39;item&#39;).doc(event._id)
+          .update(&#123;
+            data: &#123;
+              lover: event.lover,
+              lock:1
+            &#125;
+          &#125;)
+          .then(res =&gt; &#123;
+            return res;
+          &#125;)
+          .catch(err =&gt; &#123;
+            return err
+          &#125;)
+      &#125; catch (e) &#123;
+        console.error(e)
+      &#125;
+    &#125;
+</code></pre></div>
+</li>
+</ol>
+<br>      
+
+<p>记得每次写完云函数<strong>记得上传</strong>，然后这样使用✅。</p>
+<div class="hljs code-wrapper"><pre><code class="hljs">    /**
+     * 更改状态
+     */
+    upItemState(_id,lock)&#123;
+      return wx.cloud.callFunction(&#123;
+        name: &#39;upItemState&#39;,
+        data: &#123;
+          _id: _id,
+          lock: lock,
+        &#125;
+      &#125;).then(res =&gt; &#123;
+        return res;
+      &#125;).catch(err =&gt; &#123;
+        return err;
+      &#125;)
+    &#125;
+</code></pre></div>
+<br>
+
+
+<h4 id="分享两个使用函数-📊"><a href="#分享两个使用函数-📊" class="headerlink" title="分享两个使用函数 📊"></a>分享两个使用函数 📊</h4><p>我在做home页面的动画时候，如果点击得很快，文字和头像就会跳来跳去，就加了个防抖。<br>但是我偷懒防抖做得很简单，下面的是正规军。（不知道哪里复制粘贴的）<br><br>  </p>
+<div class="hljs code-wrapper"><pre><code class="hljs">/**
+   * @desc 函数防抖
+   * @param func 函数
+   * @param wait 延迟执行毫秒数
+   * @param immediate true 表立即执行，false 表非立即执行
+   */
+  debounce(func, wait, immediate) &#123;
+    let timeout;
+
+    return function() &#123;
+      let context = this;
+      let args = arguments;
+      if (timeout) clearTimeout(timeout);
+      if (immediate) &#123;
+        var callNow = !timeout;
+        timeout = setTimeout(() =&gt; &#123;
+          timeout = null;
+        &#125;, wait)
+        if (callNow) func.apply(context, args)
+      &#125; else &#123;
+        timeout = setTimeout(function() &#123;
+          func.apply(context, args)
+        &#125;, wait);
+      &#125;
+    &#125;
+  &#125;
+   /**
+   * @desc 函数节流
+   * @param func 函数
+   * @param wait 延迟执行毫秒数
+   */
+   throttle(func, wait) &#123;
+  let previous = 0;
+  return function () &#123;
+    let now = Date.now();
+    let context = this;
+    let args = arguments;
+    if (now - previous &gt; wait) &#123;
+      func.apply(context, args);
+      previous = now;
+    &#125;
+  &#125;
+&#125;
+</code></pre></div>
+ <br>
+
+
+
+<h4 id="学到了什么-🉐"><a href="#学到了什么-🉐" class="headerlink" title="学到了什么 🉐"></a>学到了什么 🉐</h4><ol>
+<li>小程序组件化开发。</li>
+<li>小程序云开发。</li>
+<li>复习了ES6。</li>
+<li>如何实现递归下拉刷新最新数据。</li>
+<li>将学习到的函数式编程运用到小程序。</li>
+<li>如何在小程序使用自定义tarBar</li>
+</ol>
+<h4 id="结束语-🏐"><a href="#结束语-🏐" class="headerlink" title="结束语 🏐"></a>结束语 🏐</h4><blockquote>
+<p>春风未了秋风到，老去万缘轻。——「少年游·枫林红透晚烟青」蒋捷</p>
+</blockquote>
+
+            </div>
+            <hr>
+            <div>
+              <div class="post-metas mb-3">
+                
+                
+                  <div class="post-meta">
+                    <i class="iconfont icon-tags"></i>
+                    
+                      <a class="hover-with-bg" href="/tags/%E5%B0%8F%E7%A8%8B%E5%BA%8F/">小程序</a>
+                    
+                  </div>
+                
+              </div>
+              
+                <p class="note note-warning">
+                  
+                    本博客所有文章除特别声明外，均采用 <a target="_blank" href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh" rel="nofollow noopener noopener">CC BY-SA 4.0 协议</a> ，转载请注明出处！
+                  
+                </p>
+              
+              
+                <div class="post-prevnext">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2019/11/18/2019-11-18-webpack-%E4%BB%8E%E9%9B%B6%E6%90%AD%E5%BB%BA%E8%87%AA%E5%B7%B1%E7%9A%84webpack%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83/">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">webpack-从零搭建自己的webpack开发环境</span>
+                        <span class="visible-mobile">Vorheriger</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2019/09/01/2019-9-1-PHP-ThinkPHP5.1%E5%AE%9E%E7%8E%B0sign%E6%A0%A1%E9%AA%8CAPI/">
+                        <span class="hidden-mobile">PHP-ThinkPHP5.1实现sign校验API</span>
+                        <span class="visible-mobile">Nächster</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+              <!-- Comments -->
+              <article class="comments" id="comments" lazyload>
+                
+                  
+                
+                
+  <script type="text/javascript">
+    Fluid.utils.loadComments('#comments', function() {
+      var light = 'github-light';
+      var dark = 'github-dark';
+      var schema = document.documentElement.getAttribute('data-user-color-scheme');
+      if (schema === 'dark') {
+        schema = dark;
+      } else {
+        schema = light;
+      }
+      window.UtterancesThemeLight = light;
+      window.UtterancesThemeDark = dark;
+      var s = document.createElement('script');
+      s.setAttribute('src', 'https://utteranc.es/client.js');
+      s.setAttribute('repo', 'waterbang/Comment');
+      s.setAttribute('issue-term', 'pathname');
+      
+      s.setAttribute('label', 'utterances');
+      
+      s.setAttribute('theme', schema);
+      s.setAttribute('crossorigin', 'anonymous');
+      document.getElementById('comments').appendChild(s);
+    })
+  </script>
+  <noscript>Please enable JavaScript to view the comments</noscript>
+
+
+              </article>
+            
+          </article>
+        </div>
+      </div>
+    </div>
+    
+      <div class="d-none d-lg-block col-lg-2 toc-container" id="toc-ctn">
+        <div id="toc">
+  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;TOC</p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+      </div>
+    
+  </div>
+</div>
+
+<!-- Custom -->
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">Suchen</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v"
+                 for="local-search-input">Stichwort</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+
+    
+  </main>
+
+  <footer class="text-center mt-5 py-3">
+  <div class="footer-content">
+     <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a>
+  </div>
+  
+
+  
+  <!-- 备案信息 -->
+  <div class="beian">
+    <span>
+      <a href="http://beian.miit.gov.cn/" target="_blank" rel="nofollow noopener">
+        闽ICP备18009949号-2
+      </a>
+    </span>
+    
+  </div>
+
+
+  
+</footer>
+
+
+  <!-- SCRIPTS -->
+  
+  <script  src="https://cdn.jsdelivr.net/npm/nprogress@0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/nprogress@0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js" ></script>
+<script  src="https://cdn.jsdelivr.net/npm/bootstrap@4/dist/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+<!-- Plugins -->
+
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+  
+
+
+
+  
+    <script  src="https://cdn.jsdelivr.net/npm/tocbot@4/dist/tocbot.min.js" ></script>
+  
+  
+    <script  src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3/dist/jquery.fancybox.min.js" ></script>
+  
+  
+    <script  src="https://cdn.jsdelivr.net/npm/anchor-js@4/anchor.min.js" ></script>
+  
+  
+    <script defer src="https://cdn.jsdelivr.net/npm/clipboard@2/dist/clipboard.min.js" ></script>
+  
+
+
+
+  <script defer src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" ></script>
+
+
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/typed.js@2/lib/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var title = document.getElementById('subtitle').title;
+      
+        typing(title);
+      
+    })(window, document);
+  </script>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+    <!-- Baidu Analytics -->
+    <script defer>
+      var _hmt = _hmt || [];
+      (function () {
+        var hm = document.createElement("script");
+        hm.src = "https://hm.baidu.com/hm.js?58e161bf4b884b2aa577f323f137ac0f";
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(hm, s);
+      })();
+    </script>
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+
+
+
+
+<!-- 主题的启动项 保持在最底部 -->
+<script  src="/js/boot.js" ></script>
+
+
+</body>
+</html>

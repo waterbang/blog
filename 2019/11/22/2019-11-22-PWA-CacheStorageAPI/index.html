@@ -1,0 +1,701 @@
+
+
+<!DOCTYPE html>
+<html lang="ch_CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/apple-touch-icon.png">
+  <link rel="icon" href="/img/favicon.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="waterbang">
+  <meta name="keywords" content="waterbang">
+  
+    <meta name="description" content="《PWA实战》记录。[以]塔勒·埃特尔 著 张俊达 译    CacheStorage APICacheStorage是一种全新的缓存层，你拥有完全的控制权。(遵循同源策略)   在CacheStorage中储存请求示例： &#x2F;&#x2F;serviceworker.js self.addEventListener(&quot;install&quot;,function(event)&#123;">
+<meta property="og:type" content="article">
+<meta property="og:title" content="PWA-CacheStorageAPI">
+<meta property="og:url" content="https://www.waterbang.top/2019/11/22/2019-11-22-PWA-CacheStorageAPI/index.html">
+<meta property="og:site_name" content="waterbang">
+<meta property="og:description" content="《PWA实战》记录。[以]塔勒·埃特尔 著 张俊达 译    CacheStorage APICacheStorage是一种全新的缓存层，你拥有完全的控制权。(遵循同源策略)   在CacheStorage中储存请求示例： &#x2F;&#x2F;serviceworker.js self.addEventListener(&quot;install&quot;,function(event)&#123;">
+<meta property="og:locale" content="ch_CN">
+<meta property="og:image" content="https://www.waterbang.top/2019/11/22/2019-11-22-PWA-CacheStorageAPI/cacheStorage.png">
+<meta property="article:published_time" content="2019-11-22T05:42:15.000Z">
+<meta property="article:modified_time" content="2024-12-21T11:43:23.155Z">
+<meta property="article:author" content="waterbang">
+<meta property="article:tag" content="Progressive Web App">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://www.waterbang.top/2019/11/22/2019-11-22-PWA-CacheStorageAPI/cacheStorage.png">
+  
+  
+  <title>PWA-CacheStorageAPI 🏮 waterbang</title>
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4/dist/css/bootstrap.min.css" />
+
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/github-markdown-css@4/github-markdown.min.css" />
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hint.css@2/hint.min.css" />
+
+  
+    
+    
+      
+      <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@10/styles/atom-one-dark.min.css" />
+    
+  
+
+  
+    <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3/dist/jquery.fancybox.min.css" />
+  
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_ba1fz6golrf.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+<!-- 自定义样式保持在最底部 -->
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    var CONFIG = {"hostname":"www.waterbang.top","root":"/","version":"1.8.14","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"right","visible":"hover","icon":"🍦"},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"copy_btn":true,"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"baidu":"58e161bf4b884b2aa577f323f137ac0f","google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+
+<body>
+  <header style="height: 70vh;">
+    <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>waterbang</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                Startseite
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                Archiv
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                Etiketten
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                Über mich
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/links/">
+                <i class="iconfont icon-link-fill"></i>
+                Weblinks
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              &nbsp;<i class="iconfont icon-search"></i>&nbsp;
+            </a>
+          </li>
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">&nbsp;<i
+                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+    <div class="banner" id="banner" parallax=true
+         style="background: url('/img/post-banner.jpg') no-repeat center center;
+           background-size: cover;">
+      <div class="full-bg-img">
+        <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+          <div class="page-header text-center fade-in-up">
+            <span class="h2" id="subtitle" title="PWA-CacheStorageAPI">
+              
+            </span>
+
+            
+              <div class="mt-3">
+  
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-author" aria-hidden="true"></i>
+      waterbang
+    </span>
+  
+  
+    <span class="post-meta">
+      <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+      <time datetime="2019-11-22 13:42" pubdate>
+        November 22, 2019 pm
+      </time>
+    </span>
+  
+</div>
+
+<div class="mt-1">
+  
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-chart"></i>
+      5.2k 字
+    </span>
+  
+
+  
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-clock-fill"></i>
+      
+      
+      44 分钟
+    </span>
+  
+
+  
+  
+    
+      <!-- 不蒜子统计文章PV -->
+      <span id="busuanzi_container_page_pv" style="display: none">
+        <i class="iconfont icon-eye" aria-hidden="true"></i>
+        <span id="busuanzi_value_page_pv"></span> 次
+      </span>
+    
+  
+</div>
+
+            
+          </div>
+
+          
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="d-none d-lg-block col-lg-2"></div>
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div class="py-5" id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">PWA-CacheStorageAPI</h1>
+            
+              <p class="note note-info">
+                
+                  本文最后更新于：5 hours ago
+                
+              </p>
+            
+            <div class="markdown-body">
+              <blockquote>
+<p><a target="_blank" rel="noopener" href="https://github.com/TalAter/gotham_imperial_hotel">《PWA实战》</a>记录。[以]塔勒·埃特尔 著 张俊达 译</p>
+</blockquote>
+<br>
+
+<h3 id="CacheStorage-API"><a href="#CacheStorage-API" class="headerlink" title="CacheStorage API"></a>CacheStorage API</h3><p>CacheStorage是一种全新的缓存层，你拥有完全的控制权。(遵循<a target="_blank" rel="noopener" href="https://baike.baidu.com/item/%E5%90%8C%E6%BA%90%E7%AD%96%E7%95%A5">同源策略</a>)</p>
+<br>
+
+<h4 id="在CacheStorage中储存请求"><a href="#在CacheStorage中储存请求" class="headerlink" title="在CacheStorage中储存请求"></a>在CacheStorage中储存请求</h4><p>示例：</p>
+<div class="hljs code-wrapper"><pre><code class="hljs">//serviceworker.js
+self.addEventListener(&quot;install&quot;,function(event)&#123;
+       event.waitUntil(
+        caches.open(&quot;gih-cache&quot;).then(function(cache)&#123;
+            return cache.add(&#39;/index-offline.html&#39;);
+        &#125;)
+       );
+&#125;);
+</code></pre></div>
+<p>首先我们来理解一下新的命令<br><code>caches.open()</code> :<br>打开并返回一个现有的缓存，如果没有找到对应名称的缓存，就创建它并返回。(并且它返回的是一个用promise包裹的cache对象。)</p>
+<p><code>cache.add()</code> :<br>这个方法将请求文件并将文件放入缓存中，传入的参数就是对应的键名。<br>在install事件中，通过<code>waitUntil</code>等待缓存完成，确保了在整个链条中如果遇到任何问题，service sorker都不会被安装。</p>
+<br>
+
+<h4 id="在CacheStorage中取回请求"><a href="#在CacheStorage中取回请求" class="headerlink" title="在CacheStorage中取回请求"></a>在CacheStorage中取回请求</h4><p>示例：</p>
+<div class="hljs code-wrapper"><pre><code class="hljs">//servicesocker.js  
+self.addEventListener(&quot;fetch&quot;,function(event)&#123;
+    event.respondWith(
+        fetch(event.request).catch(function()&#123;
+            return caches.match(&quot;/indedx-offline.html&quot;);
+        &#125;)
+    );
+&#125;);
+</code></pre></div>
+<p>新的命令：<br><code>match(request,[options])</code> :<br>第一个参数是需要在缓存中寻找的内容，可以是request对象或者URL。<br>第二个参数是非必传的选项对象。（比如 caches.match(event.request,{<code>ignoreSearch:true</code>} 这样将会匹配到请求的URL，同时忽略查询的参数。 ）<br><code>match</code>返回的是一个pormise，由<code>resolve</code>方法包裹的在缓存中找到的第一个response对象。当找不到任何内容时，它返回<br>undefined。<br>因为在找不到内容时，返回的pormise也不会进入<code>reject</code>,所以应该在返回之前判断是否找到匹配。</p>
+<div class="hljs code-wrapper"><pre><code class="hljs">//就像这样
+caches.match(&quot;/login.png&quot;).then(function(response)&#123;
+    if(response)&#123;
+    return response;
+    &#125;
+&#125;);
+</code></pre></div>
+<br>
+
+<h4 id="缓存多个请求"><a href="#缓存多个请求" class="headerlink" title="缓存多个请求"></a>缓存多个请求</h4><p>示例：</p>
+<div class="hljs code-wrapper"><pre><code class="hljs">//servicesocker.js  
+const CACHE_NAME = &quot;gih-cache&quot;;
+const CACHED_URLS = [
+    &quot;index-offline.html&quot;,
+    &quot;https:maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css&quot;,
+    &quot;/css/gih-offline.css&quot;,
+    &quot;/img/jumbo-background-sm.jpg&quot;,
+    &quot;/img/logo-header.png&quot;
+];
+ 
+self.addEventListener(&quot;install&quot;,function(event)&#123;
+       event.waitUntil(
+        caches.open(CACHE_NAME).then(function(cache)&#123;
+            return cache.addAll(CACHED_URLS);
+        &#125;)
+       );
+&#125;)
+</code></pre></div>
+<p>新的命令：<br><code>cache.addAll()</code> :<br>与cache,add()类似，但是其接收的是一组URL，并全部储存到缓存，如果任何一个请求失败，将会返回<code>promise.reject</code>。</p>
+<br>
+
+<h4 id="接收每个请求"><a href="#接收每个请求" class="headerlink" title="接收每个请求"></a>接收每个请求</h4><p>示例：</p>
+<div class="hljs code-wrapper"><pre><code class="hljs">//servicesocker.js  
+self.addEventListener(&quot;fetch&quot;,function(event)&#123;
+    event.respondWith(
+        fetch(event.request).catch(function()&#123;
+            return caches.match(event.request).then(function(response)&#123;
+                if(response)&#123;
+                    return response;
+                &#125;else if(event.request.header.get(&quot;accept&quot;).includes(&quot;text/html&quot;))&#123;
+                    return caches.match(&quot;/index-offline.html&quot;);
+                &#125;
+            &#125;);
+        &#125;)
+    );
+&#125;);
+</code></pre></div>
+<p>在这个请求中，新的fetch事件仍然试图向网络发起请求权，但是如果请求失败，则继续处理catch块中的函数。</p>
+<br>
+
+<h5 id="陷阱"><a href="#陷阱" class="headerlink" title="陷阱"></a><code>陷阱</code></h5><p>通过传递request对象（例如：caches.match(event.request)）来查找缓存中的条目有一个潜在的陷阱需要注意。<br>例如：您的网站有一个爆款活动，用户从a页面点击进入活动页面，<br>您缓存的内容长这样（<code>https://waterbang.top/activity.html?source=a</code>）。<br>用户从b页面点击进入，您的内容长这样（<code>https://waterbang.top/activity.html？id=2&amp;source=b</code>）。<br>如果您从a页面使用caches.match(event.request),尝试去寻找(<code>/activity.html?source=a</code>),会找不到任何内容。<br>如果你可以确保查询字符串对于页面内容不会产生影响。可以使用ignoreSearch选项，通知match() 方法忽略字符串查询。</p>
+<div class="hljs code-wrapper"><pre><code class="hljs">caches.match(event.request,&#123;ignoreSearch: true&#125;)
+</code></pre></div>
+<p>这样会匹配到请求的URL的条目，同时会忽略查询参数。</p>
+<br>
+
+<h3 id="HTTP缓存和HTTP头"><a href="#HTTP缓存和HTTP头" class="headerlink" title="HTTP缓存和HTTP头"></a>HTTP缓存和HTTP头</h3><p>CacheStorage不能取代过去的HTTP缓存。<br>如果你的服务器提供的文件包含一个HTTP头，说明该文件可以缓存一年（<code>Cache-Control: max-age=31536000</code>）,<br>游览器就会一直使用游览器缓存来提供这个文件。<br>如果你在一周之后更新了main.css并且打算更新service worker，让其重新调用cache.addAll([“.&#x2F;main.css”]),那么该文件会从游览器缓存中返回，而不是网络中返回</p>
+<br>
+
+<h3 id="缓存管理，清除旧缓存"><a href="#缓存管理，清除旧缓存" class="headerlink" title="缓存管理，清除旧缓存"></a>缓存管理，清除旧缓存</h3><p>我们不仅要创建缓存，还应该负责的处理不再需要的旧资源缓存<br>熟悉新的命令：<br><code>caches.delete(cacheName) </code>:<br>接收一个缓存名字做为参数，并删除对应的缓存。</p>
+<p><code>caches.keys()</code> :<br>该函数能获取所有的缓存名称，返回一个promise，成功的时候会得到一个包含缓存名称的数组。</p>
+<div class="hljs code-wrapper"><pre><code class="hljs">caches.keys().then(function()&#123;
+    cacheName.forEach(function(cacheName)&#123;
+        caches.delete(cacheName);
+    &#125;)
+&#125;)
+</code></pre></div>
+ <br>
+ 
+<h5 id="我们如何管理我们的缓存"><a href="#我们如何管理我们的缓存" class="headerlink" title="我们如何管理我们的缓存"></a>我们如何管理我们的缓存</h5><p> 任何时候，我们的应用最多需要两份缓存，一份是当前激活的service worker,<br> 另外一份是正在安装但是未激活的service worker（如果存在的话）。<br> 我们上面的缓存请求的代码已经完成了，接下来我们要实现：当新的service worker激活的时候，<br> 安全清除旧的service worker创建的缓存。<br> 我们可以在serviceworker.js文件底部，添加一个新的监听事件来完成 ——<code>activate</code>事件</p>
+<div class="hljs code-wrapper"><pre><code class="hljs">//servicesocker.js  
+self.addEventListener(&quot;activate&quot;,function(event) &#123;
+  event.waitUntil(
+    caches.keys().then(function(cacheNames)&#123;
+      return Promise.all(
+        cacheNames.map(function(cacheName)&#123;
+          if(CACHE_NAME !== cacheName &amp;&amp; cacheName.startsWith(&quot;git-cache&quot;))&#123;
+            return caches.delete(cacheName);
+          &#125;
+        &#125;)
+      );
+    &#125;)
+  );
+&#125;);
+</code></pre></div>
+<p>让我们看看我们的代码<br>首先我们用<code>event.waitUntil</code>,来让service worker 完成激活之前，先等待我们删除旧的缓存。<br>由于caches.keys返回的是一个promise,其成功时会返回一个数组，该数组包含所有缓存的名称。<br>我们需要拿到这个数组，然后创建一个promise，来迭代数组中的每个缓存（_Array.map()_），并且用Promise.all()返回。</p>
+<p>Promise.all() 接收一个promise数组，并且返回一个单独的promise，如果数组中的任何一个promise返回失败（reject）,<br>那么这整个都会创建失败，只有全部完成才会返回完成。</p>
+<br>
+
+<h4 id="重用已缓存的响应"><a href="#重用已缓存的响应" class="headerlink" title="重用已缓存的响应"></a>重用已缓存的响应</h4><p>当我们每次去安装service worker的时候，都会去创建一份新的缓存。这样是低效的，我们如果可以在创建新缓存的时候，<br>先去遍历一遍不可变文件的列表，然后从现有的缓存中复制到新的缓存。</p>
+<div class="hljs code-wrapper"><pre><code class="hljs">//serviceworker.js
+const immutableRequests = [ //我们的不可变资源
+  &quot;/fancy_header_background.mp4&quot;,
+  &quot;vendor/bootstrap/3.3.7/bootstrap.min.css&quot;,
+  &quot;/css/style-v355.css&quot;
+];
+const mutableRequest = [ //每次创建新缓存都要去网络中请求的URL
+  &quot;app-settings.json&quot;,
+  &quot;index.html&quot;
+];
+
+self.addEventListener(&quot;install&quot;,function(event)&#123;
+  event.waitUntil(caches.open(&quot;cache-v2&quot;)).then(function(cache)&#123;
+    let newImmutableRequests =[];
+    return Promise.all(
+      immutableRequests.map(function(url)&#123;
+        return caches.match(url).then(function(response)&#123;
+          if(response)&#123;
+            return response;
+          &#125;else&#123;
+            newImmutableRequests.push(url);
+            return Promise.resolve();
+          &#125;
+        &#125;);
+      &#125;)
+    ).then(function()&#123;
+      return cache.addAll(newImmutableRequests.concat(mutableRequest));
+    &#125;);
+  &#125;);
+&#125;);
+</code></pre></div>
+<p>在大部分的service worker中，上面这种模式是适用的，但是作者给我们提供了一种更加方便的方法。</p>
+<div class="hljs code-wrapper"><pre><code class="hljs">importScript(cache.adderall.js);
+self.addEventListener(&quot;install&quot;,function(event)&#123;
+    event.waitUntil(
+        caches.open(&quot;cache-v2&quot;).then(function(cache)&#123;
+            return adderall.addAll(cache,IMMUTABLE_URLS&lt;MUTABLE_URLS);
+        &#125;)
+    )
+&#125;)
+</code></pre></div>
+<p>点击<a target="_blank" rel="noopener" href="https://github.com/TalAter/cache.adderall">cache.adderall</a>，进一步了解。</p>
+<h4 id="结束🐟"><a href="#结束🐟" class="headerlink" title="结束🐟"></a>结束🐟</h4><blockquote>
+<p>清晨入古寺，初日照高林。——「题破山寺后禅院」  常建
+           </p>
+</blockquote>
+
+            </div>
+            <hr>
+            <div>
+              <div class="post-metas mb-3">
+                
+                
+                  <div class="post-meta">
+                    <i class="iconfont icon-tags"></i>
+                    
+                      <a class="hover-with-bg" href="/tags/Progressive-Web-App/">Progressive Web App</a>
+                    
+                  </div>
+                
+              </div>
+              
+                <p class="note note-warning">
+                  
+                    本博客所有文章除特别声明外，均采用 <a target="_blank" href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh" rel="nofollow noopener noopener">CC BY-SA 4.0 协议</a> ，转载请注明出处！
+                  
+                </p>
+              
+              
+                <div class="post-prevnext">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2019/11/24/2019-11-24-webpack-webpack%E5%90%84%E7%A7%8D%E4%BC%98%E5%8C%96/">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">webpack各种优化</span>
+                        <span class="visible-mobile">Vorheriger</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2019/11/21/2019-11-21-PWA-%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F/">
+                        <span class="hidden-mobile">PWA-生命周期</span>
+                        <span class="visible-mobile">Nächster</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+              <!-- Comments -->
+              <article class="comments" id="comments" lazyload>
+                
+                  
+                
+                
+  <script type="text/javascript">
+    Fluid.utils.loadComments('#comments', function() {
+      var light = 'github-light';
+      var dark = 'github-dark';
+      var schema = document.documentElement.getAttribute('data-user-color-scheme');
+      if (schema === 'dark') {
+        schema = dark;
+      } else {
+        schema = light;
+      }
+      window.UtterancesThemeLight = light;
+      window.UtterancesThemeDark = dark;
+      var s = document.createElement('script');
+      s.setAttribute('src', 'https://utteranc.es/client.js');
+      s.setAttribute('repo', 'waterbang/Comment');
+      s.setAttribute('issue-term', 'pathname');
+      
+      s.setAttribute('label', 'utterances');
+      
+      s.setAttribute('theme', schema);
+      s.setAttribute('crossorigin', 'anonymous');
+      document.getElementById('comments').appendChild(s);
+    })
+  </script>
+  <noscript>Please enable JavaScript to view the comments</noscript>
+
+
+              </article>
+            
+          </article>
+        </div>
+      </div>
+    </div>
+    
+      <div class="d-none d-lg-block col-lg-2 toc-container" id="toc-ctn">
+        <div id="toc">
+  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;TOC</p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+      </div>
+    
+  </div>
+</div>
+
+<!-- Custom -->
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">Suchen</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v"
+                 for="local-search-input">Stichwort</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+
+    
+  </main>
+
+  <footer class="text-center mt-5 py-3">
+  <div class="footer-content">
+     <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a>
+  </div>
+  
+
+  
+  <!-- 备案信息 -->
+  <div class="beian">
+    <span>
+      <a href="http://beian.miit.gov.cn/" target="_blank" rel="nofollow noopener">
+        闽ICP备18009949号-2
+      </a>
+    </span>
+    
+  </div>
+
+
+  
+</footer>
+
+
+  <!-- SCRIPTS -->
+  
+  <script  src="https://cdn.jsdelivr.net/npm/nprogress@0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/nprogress@0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js" ></script>
+<script  src="https://cdn.jsdelivr.net/npm/bootstrap@4/dist/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+<!-- Plugins -->
+
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+  
+
+
+
+  
+    <script  src="https://cdn.jsdelivr.net/npm/tocbot@4/dist/tocbot.min.js" ></script>
+  
+  
+    <script  src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3/dist/jquery.fancybox.min.js" ></script>
+  
+  
+    <script  src="https://cdn.jsdelivr.net/npm/anchor-js@4/anchor.min.js" ></script>
+  
+  
+    <script defer src="https://cdn.jsdelivr.net/npm/clipboard@2/dist/clipboard.min.js" ></script>
+  
+
+
+
+  <script defer src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" ></script>
+
+
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/typed.js@2/lib/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var title = document.getElementById('subtitle').title;
+      
+        typing(title);
+      
+    })(window, document);
+  </script>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+    <!-- Baidu Analytics -->
+    <script defer>
+      var _hmt = _hmt || [];
+      (function () {
+        var hm = document.createElement("script");
+        hm.src = "https://hm.baidu.com/hm.js?58e161bf4b884b2aa577f323f137ac0f";
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(hm, s);
+      })();
+    </script>
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+
+
+
+
+<!-- 主题的启动项 保持在最底部 -->
+<script  src="/js/boot.js" ></script>
+
+
+</body>
+</html>

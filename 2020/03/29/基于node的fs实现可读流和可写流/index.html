@@ -1,0 +1,602 @@
+
+
+<!DOCTYPE html>
+<html lang="ch_CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/apple-touch-icon.png">
+  <link rel="icon" href="/img/favicon.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="waterbang">
+  <meta name="keywords" content="waterbang">
+  
+    <meta name="description" content="前言确保您有node.js的环境。 可读流（ReadStream）先来看看核心方法如何使用，这也是我们开发中真正使用的。在工作目录下先创建一个1.txt,写入 你好然后创建一个stream.js,内容如下： 12345678910111213let fs &#x3D; require(&#x27;fs&#x27;);let path &#x3D; require(&#x27;path&#x27;);let rs &#x3D;">
+<meta property="og:type" content="article">
+<meta property="og:title" content="基于node的fs实现可读流和可写流">
+<meta property="og:url" content="https://www.waterbang.top/2020/03/29/%E5%9F%BA%E4%BA%8Enode%E7%9A%84fs%E5%AE%9E%E7%8E%B0%E5%8F%AF%E8%AF%BB%E6%B5%81%E5%92%8C%E5%8F%AF%E5%86%99%E6%B5%81/index.html">
+<meta property="og:site_name" content="waterbang">
+<meta property="og:description" content="前言确保您有node.js的环境。 可读流（ReadStream）先来看看核心方法如何使用，这也是我们开发中真正使用的。在工作目录下先创建一个1.txt,写入 你好然后创建一个stream.js,内容如下： 12345678910111213let fs &#x3D; require(&#x27;fs&#x27;);let path &#x3D; require(&#x27;path&#x27;);let rs &#x3D;">
+<meta property="og:locale" content="ch_CN">
+<meta property="og:image" content="https://www.waterbang.top/2020/03/10/node%E4%B8%AD%E7%9A%84require%E6%96%B9%E6%B3%95/logo.jpg">
+<meta property="article:published_time" content="2020-03-29T02:48:29.000Z">
+<meta property="article:modified_time" content="2024-12-21T11:43:23.165Z">
+<meta property="article:author" content="waterbang">
+<meta property="article:tag" content="node.js">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://www.waterbang.top/2020/03/10/node%E4%B8%AD%E7%9A%84require%E6%96%B9%E6%B3%95/logo.jpg">
+  
+  
+  <title>基于node的fs实现可读流和可写流 🏮 waterbang</title>
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4/dist/css/bootstrap.min.css" />
+
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/github-markdown-css@4/github-markdown.min.css" />
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hint.css@2/hint.min.css" />
+
+  
+    
+    
+      
+      <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@10/styles/atom-one-dark.min.css" />
+    
+  
+
+  
+    <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3/dist/jquery.fancybox.min.css" />
+  
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_ba1fz6golrf.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+<!-- 自定义样式保持在最底部 -->
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    var CONFIG = {"hostname":"www.waterbang.top","root":"/","version":"1.8.14","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"right","visible":"hover","icon":"🍦"},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"copy_btn":true,"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"baidu":"58e161bf4b884b2aa577f323f137ac0f","google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+
+<body>
+  <header style="height: 70vh;">
+    <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>waterbang</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                Startseite
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                Archiv
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                Etiketten
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                Über mich
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/links/">
+                <i class="iconfont icon-link-fill"></i>
+                Weblinks
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              &nbsp;<i class="iconfont icon-search"></i>&nbsp;
+            </a>
+          </li>
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">&nbsp;<i
+                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+    <div class="banner" id="banner" parallax=true
+         style="background: url('/img/post-banner.jpg') no-repeat center center;
+           background-size: cover;">
+      <div class="full-bg-img">
+        <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+          <div class="page-header text-center fade-in-up">
+            <span class="h2" id="subtitle" title="基于node的fs实现可读流和可写流">
+              
+            </span>
+
+            
+              <div class="mt-3">
+  
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-author" aria-hidden="true"></i>
+      waterbang
+    </span>
+  
+  
+    <span class="post-meta">
+      <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+      <time datetime="2020-03-29 10:48" pubdate>
+        March 29, 2020 am
+      </time>
+    </span>
+  
+</div>
+
+<div class="mt-1">
+  
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-chart"></i>
+      12k 字
+    </span>
+  
+
+  
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-clock-fill"></i>
+      
+      
+      102 分钟
+    </span>
+  
+
+  
+  
+    
+      <!-- 不蒜子统计文章PV -->
+      <span id="busuanzi_container_page_pv" style="display: none">
+        <i class="iconfont icon-eye" aria-hidden="true"></i>
+        <span id="busuanzi_value_page_pv"></span> 次
+      </span>
+    
+  
+</div>
+
+            
+          </div>
+
+          
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="d-none d-lg-block col-lg-2"></div>
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div class="py-5" id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">基于node的fs实现可读流和可写流</h1>
+            
+              <p class="note note-info">
+                
+                  本文最后更新于：5 hours ago
+                
+              </p>
+            
+            <div class="markdown-body">
+              <h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>确保您有node.js的环境。</p>
+<h2 id="可读流（ReadStream）"><a href="#可读流（ReadStream）" class="headerlink" title="可读流（ReadStream）"></a>可读流（ReadStream）</h2><p>先来看看核心方法如何使用，这也是我们开发中真正使用的。在工作目录下先创建一个<code>1.txt</code>,写入 你好<br>然后创建一个<code>stream.js</code>,内容如下：</p>
+<figure class="highlight html"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs html">let fs = require(&#x27;fs&#x27;);<br>let path = require(&#x27;path&#x27;);<br><br>let rs = fs.createReadStream(path.resolve(__dirname,&#x27;1.txt&#x27;))<br>let arr = [];<br><br>rs.on(&#x27;data&#x27;,function(data)&#123; // buffer<br>    arr.push(data);<br>&#125;)<br>rs.on(&#x27;end&#x27;,function()&#123;<br>   console.log(Buffer.concat(arr).toString());<br>&#125;);<br><br></code></pre></div></td></tr></table></figure>
+
+<p>上面代码中我们创建了一个arr数组来存我们每次读取的二进制数据。其形式为buffer。<br>其内部每次读取到数据就会触发我们监听的<code>data</code>事件。然后把数据返还给我们，而<code>end</code>事件是结束时触发的。两者都是固定的。<br>上面调用<code>fs.createReadStream()</code> 默认是流是暂停的，只有我们手动监听<code>data</code>事件的时候才会进行数据读取。</p>
+<blockquote>
+<p>内部触发事件具体看<a target="_blank" rel="noopener" href="http://nodejs.cn/api/fs.html#fs_class_fs_readstream">官方文档</a></p>
+</blockquote>
+<h3 id="可传的参数"><a href="#可传的参数" class="headerlink" title="可传的参数"></a>可传的参数</h3><p><code>fs.createReadStream(path，[options])</code>的第二个参数允许我们进行传参，我们先来了解一下各个参数的作用。</p>
+<figure class="highlight html"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs html">let rs = fs.createReadStream(&#x27;./1.txt&#x27;,&#123;<br>    flags:&#x27;r&#x27;, // 当前要做什么操作，具体可以看下面的文件系统标志<br>    encoding:null, // 默认是buffer<br>    highWaterMark:2,// 内部会创建 64k大的buffer<br>    mode:438,// 文件的权限 438为8进制，换成二进制为110110110<br>    autoClose:true, //默认为true ,在`error`或`end` 事件时，文件描述符会自动关闭。<br>    start:0,<br>    end:6 // start 和 end 就是读取一定范围的字节。<br>&#125;);<br></code></pre></div></td></tr></table></figure>
+<ol>
+<li><code>flags</code> 具体要进行的操作，如读取 <code>r</code> 或者写入 <code>w</code>。 默认 r</li>
+<li><code>encoding</code>  其可以是 Buffer 接受的任何一种字符编码。 默认 null</li>
+<li><code>fd</code> 如果指定，其内部将会忽略path参数，并使用指定的文件描述符。 默认为 null</li>
+<li><code>mode</code> 文件的权限，跟linux一样，4-&gt;可读 2-&gt;可写 1-&gt;可执行， 默认为 0o666或者438</li>
+<li><code>autoClose</code> 是否在触发error或者end事件时自动关闭文件。 默认为 true</li>
+<li><code>emitClose</code> 默认情况下，流在销毁后将不会触发 ‘close’ 事件。更改为true可以更改此行为。 默认为 false</li>
+<li><code>start end</code> 设置读取的范围。默认读取全部内容。</li>
+<li><code>highWaterMark</code> 默认每次读取64K，内部创建64K的缓冲区（buffer）。 默认为 64*1024</li>
+</ol>
+<blockquote>
+<p>注意: <em>文件写入时。如果文件不存在则创建文件，如果文件已存在则截断文件。</em><br><em>文件在读取时。如果文件不存在，则出现异常。</em></p>
+</blockquote>
+<h3 id="ReadStream-js"><a href="#ReadStream-js" class="headerlink" title="ReadStream.js"></a>ReadStream.js</h3><p>我们在工作目录创建文件 <code>ReadStream.js</code>,来写我们自己的可读流。<br>我们要先明确内部的流在创建的时候是暂停的。就跟我们的龙头一样。data事件就是我们的开关。<br>其次内部为了降低耦合，用了发布订阅。<br>我们首先要改一下stream.js,来用上我们自己的ReadStream。代码如下：</p>
+<figure class="highlight html"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs html">const fs = require(&#x27;fs&#x27;);<br>let ReadStream = require(&#x27;./ReadStream&#x27;);<br>let rs = new ReadStream(&#x27;./1.txt&#x27;,&#123;<br>    flags:&#x27;r&#x27;, // 当前要做什么操作，具体可以看下面的文件系统标志<br>    encoding:null, // 默认是buffer<br>    highWaterMark:2,// 内部会创建 64k大的buffer<br>    mode:438,// 文件的权限 438为8进制，换成二进制为110110110<br>    autoClose:true, //默认为true ,在`error`或`end` 事件时，文件描述符会自动关闭。<br>    start:0,<br>    end:6 // start 和 end 就是读取一定范围的字节。<br>&#125;);<br>rs.on(&#x27;open&#x27;,function(fd)&#123;<br>    console.log(&#x27;文件打开触发open事件&#x27;,fd)<br>&#125;);<br>let arr = [];<br>rs.on(&#x27;data&#x27;,function(data)&#123; // 每次读取到的结果<br>    console.log(data);<br>    arr.push(data); // 存起来<br>&#125;)<br>rs.on(&#x27;end&#x27;,function()&#123;<br>    console.log(&#x27;文件读取完毕&#x27;)<br>     console.log(Buffer.concat(arr).toString());<br>&#125;);<br>rs.on(&#x27;close&#x27;,function()&#123;<br>    console.log(&#x27;文件关闭&#x27;)<br>&#125;);<br></code></pre></div></td></tr></table></figure>
+<p>接下来就可以创建我们自己的ReadStream了，内部会基于node.js的<a target="_blank" rel="noopener" href="http://nodejs.cn/api/events.html">events</a>和<a target="_blank" rel="noopener" href="http://nodejs.cn/api/fs.html">fs</a>模块。<br>先引入两个模块，然后我们的类要继承events，接着把常用的可选参数传入。<br>读取的第一步就是要将文件打开，借助fs模块我们可以打开文件，并获得文件标识符，以方便下一步动作。<br>我们用一个<code>flowing</code>参数标识流是否是暂停的。并且在注册了<code>data</code>事件之后，将其打开。<br>代码如下：</p>
+<figure class="highlight html"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs html">const EventEmitter = require(&#x27;events&#x27;);<br>const fs = require(&#x27;fs&#x27;);<br>class ReadStream extends EventEmitter&#123;<br>  constructor(path, options = &#123;&#125;) &#123;<br>    super();<br>    this.path = path;<br>    this.flags = options.flags || &#x27;r&#x27;;<br>    this.encoding = options.encoding || null;<br>    this.highWaterMark = options.highWaterMark || 64*1024;<br>    this.mode = options.mode || 438;<br>    this.autoClose = options.autoClose || true;<br>    this.start = options.start || 0;<br>    this.end = options.end;<br><br>    this.flowing = null; // 默认是暂停模式<br>    this.offset = 0; // 读取文件的偏移量<br>    this.open(); // 打开文件 (异步)<br>    this.on(&#x27;newListener&#x27;,(type) =&gt; &#123;<br>    console.log(type);<br>     if(type === &#x27;data&#x27;) &#123;<br>      this.flowing = true;<br>      this.read();<br>     &#125;<br>    &#125;)<br>  &#125;<br>  read() &#123;<br>    console.log(this.fd);  // undefined<br>   &#125;<br>  open() &#123;<br>    fs.open(this.path, this.flags, (err,fd) =&gt;&#123;<br>      this.fd = fd;<br>      this.emit(&#x27;open&#x27;, this.fd);<br>    &#125;)<br>  &#125;<br>&#125;<br></code></pre></div></td></tr></table></figure>
+<p>上面的<a target="_blank" rel="noopener" href="http://nodejs.cn/api/events.html#events_event_newlistener">newListener</a>事件,为其注册监听器，会传递事件名称和对要添加的监听器的引用。<br>type打印内容如下：<br><img src="/./newListener.png" srcset="/img/loading.gif" lazyload alt="newListener"></p>
+<p>在我们打开文件要对其进行读取的时候，发现文件打开操作是异步的，而读取操作是同步的。文件还没打开就去读取是不得行的。<br>所以在<code>read()</code>的时候，this.fd是undefined。我们现在要解决的就是让<code>read()</code>比<code>open()</code>慢。<br>process.nextTick是不行的，它指定的任务会发生在所有异步任务之前。<br>解决方法是给<code>read()</code>注册一个open监听器，文件描述符获取到后触发这个open事件。<br>然后再去再次调用<code>read()</code>，这样就能在<code>read()</code>里获取到this.fd。具体代码如下：</p>
+<figure class="highlight html"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs html">read() &#123;<br>    if(typeof this.fd !== &quot;number&quot;) &#123; // 因为read 比open先调用<br>      return this.once(&#x27;open&#x27;, this.read); // 先把read方法存起来， 等open后再次调用。<br>    &#125;<br>    console.log(this.fd);<br>  &#125;<br>  open() &#123;<br>    fs.open(this.path, this.flags, (err,fd) =&gt;&#123;<br>      this.fd = fd;<br>      this.emit(&#x27;open&#x27;, this.fd);<br>    &#125;)<br>  &#125;<br></code></pre></div></td></tr></table></figure>
+<p>输出如下：<br><img src="/./fd.png" srcset="/img/loading.gif" lazyload alt="fd"></p>
+<p>这样就能获取到文件描述符，接下来就是进行连续读的操作，read()代码如下：</p>
+<figure class="highlight html"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs html">read() &#123;<br>   if(typeof this.fd !== &quot;number&quot;) &#123; // 因为read 比open先调用<br>     return this.once(&#x27;open&#x27;, this.read); // 先把read方法存起来， 等open后再次调用。<br>   &#125;<br>   let buffer = Buffer.alloc(this.highWaterMark); // 每次读多少个<br><br>   fs.read(this.fd, buffer, 0, this.highWaterMark, this.offset, (err, bytesRead) =&gt; &#123;<br>     this.offset += bytesRead; // 每次往前走<br>     if(bytesRead &gt; 0) &#123; //判断是否读完<br>     this.emit(&#x27;data&#x27;, buffer); // 如果读取到了内容就触发data事件<br>     this.read();<br>     &#125; else &#123;<br>       this.emit(&#x27;end&#x27;);<br>     &#125;<br>   &#125;)<br> &#125;<br></code></pre></div></td></tr></table></figure>
+<p>fs.read的各个参数分别是：<br><code>this.fd</code>: 要操作的文件标识符<br><code>buffer</code>: 给一个多大的缓冲区<br><code>0</code>：从buffer什么位置开始填进去<br><code>this.highWaterMark</code>： 每次读多少<br><code>this.offset</code>：每次写入文件的偏移量<br>然后我们每次读取到数据，就去触发data事件，然后把读到的buffer传递出去。如果bytesRead小于或等于零，表示读完了直接触发end事件就可以了。<br>我们还需要进一步完善我们的读取操作。把我们的end和start参数用上，并且添加close和控制流的方法：</p>
+<figure class="highlight html"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs html">const EventEmitter = require(&#x27;events&#x27;);<br>const fs = require(&#x27;fs&#x27;);<br>class ReadStream extends EventEmitter&#123;<br>  constructor(path, options = &#123;&#125;) &#123;<br>    super();<br>    this.path = path;<br>    this.flags = options.flags || &#x27;r&#x27;;<br>    this.encoding = options.encoding || null;<br>    this.highWaterMark = options.highWaterMark || 64*1024;<br>    this.mode = options.mode || 438;<br>    this.autoClose = options.autoClose || true;<br>    this.start = options.start || 0;<br>    this.end = options.end;<br><br>    this.flowing = null; // 默认是暂停模式<br>    this.offset = 0; //偏移量<br>    this.open(); // 打开文件 (异步)<br>    this.on(&#x27;newListener&#x27;,(type) =&gt; &#123;<br>     if(type === &#x27;data&#x27;) &#123;<br>      this.flowing = true;<br>      this.read();<br>     &#125;<br>    &#125;)<br>  &#125;<br>  read() &#123;<br>    if(typeof this.fd !== &quot;number&quot;) &#123; // 因为read 比open先调用<br>      return this.once(&#x27;open&#x27;, this.read); // 先把read方法存起来， 等open后再次调用。<br>    &#125;<br><br>    let howMuchToRead = this.end<br>    ? Math.min(this.highWaterMark, this.end-this.start + 1 - this.offset)<br>    : this.highWaterMark;<br>    let buffer = Buffer.alloc(howMuchToRead);<br><br>    fs.read(this.fd, buffer, 0, howMuchToRead, this.offset, (err, bytesRead) =&gt; &#123;<br>      this.offset += bytesRead;<br>      if(bytesRead &gt; 0) &#123;<br>      this.emit(&#x27;data&#x27;, buffer); // 如果读取到了内容就触发data事件<br>      this.flowing &amp;&amp; this.read();<br>      &#125; else &#123;<br>        this.emit(&#x27;end&#x27;);<br>        this.close();<br>      &#125;<br>    &#125;)<br>  &#125;<br>  close() &#123;<br>    if(this.autoClose) &#123;<br>      fs.close(this.fd, () =&gt; &#123;<br>        this.emit(&#x27;close&#x27;);<br>      &#125;)<br>    &#125;<br>  &#125;<br>  open() &#123;<br>    fs.open(this.path, this.flags, (err,fd) =&gt;&#123;<br>      this.fd = fd;<br>      this.emit(&#x27;open&#x27;, this.fd);<br>    &#125;)<br>  &#125;<br>  pause() &#123;<br>    this.flowing = false;<br>  &#125;<br>  resume() &#123;<br>    this.flowing = true;<br>    this.read();<br>  &#125;<br>&#125;<br></code></pre></div></td></tr></table></figure>
+<p>如果我们传了end和start,我们就需要算出每次一共读几个，防止最后一次读取的时候超过end。<br>然后加上控制流的方法。还有条件。我们的可读流就完成了。</p>
+<h2 id="可写流（writeStream）"><a href="#可写流（writeStream）" class="headerlink" title="可写流（writeStream）"></a>可写流（writeStream）</h2><h3 id="用法"><a href="#用法" class="headerlink" title="用法"></a>用法</h3><p>可写流最主要的就是 <code>write</code> 和 <code>end</code> 事件，一个是写入操作，一个是关闭操作。<br>我们先来实现一个写一点，等待写完，再次进行写的操作。这样可以节省内存占用。<br>创建一个write.js 文件用来写入我们的代码：</p>
+<figure class="highlight html"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs html">let fs = require(&#x27;fs&#x27;);<br>let ws = fs.createWriteStream(&#x27;./1.txt&#x27;,&#123;<br>  highWaterMark:3 // 预计占用的内存<br>&#125;)<br>let index = 0;<br>function write() &#123;<br>  let flag = true;<br>  while(index &lt; 10 &amp;&amp; flag) &#123;<br>    flag = ws.write(index + &#x27;&#x27;); // 转换成 String<br>    index++;<br>  &#125;<br>  if(index &gt; 9) &#123;<br>    ws.end(); // 关闭文件 关闭可写流<br>  &#125;<br>&#125;<br>write();<br><br>ws.on(&#x27;drain&#x27;, function()&#123;<br>  console.log(&#x27;预计内存满了&#x27;);<br>  write();<br>&#125;)<br></code></pre></div></td></tr></table></figure>
+<p>highWaterMark参数表示预计占用的内存,默认为16K.<br>其内部在写入的个数达到了，且预计的大小被写入到文件后清空了，就会触发<code>drain</code>事件，<br>所以我们可以在<code>drain</code>事件里，再次调用write方法。输出内容如下：<br><img src="/./write1.png" srcset="/img/loading.gif" lazyload alt="write1"></p>
+<p>由于我们写入10个数，每次写3个，所以drain触发了3次。</p>
+<blockquote>
+<p><strong>注意：<br>由于内部不知道什么时候写完的，所以我们需要手动调用end事件。<br>可写流写入是数据只能是字符串或者Buffer。</strong></p>
+</blockquote>
+<h3 id="writeStream-js"><a href="#writeStream-js" class="headerlink" title="writeStream.js"></a>writeStream.js</h3><p>接下来创建自己的可写流，创建<code>writeStream.js</code>文件,改写write.js 内容如下：</p>
+<figure class="highlight html"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs html">let fs = require(&#x27;fs&#x27;);<br>let WriteStream = require(&#x27;./writeStream&#x27;)<br>let ws = new WriteStream(&#x27;./1.txt&#x27;,&#123;<br>  highWaterMark:3,// 预期占用几个内存<br>  encoding:&#x27;utf8&#x27;,// 写入的编码<br>  start:0, // 从文件的第0个位置开始写入<br>  mode:438,<br>  flags:&#x27;w&#x27; // 默认操作是可写<br>&#125;)<br>let index = 0;<br>function write() &#123;<br>  let flag = true;<br>  while(index &lt; 10 &amp;&amp; flag) &#123;<br>    flag = ws.write(index + &#x27;&#x27;);<br>    console.log(flag)<br>    index++;<br>  &#125;<br>  if(index &gt; 9) &#123;<br>    ws.end(); // 关闭文件 关闭可写流<br>  &#125;<br>&#125;<br>write();<br><br>ws.on(&#x27;drain&#x27;, function()&#123;<br>  console.log(&#x27;预计内存满了&#x27;);<br>  write();<br>&#125;)<br>ws.on(&#x27;close&#x27;,function()&#123;<br>  console.log(&#x27;关闭了文件&#x27;);<br>&#125;)<br></code></pre></div></td></tr></table></figure>
+
+<p>刚开始的写法跟可读流是一样的，我们引入events模块，然后把参数在构造函数中赋值。可读流一创建就可以进行写的操作，<br>那么它在创建的时候肯定是打开了的，接下来先创建 open() write() end() 方法，内容如下：</p>
+<figure class="highlight html"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs html">const EventEmitter = require(&#x27;events&#x27;);<br>class WriteStream &#123;<br>  constructor(path, options = &#123;&#125;) &#123;<br>    super();<br>    this.path = path;<br>    this.highWaterMark = options.highWaterMark || 16 * 1024<br>    this.encoding = options.encoding || &#x27;utf8&#x27;;<br>    this.start = options.start || 0;<br>    this.mode = options.mode || 0o666;<br>    this.flags = options.flags || &#x27;w&#x27;;<br>    // 先打开文件<br>    this.open();<br>  &#125;<br>  open() &#123;<br><br>  &#125;<br>  write() &#123;<br><br>  &#125;<br>  end() &#123;<br>    <br>  &#125;<br>&#125;<br><br>module.exports = WriteStream;<br></code></pre></div></td></tr></table></figure>
+<p>先完善我们的open()方法，用户会同步调用write方法，在取的时候并不一定能取到文件标识符，而且用户调用write方法时，<br>需要先判断当前是否正在写入，如果正在写入需要先放到缓存中，如果不是正在写入，需要真正的写入文件当中。<br>我们还需要创建几个变量，具体代码如下：</p>
+<figure class="highlight html"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs html">class WriteStream &#123;<br>  constructor(path, options = &#123;&#125;) &#123;<br>    super();<br>    this.path = path;<br>    this.highWaterMark = options.highWaterMark || 16 * 1024<br>    this.encoding = options.encoding || &#x27;utf8&#x27;;<br>    this.start = options.start || 0;<br>    this.mode = options.mode || 0o666;<br>    this.flags = options.flags || &#x27;w&#x27;;<br>    // 先打开文件<br>    this.open();<br>    // 缓存区 <br>    this.cache = [];<br>    this.writing = false; // 判断是否正在被写入<br>    this.len = 0; // 缓存区的大小<br>    this.needDrain = false; // 是否触发drain事件<br>    this.offset = this.start; // offset 表示每次写入的偏移量<br>  &#125;<br>  open() &#123; // 先打开文件<br>    fs.open(this.path, this.flags, (err, fd) =&gt; &#123;<br>      this.fd = fd;<br>      this.emit(&#x27;open&#x27;, fd);<br>    &#125;)<br>  &#125;<br>  write() &#123;<br><br>  &#125;<br>&#125;<br></code></pre></div></td></tr></table></figure>
+<p>接下来完善write方法,第一个参数是写入的数据，第二个是编码没给用默认的编码，第三个是个callback。<br>我们首先要先判断，写入的数据是不是buffer,如果不是转换成buffer。接着统计写入数据的个数，<br>然后和highWaterMark比较，返回一个flag。代码如下：</p>
+<figure class="highlight html"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs html">write(chunk, encoding = this.encoding, callback) &#123;// 用户会同步的调用write方法<br>   chunk = Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk); // 判断这个chunk 是不是buffer 如果不是buffer转化成buffer<br>   this.len += chunk.length; // 统计写入数据的个数<br>   let flag = this.len &lt; this.highWaterMark;<br>   return flag;<br> &#125;<br></code></pre></div></td></tr></table></figure>
+<p>运行write.js文件，输出:</p>
+<blockquote>
+<p>true<br>true<br>false</p>
+</blockquote>
+<p>这样子是没错的，flag返回的是告知还有没有空间，我们的highWaterMark传入的是3，所以第三个写入满了，就返回了false。<br>这样我们可以得知，什么时候应该触发drain事件。然后我们需要将除了第一次数据真实写入，而其他都放到缓存中。<br>然后再去清空缓存队列，每次取第一个，进行真正的写入。而且每次调用的时候，还需要执行自己的成功操作，并且清空队列。代码如下：</p>
+<figure class="highlight html"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs html">write(chunk, encoding = this.encoding, callback) &#123;// 用户会同步的调用write方法<br>   chunk = Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk); // 判断这个chunk 是不是buffer 如果不是buffer转化成buffer<br>   this.len += chunk.length; // 统计写入数据的个数<br>   let flag = this.len &lt; this.highWaterMark;<br>   this.needDrain = !flag; //相反操作<br>   if (this.writing) &#123; // 当前是否正在写入<br>     this.cache.push(&#123; // 将除了第一次真实的写入，其他都放到缓存中<br>       chunk,<br>       encoding,<br>       callback<br>     &#125;)<br>   &#125; else &#123;<br>     this.writing = true; // 标识是否正在写入<br>     this._write(chunk, encoding, () =&gt; &#123;<br>       callback &amp;&amp; callback(); // 先执行自己的成功操作<br>       this.clearBuffer(); // 再去清空队列中的第一个<br>     &#125;);// 真实像文件中写入<br>   &#125;<br>   return flag;<br> &#125;<br></code></pre></div></td></tr></table></figure>
+<p>我们先来创建真正写入的核心方法_write,它获取this.fd，需要等待open事件触发，跟可读流一样。<br>接着进行文件的写入操作:</p>
+<figure class="highlight html"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs html">// 核心的写入方法<br>_write(chunk, encoding, clearBuffer) &#123;<br>  if (typeof this.fd !== &#x27;number&#x27;) &#123; //  write方法相对于open 是先调用的<br>    return this.once(&#x27;open&#x27;, () =&gt; this._write(chunk, encoding, clearBuffer))<br>  &#125;<br>  fs.write(this.fd, chunk, 0, chunk.length, this.offset, (err, written) =&gt; &#123;<br>    // written 表示真实写入的个数<br>    this.offset += written; // 增加偏移量<br>    this.len -= written; // 减少缓存中的数据<br>    clearBuffer(); // 清空缓存<br>  &#125;)<br>&#125;<br></code></pre></div></td></tr></table></figure>
+<p>fs.write的各个参数分别是：<br><code>this.fd</code>: 要操作的文件标识符<br><code>chunk</code>: 写入的数据<br><code>chunk.length</code>: 读取buffer多少个字节<br><code>0</code>：0表示把数据的第0个位置开始写入<br><code>this.highWaterMark</code>： 每次读多少<br><code>this.offset</code>：每次写入文件的偏移量<br>接下来要写清空缓存中的方法，需要判断缓存中是否有数据，如果有就取出第一个进行写入，如果没有数据且this.needDrain为true，<br>就表示数据都被清空了，需要从新设置变量然后触发drain事件：</p>
+<figure class="highlight html"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs html">clearBuffer() &#123;<br>   // 去缓存中取<br>   let obj = this.cache.shift();<br>   if (obj) &#123; // 需要写入<br>     this._write(obj.chunk, obj.encoding, () =&gt; &#123;<br>       obj.callback &amp;&amp; obj.callback();<br>       this.clearBuffer();<br>     &#125;);<br>   &#125; else &#123;<br>     if (this.needDrain) &#123;<br>       this.needDrain = false; // 下一次需要重新判断是否需要触发drain事件<br>       this.writing = false; //告诉下一次调用write 应该像文件中写入<br>       this.emit(&#x27;drain&#x27;);<br>     &#125;<br>   &#125;<br> &#125;<br></code></pre></div></td></tr></table></figure>
+<p>这样我们的写入方法就完成了，再到write.js里run一下，内容是正确的，最后还需要完善close和end方法。<br>close比较简单直接调用fs的close方法就行了：</p>
+<figure class="highlight html"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs html">close() &#123;<br>  fs.close(this.fd, () =&gt; &#123;<br>    this.emit(&#x27;close&#x27;)<br>  &#125;)<br>&#125;<br></code></pre></div></td></tr></table></figure>
+<p>接着就是end方法，end方法可以传参，第一个是写入的内容，第二个是编码，<br>如果传递参数，我们需要先强制清空缓存，然后写入end方法的内容，接着再关闭文件,代码如下：</p>
+<figure class="highlight html"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs html">end(chunk, encoding) &#123;  <br>  if (chunk) &#123;<br>    chunk = Buffer.isBuffer(chunk)?chunk:Buffer.from(chunk);<br>    return this.write(chunk, encoding, () =&gt; &#123;<br>      this.close()<br>    &#125;)<br>  &#125;<br>  this.close();<br>&#125;<br></code></pre></div></td></tr></table></figure>
+
+<p>这样我们就完成了可写流。</p>
+<h3 id="结束语"><a href="#结束语" class="headerlink" title="结束语"></a>结束语</h3><p>错误之处留言告知，谢谢你！。</p>
+<p>记得金銮同唱第，春风上国繁华。<br>「临江仙·记得金銮同唱第」<br>欧阳修</p>
+
+            </div>
+            <hr>
+            <div>
+              <div class="post-metas mb-3">
+                
+                
+                  <div class="post-meta">
+                    <i class="iconfont icon-tags"></i>
+                    
+                      <a class="hover-with-bg" href="/tags/node-js/">node.js</a>
+                    
+                  </div>
+                
+              </div>
+              
+                <p class="note note-warning">
+                  
+                    本博客所有文章除特别声明外，均采用 <a target="_blank" href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh" rel="nofollow noopener noopener">CC BY-SA 4.0 协议</a> ，转载请注明出处！
+                  
+                </p>
+              
+              
+                <div class="post-prevnext">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2020/04/07/%E5%AE%9E%E7%8E%B0%E7%AE%80%E5%8D%95%E7%9A%84koa/">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">实现简单的koa</span>
+                        <span class="visible-mobile">Vorheriger</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2020/03/13/%E5%9C%A8node%E4%B8%AD%E4%BD%BF%E7%94%A8RabbitMQ/">
+                        <span class="hidden-mobile">win10环境在node中使用RabbitMQ</span>
+                        <span class="visible-mobile">Nächster</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+              <!-- Comments -->
+              <article class="comments" id="comments" lazyload>
+                
+                  
+                
+                
+  <script type="text/javascript">
+    Fluid.utils.loadComments('#comments', function() {
+      var light = 'github-light';
+      var dark = 'github-dark';
+      var schema = document.documentElement.getAttribute('data-user-color-scheme');
+      if (schema === 'dark') {
+        schema = dark;
+      } else {
+        schema = light;
+      }
+      window.UtterancesThemeLight = light;
+      window.UtterancesThemeDark = dark;
+      var s = document.createElement('script');
+      s.setAttribute('src', 'https://utteranc.es/client.js');
+      s.setAttribute('repo', 'waterbang/Comment');
+      s.setAttribute('issue-term', 'pathname');
+      
+      s.setAttribute('label', 'utterances');
+      
+      s.setAttribute('theme', schema);
+      s.setAttribute('crossorigin', 'anonymous');
+      document.getElementById('comments').appendChild(s);
+    })
+  </script>
+  <noscript>Please enable JavaScript to view the comments</noscript>
+
+
+              </article>
+            
+          </article>
+        </div>
+      </div>
+    </div>
+    
+      <div class="d-none d-lg-block col-lg-2 toc-container" id="toc-ctn">
+        <div id="toc">
+  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;TOC</p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+      </div>
+    
+  </div>
+</div>
+
+<!-- Custom -->
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">Suchen</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v"
+                 for="local-search-input">Stichwort</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+
+    
+  </main>
+
+  <footer class="text-center mt-5 py-3">
+  <div class="footer-content">
+     <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a>
+  </div>
+  
+
+  
+  <!-- 备案信息 -->
+  <div class="beian">
+    <span>
+      <a href="http://beian.miit.gov.cn/" target="_blank" rel="nofollow noopener">
+        闽ICP备18009949号-2
+      </a>
+    </span>
+    
+  </div>
+
+
+  
+</footer>
+
+
+  <!-- SCRIPTS -->
+  
+  <script  src="https://cdn.jsdelivr.net/npm/nprogress@0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/nprogress@0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js" ></script>
+<script  src="https://cdn.jsdelivr.net/npm/bootstrap@4/dist/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+<!-- Plugins -->
+
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+  
+
+
+
+  
+    <script  src="https://cdn.jsdelivr.net/npm/tocbot@4/dist/tocbot.min.js" ></script>
+  
+  
+    <script  src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3/dist/jquery.fancybox.min.js" ></script>
+  
+  
+    <script  src="https://cdn.jsdelivr.net/npm/anchor-js@4/anchor.min.js" ></script>
+  
+  
+    <script defer src="https://cdn.jsdelivr.net/npm/clipboard@2/dist/clipboard.min.js" ></script>
+  
+
+
+
+  <script defer src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" ></script>
+
+
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/typed.js@2/lib/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var title = document.getElementById('subtitle').title;
+      
+        typing(title);
+      
+    })(window, document);
+  </script>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+    <!-- Baidu Analytics -->
+    <script defer>
+      var _hmt = _hmt || [];
+      (function () {
+        var hm = document.createElement("script");
+        hm.src = "https://hm.baidu.com/hm.js?58e161bf4b884b2aa577f323f137ac0f";
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(hm, s);
+      })();
+    </script>
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+
+
+
+
+<!-- 主题的启动项 保持在最底部 -->
+<script  src="/js/boot.js" ></script>
+
+
+</body>
+</html>
