@@ -10,3 +10,13 @@
 ### hexo docs
 
 [hexo docs](https://hexo.io/zh-cn/docs/commands)
+
+
+### 常用命令
+
+- `hexo clean` - 清理缓存
+- `hexo generate` - 生成静态文件
+- `hexo server` - 启动服务器
+- `hexo deploy` - 部署网站
+- `hexo new "文章标题"` - 新建文章
+- `hexo help` - 查看帮助

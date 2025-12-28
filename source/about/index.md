@@ -29,6 +29,8 @@ opensea: [https://opensea.io/waterbang](https://opensea.io/waterbang)
 
 #`deno`,`kotlin multiplatform`,`VUE`,`Node.js`,`electron`,~~`React-native`~~,~~`tensorflow.js`~~,`Google插件`，`PWA`,~~`微信小程序`~~
 
+当前AI已经技术平权，有的只是理解和应用能力的差异。
+
 ### 出售的网站 💰
 
 ~~`bfchain.work`~~
