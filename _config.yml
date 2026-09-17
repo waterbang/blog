@@ -99,6 +99,18 @@ pagination_dir: page
 ## Themes: https://hexo.io/themes/
 theme: fluid
 
+# Markdown-it
+markdown:
+  preset: 'default'
+  render:
+    html: true
+    xhtmlOut: false
+    breaks: true
+    linkify: true
+    typographer: true
+  plugins:
+    - '@traptitech/markdown-it-katex'
+
 # Deployment
 ## Docs: https://hexo.io/docs/one-command-deployment
 deploy:
