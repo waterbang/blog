@@ -20,3 +20,11 @@
 - `hexo deploy` - 部署网站
 - `hexo new "文章标题"` - 新建文章
 - `hexo help` - 查看帮助
+
+### 自动部署
+
+使用 Node.js 24（版本记录在 `.nvmrc`），首次安装执行 `npm ci`，本地构建执行 `npm run build`。
+
+将代码推送到 `main` 后，GitHub Actions 的 `Pages` 工作流会安装锁定依赖、构建 `public/` 并发布到 GitHub Pages。仅执行本地 commit 不会触发发布；也可以在 Actions 页面手动运行该工作流。
+
+在仓库 Actions 页面确认 build 和 deploy 均成功后，访问 https://waterbang.top 检查结果。此流程无需手动执行 `npm run d` 或推送 `gh-pages` 分支。
